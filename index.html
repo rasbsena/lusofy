@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lusofy - v1.0</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@300;400;500;600;700&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --lusotur-blue: #041f43;
+            --lusotur-yellow: #ffcf00;
+            --lusotur-white: #ffffff;
+            --bg-primary: #041f43;
+            --bg-secondary: #062a5a;
+            --bg-card: #0a3570;
+            --bg-column: #031632;
+            --text-primary: #ffffff;
+            --text-secondary: #b8c7db;
+            --text-muted: #7a8fa8;
+            --border-color: #1a4a7a;
+            --accent: #ffcf00;
+            --accent-hover: #ffe14d;
+            --status-nao-iniciado: #6b7280;
+            --status-em-espera: #f59e0b;
+            --status-bloqueado: #ef4444;
+            --status-em-planejamento: #3b82f6;
+            --status-em-producao: #10b981;
+            --status-concluido: #22c55e;
+            --priority-urgente: #dc2626;
+            --priority-alta: #f97316;
+            --priority-media: #eab308;
+            --priority-baixa: #6b7280;
+        }
+        body { font-family: 'Montserrat', sans-serif; background: linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-secondary) 100%); min-height: 100vh; color: var(--text-primary); }
+        h1, h2, h3, h4, h5, h6, .title-font { font-family: 'Oswald', sans-serif; }
+        .header { background: rgba(4, 31, 67, 0.98); backdrop-filter: blur(10px); border-bottom: 3px solid var(--accent); padding: 0 24px; height: 70px; display: flex; align-items: center; justify-content: space-between; position: fixed; top: 0; left: 0; right: 0; z-index: 100; }
+        .header-logo { display: flex; align-items: center; gap: 12px; }
+        .header-logo h1 { font-size: 1.8rem; font-weight: 700; color: var(--accent); letter-spacing: 2px; text-transform: uppercase; }
+        .header-logo .version { font-family: 'Montserrat', sans-serif; font-size: 0.7rem; color: var(--text-muted); background: var(--bg-card); padding: 3px 10px; border-radius: 4px; font-weight: 500; }
+        .header-nav { display: flex; gap: 8px; }
+        .nav-btn { font-family: 'Oswald', sans-serif; padding: 10px 20px; border-radius: 6px; font-size: 0.95rem; font-weight: 500; cursor: pointer; transition: all 0.2s ease; border: 2px solid transparent; background: transparent; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 1px; }
+        .nav-btn:hover { background: rgba(255, 207, 0, 0.1); color: var(--text-primary); border-color: rgba(255, 207, 0, 0.3); }
+        .nav-btn.active { background: var(--accent); color: var(--bg-primary); border-color: var(--accent); font-weight: 600; }
+        .header-profile { display: flex; align-items: center; gap: 12px; }
+        .profile-btn { display: flex; align-items: center; gap: 10px; padding: 8px 16px; border-radius: 8px; background: var(--bg-card); border: 2px solid var(--border-color); color: var(--text-primary); cursor: pointer; transition: all 0.2s ease; font-family: 'Montserrat', sans-serif; font-weight: 500; }
+        .profile-btn:hover { border-color: var(--accent); background: rgba(255, 207, 0, 0.1); }
+        .profile-avatar { width: 34px; height: 34px; border-radius: 50%; background: var(--accent); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.9rem; color: var(--bg-primary); }
+        .main-content { padding-top: 94px; padding-bottom: 24px; min-height: 100vh; }
+        .kanban-container { padding: 0 24px; overflow-x: auto; }
+        .kanban-board { display: flex; gap: 16px; min-width: max-content; padding-bottom: 24px; }
+        .kanban-column { width: 320px; min-width: 320px; background: var(--bg-column); border-radius: 12px; border: 1px solid var(--border-color); display: flex; flex-direction: column; max-height: calc(100vh - 130px); }
+        .column-header { padding: 16px; border-bottom: 1px solid var(--border-color); display: flex; align-items: center; justify-content: space-between; }
+        .column-title { display: flex; align-items: center; gap: 10px; }
+        .column-status-dot { width: 12px; height: 12px; border-radius: 50%; }
+        .column-name { font-family: 'Oswald', sans-serif; font-weight: 600; font-size: 0.95rem; text-transform: uppercase; letter-spacing: 0.5px; }
+        .column-count { background: var(--bg-card); color: var(--accent); font-size: 0.75rem; padding: 3px 10px; border-radius: 12px; font-weight: 600; }
+        .column-cards { flex: 1; padding: 12px; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; }
+        .column-cards::-webkit-scrollbar { width: 6px; }
+        .column-cards::-webkit-scrollbar-track { background: transparent; }
+        .column-cards::-webkit-scrollbar-thumb { background: var(--border-color); border-radius: 3px; }
+        .task-card { background: var(--bg-card); border-radius: 10px; border: 1px solid var(--border-color); padding: 16px; cursor: grab; transition: all 0.2s ease; }
+        .task-card:hover { border-color: var(--accent); transform: translateY(-2px); box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4); }
+        .task-card.dragging { opacity: 0.5; cursor: grabbing; }
+        .task-card-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 8px; margin-bottom: 12px; }
+        .task-title { font-weight: 600; font-size: 0.95rem; line-height: 1.4; flex: 1; }
+        .task-priority { font-family: 'Oswald', sans-serif; font-size: 0.65rem; font-weight: 600; padding: 4px 10px; border-radius: 4px; text-transform: uppercase; letter-spacing: 0.5px; white-space: nowrap; }
+        .priority-urgente { background: rgba(220, 38, 38, 0.25); color: #fca5a5; border: 1px solid rgba(220, 38, 38, 0.4); }
+        .priority-alta { background: rgba(249, 115, 22, 0.25); color: #fdba74; border: 1px solid rgba(249, 115, 22, 0.4); }
+        .priority-media { background: rgba(234, 179, 8, 0.25); color: #fde047; border: 1px solid rgba(234, 179, 8, 0.4); }
+        .priority-baixa { background: rgba(107, 114, 128, 0.25); color: #9ca3af; border: 1px solid rgba(107, 114, 128, 0.4); }
+        .task-card-info { display: flex; flex-direction: column; gap: 8px; margin-bottom: 12px; }
+        .task-info-row { display: flex; align-items: center; gap: 8px; font-size: 0.8rem; color: var(--text-secondary); }
+        .task-info-row svg { width: 14px; height: 14px; color: var(--accent); opacity: 0.8; }
+        .task-card-footer { display: flex; align-items: center; justify-content: space-between; padding-top: 12px; border-top: 1px solid var(--border-color); }
+        .task-responsavel { display: flex; align-items: center; gap: 8px; }
+        .responsavel-avatar { width: 28px; height: 28px; border-radius: 50%; background: linear-gradient(135deg, var(--accent) 0%, #ffe680 100%); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.7rem; color: var(--bg-primary); }
+        .responsavel-nome { font-size: 0.8rem; color: var(--text-secondary); font-weight: 500; }
+        .task-comments { display: flex; align-items: center; gap: 5px; font-size: 0.75rem; color: var(--text-muted); }
+        .task-comments svg { width: 14px; height: 14px; }
+        .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0, 0, 0, 0.75); backdrop-filter: blur(4px); display: none; align-items: center; justify-content: center; z-index: 1000; padding: 24px; }
+        .modal-overlay.active { display: flex; }
+        .modal { background: var(--bg-secondary); border-radius: 16px; border: 2px solid var(--border-color); width: 100%; max-width: 800px; max-height: 90vh; overflow: hidden; display: flex; flex-direction: column; box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5); }
+        .modal-header { padding: 20px 24px; border-bottom: 2px solid var(--accent); display: flex; align-items: center; justify-content: space-between; background: var(--bg-primary); }
+        .modal-title { font-family: 'Oswald', sans-serif; font-size: 1.4rem; font-weight: 600; color: var(--accent); text-transform: uppercase; letter-spacing: 1px; }
+        .modal-close { width: 36px; height: 36px; border-radius: 8px; background: var(--bg-card); border: 1px solid var(--border-color); color: var(--text-secondary); cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s ease; }
+        .modal-close:hover { background: var(--accent); color: var(--bg-primary); border-color: var(--accent); }
+        .modal-body { flex: 1; overflow-y: auto; padding: 24px; }
+        .modal-section { margin-bottom: 24px; }
+        .modal-section:last-child { margin-bottom: 0; }
+        .modal-section-title { font-family: 'Oswald', sans-serif; font-size: 0.85rem; font-weight: 600; color: var(--accent); margin-bottom: 10px; text-transform: uppercase; letter-spacing: 1px; display: flex; align-items: center; gap: 8px; }
+        .modal-section-title svg { width: 16px; height: 16px; }
+        .modal-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
+        @media (max-width: 600px) { .modal-grid { grid-template-columns: 1fr; } }
+        .modal-field { background: var(--bg-card); border-radius: 8px; padding: 14px; border: 1px solid var(--border-color); }
+        .modal-field-label { font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px; font-weight: 600; }
+        .modal-field-value { font-size: 0.95rem; color: var(--text-primary); font-weight: 500; }
+        .modal-field-value.editable { cursor: pointer; display: flex; align-items: center; gap: 8px; }
+        .modal-field-value.editable:hover { color: var(--accent); }
+        .modal-field-value.editable svg { width: 14px; height: 14px; opacity: 0.5; }
+        .cronometro { display: flex; align-items: center; gap: 8px; font-family: 'Oswald', monospace; font-size: 1.1rem; color: var(--accent); font-weight: 600; }
+        .cronometro svg { width: 18px; height: 18px; }
+        .descricao-box { background: var(--bg-card); border-radius: 8px; padding: 16px; border: 1px solid var(--border-color); min-height: 100px; font-size: 0.9rem; line-height: 1.6; color: var(--text-secondary); white-space: pre-wrap; }
+        .responsavel-search { position: relative; }
+        .responsavel-input { width: 100%; padding: 12px 16px; background: var(--bg-card); border: 2px solid var(--border-color); border-radius: 8px; color: var(--text-primary); font-size: 0.9rem; font-family: 'Montserrat', sans-serif; transition: all 0.2s ease; }
+        .responsavel-input:focus { outline: none; border-color: var(--accent); }
+        .responsavel-dropdown { position: absolute; top: 100%; left: 0; right: 0; background: var(--bg-card); border: 2px solid var(--accent); border-top: none; border-radius: 0 0 8px 8px; max-height: 200px; overflow-y: auto; display: none; z-index: 10; }
+        .responsavel-dropdown.active { display: block; }
+        .responsavel-option { padding: 12px 16px; cursor: pointer; display: flex; align-items: center; gap: 12px; transition: background 0.2s ease; border-bottom: 1px solid var(--border-color); }
+        .responsavel-option:last-child { border-bottom: none; }
+        .responsavel-option:hover { background: rgba(255, 207, 0, 0.1); }
+        .responsavel-option-avatar { width: 32px; height: 32px; border-radius: 50%; background: var(--accent); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.75rem; color: var(--bg-primary); }
+        .responsavel-option-info { flex: 1; }
+        .responsavel-option-name { font-weight: 600; font-size: 0.9rem; }
+        .responsavel-option-email { font-size: 0.75rem; color: var(--text-muted); }
+        .comentarios-list { display: flex; flex-direction: column; gap: 12px; margin-bottom: 16px; }
+        .comentario-item { background: var(--bg-card); border-radius: 10px; padding: 14px; border: 1px solid var(--border-color); }
+        .comentario-header { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+        .comentario-avatar { width: 30px; height: 30px; border-radius: 50%; background: var(--accent); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.7rem; color: var(--bg-primary); }
+        .comentario-autor { font-weight: 600; font-size: 0.85rem; }
+        .comentario-data { font-size: 0.7rem; color: var(--text-muted); margin-left: auto; }
+        .comentario-texto { font-size: 0.9rem; line-height: 1.5; color: var(--text-secondary); }
+        .comentario-form { display: flex; flex-direction: column; gap: 10px; }
+        .comentario-textarea { width: 100%; min-height: 80px; padding: 14px; background: var(--bg-card); border: 2px solid var(--border-color); border-radius: 8px; color: var(--text-primary); font-size: 0.9rem; font-family: 'Montserrat', sans-serif; resize: vertical; transition: all 0.2s ease; }
+        .comentario-textarea:focus { outline: none; border-color: var(--accent); }
+        .comentario-btn { align-self: flex-end; padding: 10px 24px; background: var(--accent); border: none; border-radius: 6px; color: var(--bg-primary); font-family: 'Oswald', sans-serif; font-size: 0.9rem; font-weight: 600; cursor: pointer; transition: all 0.2s ease; text-transform: uppercase; letter-spacing: 1px; }
+        .comentario-btn:hover { background: var(--accent-hover); transform: translateY(-1px); }
+        .arquivos-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 12px; }
+        .arquivo-item { background: var(--bg-card); border-radius: 10px; border: 1px solid var(--border-color); overflow: hidden; cursor: pointer; transition: all 0.2s ease; }
+        .arquivo-item:hover { border-color: var(--accent); transform: translateY(-2px); }
+        .arquivo-preview { height: 100px; background: var(--bg-column); display: flex; align-items: center; justify-content: center; overflow: hidden; }
+        .arquivo-preview img { width: 100%; height: 100%; object-fit: cover; }
+        .arquivo-preview svg { width: 40px; height: 40px; color: var(--accent); }
+        .arquivo-info { padding: 10px; }
+        .arquivo-nome { font-size: 0.75rem; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .date-input { background: var(--bg-card); border: 2px solid var(--border-color); border-radius: 6px; padding: 8px 12px; color: var(--text-primary); font-family: 'Montserrat', sans-serif; font-size: 0.9rem; cursor: pointer; }
+        .date-input:focus { outline: none; border-color: var(--accent); }
+        .loading { display: flex; align-items: center; justify-content: center; padding: 60px; }
+        .loading-spinner { width: 50px; height: 50px; border: 4px solid var(--border-color); border-top-color: var(--accent); border-radius: 50%; animation: spin 1s linear infinite; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .toast-container { position: fixed; bottom: 24px; right: 24px; z-index: 2000; display: flex; flex-direction: column; gap: 10px; }
+        .toast { background: var(--bg-card); border: 2px solid var(--accent); border-radius: 10px; padding: 14px 20px; display: flex; align-items: center; gap: 12px; box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4); animation: slideIn 0.3s ease; }
+        @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+        .toast-icon { width: 22px; height: 22px; color: var(--accent); }
+        .toast-message { font-size: 0.9rem; font-weight: 500; }
+        .toast.success { border-color: #22c55e; }
+        .toast.success .toast-icon { color: #22c55e; }
+        .toast.error { border-color: #ef4444; }
+        .toast.error .toast-icon { color: #ef4444; }
+        .empty-column { text-align: center; padding: 30px; color: var(--text-muted); }
+        .empty-column svg { width: 48px; height: 48px; margin-bottom: 12px; opacity: 0.4; }
+        .empty-column p { font-size: 0.85rem; }
+        .kanban-column.drag-over .column-cards { background: rgba(255, 207, 0, 0.05); border-radius: 8px; }
+        .logo-sun { width: 36px; height: 36px; color: var(--accent); }
+        @media (max-width: 768px) { .header { padding: 0 16px; } .header-nav { display: none; } .kanban-container { padding: 0 16px; } .kanban-column { width: 280px; min-width: 280px; } }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="header-logo">
+            <svg class="logo-sun" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="50" cy="70" r="20" stroke="currentColor" stroke-width="3" fill="none"/>
+                <line x1="50" y1="45" x2="50" y2="25" stroke="currentColor" stroke-width="3"/>
+                <line x1="50" y1="45" x2="30" y2="30" stroke="currentColor" stroke-width="3"/>
+                <line x1="50" y1="45" x2="70" y2="30" stroke="currentColor" stroke-width="3"/>
+                <line x1="50" y1="45" x2="20" y2="45" stroke="currentColor" stroke-width="3"/>
+                <line x1="50" y1="45" x2="80" y2="45" stroke="currentColor" stroke-width="3"/>
+                <line x1="50" y1="45" x2="25" y2="55" stroke="currentColor" stroke-width="3"/>
+                <line x1="50" y1="45" x2="75" y2="55" stroke="currentColor" stroke-width="3"/>
+                <line x1="15" y1="70" x2="85" y2="70" stroke="currentColor" stroke-width="3"/>
+            </svg>
+            <h1>LUSOFY</h1>
+            <span class="version">v1.0</span>
+        </div>
+        <nav class="header-nav">
+            <button class="nav-btn active">OTA</button>
+            <button class="nav-btn">Faturamentos</button>
+            <button class="nav-btn">Financeiro</button>
+        </nav>
+        <div class="header-profile">
+            <button class="profile-btn">
+                <div class="profile-avatar">U</div>
+                <span>Meu Perfil</span>
+            </button>
+        </div>
+    </header>
+    <main class="main-content">
+        <div class="kanban-container">
+            <div class="kanban-board" id="kanbanBoard">
+                <div class="loading"><div class="loading-spinner"></div></div>
+            </div>
+        </div>
+    </main>
+    <div class="modal-overlay" id="taskModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h2 class="modal-title" id="modalTitle">Detalhes da Tarefa</h2>
+                <button class="modal-close" onclick="closeModal()">
+                    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
+                </button>
+            </div>
+            <div class="modal-body" id="modalBody"></div>
+        </div>
+    </div>
+    <div class="toast-container" id="toastContainer"></div>
+    <script>
+        const WEBHOOK_URL = 'https://n8n.upperfy.com.br/webhook/0fec17a7-8654-45ff-8ad6-lsfy1';
+        const SEARCH_URL = 'https://n8n.upperfy.com.br/webhook/0fec17a7-8654-45ff-8ad6-lsfysearchpeople';
+        const STATUS_CONFIG = {
+            'nao_iniciado': { label: 'Não iniciado', color: '#6b7280' },
+            'em_espera': { label: 'Em espera', color: '#f59e0b' },
+            'bloqueado': { label: 'Bloqueado', color: '#ef4444' },
+            'em_planejamento': { label: 'Em planejamento', color: '#3b82f6' },
+            'em_producao': { label: 'Em produção', color: '#10b981' },
+            'concluido': { label: 'Concluído', color: '#22c55e' }
+        };
+        const STATUS_ORDER = ['nao_iniciado', 'em_espera', 'bloqueado', 'em_planejamento', 'em_producao', 'concluido'];
+        let tasks = [];
+        let currentTask = null;
+        let draggedCard = null;
+
+        document.addEventListener('DOMContentLoaded', () => { loadTasks(); });
+
+        async function loadTasks() {
+            try {
+                const response = await fetch(WEBHOOK_URL);
+                const data = await response.json();
+                tasks = data.tasks || [];
+                renderBoard();
+            } catch (error) {
+                console.error('Erro ao carregar tarefas:', error);
+                showToast('Erro ao carregar tarefas', 'error');
+                tasks = getDemoTasks();
+                renderBoard();
+            }
+        }
+
+        function renderBoard() {
+            const board = document.getElementById('kanbanBoard');
+            board.innerHTML = '';
+            STATUS_ORDER.forEach(status => {
+                const statusConfig = STATUS_CONFIG[status];
+                const statusTasks = tasks.filter(t => t.status === status);
+                const column = document.createElement('div');
+                column.className = 'kanban-column';
+                column.dataset.status = status;
+                column.innerHTML = `
+                    <div class="column-header">
+                        <div class="column-title">
+                            <div class="column-status-dot" style="background: ${statusConfig.color}"></div>
+                            <span class="column-name">${statusConfig.label}</span>
+                        </div>
+                        <span class="column-count">${statusTasks.length}</span>
+                    </div>
+                    <div class="column-cards" data-status="${status}">
+                        ${statusTasks.length === 0 ? `<div class="empty-column"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 9h6M9 12h6M9 15h4"/></svg><p>Nenhuma tarefa</p></div>` : statusTasks.map(task => renderCard(task)).join('')}
+                    </div>`;
+                board.appendChild(column);
+            });
+            setupDragAndDrop();
+        }
+
+        function renderCard(task) {
+            const iniciais = getIniciais(task.responsavel?.nome || 'N/A');
+            const prazoFormatado = formatDate(task.prazo);
+            const inicioFormatado = formatDate(task.inicio_previsto);
+            const commentsCount = task.comentarios?.length || 0;
+            return `
+                <div class="task-card" data-id="${task.id}" draggable="true" onclick="openModal(${task.id})">
+                    <div class="task-card-header">
+                        <span class="task-title">${task.nome}</span>
+                        <span class="task-priority priority-${task.prioridade}">${task.prioridade}</span>
+                    </div>
+                    <div class="task-card-info">
+                        <div class="task-info-row"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg><span>Início: ${inicioFormatado}</span></div>
+                        <div class="task-info-row"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg><span>Prazo: ${prazoFormatado}</span></div>
+                    </div>
+                    <div class="task-card-footer">
+                        <div class="task-responsavel"><div class="responsavel-avatar">${iniciais}</div><span class="responsavel-nome">${task.responsavel?.nome || 'Não atribuído'}</span></div>
+                        ${commentsCount > 0 ? `<div class="task-comments"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg><span>${commentsCount}</span></div>` : ''}
+                    </div>
+                </div>`;
+        }
+
+        function setupDragAndDrop() {
+            const cards = document.querySelectorAll('.task-card');
+            const columns = document.querySelectorAll('.column-cards');
+            cards.forEach(card => { card.addEventListener('dragstart', handleDragStart); card.addEventListener('dragend', handleDragEnd); });
+            columns.forEach(column => { column.addEventListener('dragover', handleDragOver); column.addEventListener('drop', handleDrop); column.addEventListener('dragleave', handleDragLeave); });
+        }
+        function handleDragStart(e) { draggedCard = e.target; e.target.classList.add('dragging'); e.dataTransfer.effectAllowed = 'move'; }
+        function handleDragEnd(e) { e.target.classList.remove('dragging'); document.querySelectorAll('.kanban-column').forEach(col => { col.classList.remove('drag-over'); }); draggedCard = null; }
+        function handleDragOver(e) { e.preventDefault(); e.dataTransfer.dropEffect = 'move'; e.currentTarget.closest('.kanban-column').classList.add('drag-over'); }
+        function handleDragLeave(e) { e.currentTarget.closest('.kanban-column').classList.remove('drag-over'); }
+        async function handleDrop(e) {
+            e.preventDefault();
+            const column = e.currentTarget;
+            const newStatus = column.dataset.status;
+            column.closest('.kanban-column').classList.remove('drag-over');
+            if (draggedCard) {
+                const taskId = parseInt(draggedCard.dataset.id);
+                const task = tasks.find(t => t.id === taskId);
+                if (task && task.status !== newStatus) {
+                    const oldStatus = task.status;
+                    task.status = newStatus;
+                    renderBoard();
+                    try {
+                        await fetch(WEBHOOK_URL, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: 'update_status', task_id: taskId, status: newStatus }) });
+                        showToast('Status atualizado!', 'success');
+                    } catch (error) { console.error('Erro ao atualizar status:', error); task.status = oldStatus; renderBoard(); showToast('Erro ao atualizar status', 'error'); }
+                }
+            }
+        }
+
+        function openModal(taskId) {
+            event.stopPropagation();
+            currentTask = tasks.find(t => t.id === taskId);
+            if (!currentTask) return;
+            document.getElementById('modalTitle').textContent = currentTask.nome;
+            renderModalContent();
+            document.getElementById('taskModal').classList.add('active');
+        }
+        function closeModal() { document.getElementById('taskModal').classList.remove('active'); currentTask = null; }
+
+        function renderModalContent() {
+            const modal = document.getElementById('modalBody');
+            const cronometro = calcularCronometro(currentTask.inicio_previsto);
+            modal.innerHTML = `
+                <div class="modal-section"><div class="modal-grid">
+                    <div class="modal-field"><div class="modal-field-label">Status</div><div class="modal-field-value"><span style="display: inline-flex; align-items: center; gap: 8px;"><span style="width: 10px; height: 10px; border-radius: 50%; background: ${STATUS_CONFIG[currentTask.status].color}"></span>${STATUS_CONFIG[currentTask.status].label}</span></div></div>
+                    <div class="modal-field"><div class="modal-field-label">Prioridade</div><div class="modal-field-value"><span class="task-priority priority-${currentTask.prioridade}">${currentTask.prioridade}</span></div></div>
+                    <div class="modal-field"><div class="modal-field-label">Início Previsto</div><div class="modal-field-value editable" onclick="editDate('inicio_previsto')"><span>${formatDate(currentTask.inicio_previsto)}</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></div></div>
+                    <div class="modal-field"><div class="modal-field-label">Prazo</div><div class="modal-field-value editable" onclick="editDate('prazo')"><span>${formatDate(currentTask.prazo)}</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></div></div>
+                    <div class="modal-field"><div class="modal-field-label">Criado em</div><div class="modal-field-value">${formatDateTime(currentTask.criado_em)}</div></div>
+                    <div class="modal-field"><div class="modal-field-label">Última Edição</div><div class="modal-field-value">${formatDateTime(currentTask.ultima_edicao)}</div></div>
+                </div></div>
+                <div class="modal-section"><div class="modal-section-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>Tempo desde início</div><div class="modal-field"><div class="cronometro" id="cronometro"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg><span>${cronometro}</span></div></div></div>
+                <div class="modal-section"><div class="modal-section-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>Responsável</div><div class="responsavel-search"><input type="text" class="responsavel-input" id="responsavelInput" value="${currentTask.responsavel?.nome || ''}" placeholder="Digite para buscar..." oninput="searchResponsavel(this.value)"><div class="responsavel-dropdown" id="responsavelDropdown"></div></div></div>
+                <div class="modal-section"><div class="modal-section-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><path d="M14 2v6h6M16 13H8M16 17H8M10 9H8"/></svg>Descrição</div><div class="descricao-box">${currentTask.descricao || 'Sem descrição'}</div></div>
+                ${currentTask.arquivos && currentTask.arquivos.length > 0 ? `<div class="modal-section"><div class="modal-section-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.44 11.05l-9.19 9.19a6 6 0 01-8.49-8.49l9.19-9.19a4 4 0 015.66 5.66l-9.2 9.19a2 2 0 01-2.83-2.83l8.49-8.48"/></svg>Arquivos (${currentTask.arquivos.length})</div><div class="arquivos-grid">${currentTask.arquivos.map((arquivo, idx) => `<div class="arquivo-item" onclick="openArquivo(${idx})"><div class="arquivo-preview">${arquivo.tipo.startsWith('image/') ? `<img src="data:${arquivo.tipo};base64,${arquivo.base64}" alt="${arquivo.nome}">` : `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><path d="M14 2v6h6"/></svg>`}</div><div class="arquivo-info"><div class="arquivo-nome">${arquivo.nome}</div></div></div>`).join('')}</div></div>` : ''}
+                <div class="modal-section"><div class="modal-section-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>Comentários (${currentTask.comentarios?.length || 0})</div><div class="comentarios-list">${currentTask.comentarios && currentTask.comentarios.length > 0 ? currentTask.comentarios.map(c => `<div class="comentario-item"><div class="comentario-header"><div class="comentario-avatar">${getIniciais(c.autor_nome)}</div><span class="comentario-autor">${c.autor_nome}</span><span class="comentario-data">${formatDateTime(c.criado_em)}</span></div><div class="comentario-texto">${c.texto}</div></div>`).join('') : '<p style="color: var(--text-muted); font-size: 0.9rem;">Nenhum comentário ainda</p>'}</div><div class="comentario-form"><textarea class="comentario-textarea" id="novoComentario" placeholder="Escreva um comentário..."></textarea><button class="comentario-btn" onclick="addComentario()">Salvar</button></div></div>`;
+            updateCronometro();
+        }
+
+        let searchTimeout;
+        async function searchResponsavel(query) {
+            clearTimeout(searchTimeout);
+            const dropdown = document.getElementById('responsavelDropdown');
+            if (query.length < 3) { dropdown.classList.remove('active'); return; }
+            searchTimeout = setTimeout(async () => {
+                try {
+                    const response = await fetch(SEARCH_URL, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ query }) });
+                    const pessoas = await response.json();
+                    if (pessoas.length > 0) {
+                        dropdown.innerHTML = pessoas.map(p => `<div class="responsavel-option" onclick="selectResponsavel(${p.id}, '${p.nome_completo}')"><div class="responsavel-option-avatar">${getIniciais(p.nome_completo)}</div><div class="responsavel-option-info"><div class="responsavel-option-name">${p.nome_completo}</div><div class="responsavel-option-email">${p.email}</div></div></div>`).join('');
+                        dropdown.classList.add('active');
+                    } else { dropdown.classList.remove('active'); }
+                } catch (error) { console.error('Erro na busca:', error); dropdown.classList.remove('active'); }
+            }, 300);
+        }
+        async function selectResponsavel(id, nome) {
+            document.getElementById('responsavelInput').value = nome;
+            document.getElementById('responsavelDropdown').classList.remove('active');
+            currentTask.responsavel = { id, nome };
+            try {
+                await fetch(WEBHOOK_URL, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: 'update_responsavel', task_id: currentTask.id, responsavel_id: id, responsavel_nome: nome }) });
+                renderBoard();
+                showToast('Responsável atualizado!', 'success');
+            } catch (error) { console.error('Erro ao atualizar responsável:', error); showToast('Erro ao atualizar responsável', 'error'); }
+        }
+
+        function editDate(field) {
+            const value = currentTask[field] ? currentTask[field].split('T')[0] : '';
+            const input = document.createElement('input');
+            input.type = 'date';
+            input.className = 'date-input';
+            input.value = value;
+            input.onchange = async () => {
+                const newValue = input.value;
+                currentTask[field] = newValue;
+                try {
+                    await fetch(WEBHOOK_URL, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: 'update_date', task_id: currentTask.id, field: field, value: newValue }) });
+                    renderModalContent();
+                    renderBoard();
+                    showToast('Data atualizada!', 'success');
+                } catch (error) { console.error('Erro ao atualizar data:', error); showToast('Erro ao atualizar data', 'error'); }
+            };
+            const container = event.currentTarget;
+            container.innerHTML = '';
+            container.appendChild(input);
+            input.focus();
+        }
+
+        async function addComentario() {
+            const texto = document.getElementById('novoComentario').value.trim();
+            if (!texto) return;
+            const novoComentario = { id: Date.now(), autor_id: 1, autor_nome: 'Usuário', texto, criado_em: new Date().toISOString() };
+            currentTask.comentarios = currentTask.comentarios || [];
+            currentTask.comentarios.push(novoComentario);
+            try {
+                await fetch(WEBHOOK_URL, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: 'add_comment', task_id: currentTask.id, texto, autor_id: 1, autor_nome: 'Usuário' }) });
+                renderModalContent();
+                renderBoard();
+                showToast('Comentário adicionado!', 'success');
+            } catch (error) { console.error('Erro ao adicionar comentário:', error); showToast('Erro ao adicionar comentário', 'error'); }
+        }
+
+        function openArquivo(idx) {
+            const arquivo = currentTask.arquivos[idx];
+            const dataUrl = `data:${arquivo.tipo};base64,${arquivo.base64}`;
+            if (arquivo.tipo.startsWith('image/')) { const win = window.open('', '_blank'); win.document.write(`<img src="${dataUrl}" style="max-width: 100%;">`); }
+            else { window.open(dataUrl, '_blank'); }
+        }
+
+        function calcularCronometro(inicioStr) {
+            if (!inicioStr) return '—';
+            const inicio = new Date(inicioStr);
+            const agora = new Date();
+            const diff = agora - inicio;
+            if (diff < 0) return 'Ainda não iniciado';
+            const dias = Math.floor(diff / (1000 * 60 * 60 * 24));
+            const horas = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutos = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+            return `${dias}d ${horas}h ${minutos}m`;
+        }
+        function updateCronometro() {
+            if (!currentTask) return;
+            const cronometroEl = document.getElementById('cronometro');
+            if (cronometroEl) { const span = cronometroEl.querySelector('span'); if (span) { span.textContent = calcularCronometro(currentTask.inicio_previsto); } }
+            setTimeout(updateCronometro, 60000);
+        }
+
+        function getIniciais(nome) { if (!nome) return 'NA'; return nome.split(' ').map(n => n[0]).slice(0, 2).join('').toUpperCase(); }
+        function formatDate(dateStr) { if (!dateStr) return '—'; const date = new Date(dateStr); return date.toLocaleDateString('pt-BR'); }
+        function formatDateTime(dateStr) { if (!dateStr) return '—'; const date = new Date(dateStr); return date.toLocaleDateString('pt-BR') + ' ' + date.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }); }
+        function showToast(message, type = 'info') {
+            const container = document.getElementById('toastContainer');
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            const icons = { success: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><path d="M22 4L12 14.01l-3-3"/></svg>', error: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M15 9l-6 6M9 9l6 6"/></svg>', info: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>' };
+            toast.innerHTML = `<div class="toast-icon">${icons[type]}</div><span class="toast-message">${message}</span>`;
+            container.appendChild(toast);
+            setTimeout(() => toast.remove(), 3000);
+        }
+
+        function getDemoTasks() {
+            return [
+                { id: 1, nome: 'Agente de IA do OTA', status: 'em_producao', responsavel: { id: 1011, nome: 'Renan Alcântara' }, prioridade: 'alta', criado_em: '2025-12-01T10:00:00Z', inicio_previsto: '2025-12-02T09:00:00Z', prazo: '2025-12-20T18:00:00Z', ultima_edicao: '2025-12-18T14:30:00Z', descricao: 'Desenvolvimento do agente de inteligência artificial para automatização das tarefas do setor OTA.', comentarios: [{ id: 1, autor_id: 1, autor_nome: 'Renan Alcântara', texto: 'Iniciando o desenvolvimento', criado_em: '2025-12-02T09:30:00Z' }], arquivos: [] },
+                { id: 2, nome: 'Contas Microsoft e Gestão de contas', status: 'em_espera', responsavel: { id: 1012, nome: 'Maria Silva' }, prioridade: 'alta', criado_em: '2025-12-10T08:00:00Z', inicio_previsto: '2025-12-16T09:00:00Z', prazo: '2025-12-22T18:00:00Z', ultima_edicao: '2025-12-15T11:00:00Z', descricao: 'Organização e gestão das contas Microsoft do setor.', comentarios: [], arquivos: [] },
+                { id: 3, nome: 'LP Formulário - O que fazer quando preenchem', status: 'em_planejamento', responsavel: { id: 1011, nome: 'Renan Alcântara' }, prioridade: 'media', criado_em: '2025-12-12T14:00:00Z', inicio_previsto: '2025-12-22T09:00:00Z', prazo: '2025-12-28T18:00:00Z', ultima_edicao: '2025-12-12T14:00:00Z', descricao: 'Definir fluxo de ações após preenchimento do formulário da Landing Page.', comentarios: [], arquivos: [] },
+                { id: 4, nome: 'Decupagem e edição inicial dos vídeos Lusotur', status: 'nao_iniciado', responsavel: { id: 1013, nome: 'João Santos' }, prioridade: 'media', criado_em: '2025-12-15T10:00:00Z', inicio_previsto: '2025-12-24T09:00:00Z', prazo: '2025-12-30T18:00:00Z', ultima_edicao: '2025-12-15T10:00:00Z', descricao: 'Realizar decupagem e edição inicial dos vídeos institucionais.', comentarios: [], arquivos: [] },
+                { id: 5, nome: 'Mapear Pixels de Sites', status: 'bloqueado', responsavel: { id: 1011, nome: 'Renan Alcântara' }, prioridade: 'media', criado_em: '2025-12-14T09:00:00Z', inicio_previsto: '2025-12-24T09:00:00Z', prazo: '2025-12-26T18:00:00Z', ultima_edicao: '2025-12-17T16:00:00Z', descricao: 'Aguardando acesso às contas de anúncio.', comentarios: [{ id: 2, autor_id: 1011, autor_nome: 'Renan Alcântara', texto: 'Bloqueado - aguardando credenciais', criado_em: '2025-12-17T16:00:00Z' }], arquivos: [] },
+                { id: 6, nome: 'Meta Verificado para Lusotur Gestão e Pousada H', status: 'concluido', responsavel: { id: 1012, nome: 'Maria Silva' }, prioridade: 'baixa', criado_em: '2025-11-01T10:00:00Z', inicio_previsto: '2025-11-11T09:00:00Z', prazo: '2025-11-20T18:00:00Z', ultima_edicao: '2025-11-18T15:00:00Z', descricao: 'Verificação das contas Meta concluída.', comentarios: [{ id: 3, autor_id: 1012, autor_nome: 'Maria Silva', texto: 'Verificação concluída com sucesso!', criado_em: '2025-11-18T15:00:00Z' }], arquivos: [] }
+            ];
+        }
+
+        document.getElementById('taskModal').addEventListener('click', (e) => { if (e.target.id === 'taskModal') closeModal(); });
+        document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeModal(); });
+    </script>
+</body>
+</html>
