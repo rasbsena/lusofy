@@ -29,10 +29,6 @@
             --status-em-planejamento: #3b82f6;
             --status-em-producao: #10b981;
             --status-concluido: #22c55e;
-            --priority-urgente: #dc2626;
-            --priority-alta: #f97316;
-            --priority-media: #eab308;
-            --priority-baixa: #6b7280;
         }
         body { font-family: 'Montserrat', sans-serif; background: linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-secondary) 100%); min-height: 100vh; color: var(--text-primary); }
         h1, h2, h3, h4, h5, h6, .title-font { font-family: 'Oswald', sans-serif; }
@@ -206,8 +202,20 @@
     </div>
     <div class="toast-container" id="toastContainer"></div>
     <script>
-        const WEBHOOK_URL = 'https://n8n.upperfy.com.br/webhook/0fec17a7-8654-45ff-8ad6-lsfy1';
+        // URLs dos webhooks
+        const WEBHOOK_LOAD = 'https://n8n.upperfy.com.br/webhook/0fec17a7-8654-45ff-8ad6-lsfy1';
+        const WEBHOOK_UPDATE = 'https://n8n.upperfy.com.br/webhook/0fec17a7-8654-45ff-lsfy-draganddrop';
         const SEARCH_URL = 'https://n8n.upperfy.com.br/webhook/0fec17a7-8654-45ff-8ad6-lsfysearchpeople';
+        
+        // Tipos de atualização
+        const UPDATE_TYPES = {
+            STATUS_CHANGE: 1,      // Troca de coluna (drag and drop)
+            COMMENT: 2,            // Novo comentário
+            FILE_UPLOAD: 3,        // Inserção de arquivo
+            DATA_UPDATE: 4,        // Preenchimento/atualização de dados
+            RESPONSAVEL_CHANGE: 5  // Troca de responsável
+        };
+
         const STATUS_CONFIG = {
             'nao_iniciado': { label: 'Não iniciado', color: '#6b7280' },
             'em_espera': { label: 'Em espera', color: '#f59e0b' },
@@ -217,17 +225,67 @@
             'concluido': { label: 'Concluído', color: '#22c55e' }
         };
         const STATUS_ORDER = ['nao_iniciado', 'em_espera', 'bloqueado', 'em_planejamento', 'em_producao', 'concluido'];
+        
         let tasks = [];
         let currentTask = null;
         let draggedCard = null;
+
+        // LocalStorage helpers
+        function getLocalStorage() {
+            try {
+                const data = localStorage.getItem('lusofy_data');
+                return data ? JSON.parse(data) : { user: null, lastSync: null, preferences: {} };
+            } catch (e) {
+                return { user: null, lastSync: null, preferences: {} };
+            }
+        }
+        function setLocalStorage(data) {
+            try {
+                localStorage.setItem('lusofy_data', JSON.stringify(data));
+            } catch (e) {
+                console.error('Erro ao salvar localStorage:', e);
+            }
+        }
+        function updateLocalStorage(updates) {
+            const current = getLocalStorage();
+            setLocalStorage({ ...current, ...updates, lastSync: new Date().toISOString() });
+        }
+
+        // Função para enviar atualizações ao webhook
+        async function sendUpdate(updateType, card, additionalData = {}) {
+            const localData = getLocalStorage();
+            const payload = {
+                update_type: updateType,
+                update_type_name: Object.keys(UPDATE_TYPES).find(key => UPDATE_TYPES[key] === updateType),
+                timestamp: new Date().toISOString(),
+                card: card,
+                local_storage: localData,
+                ...additionalData
+            };
+            
+            console.log('Enviando atualização:', payload);
+            
+            try {
+                const response = await fetch(WEBHOOK_UPDATE, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                return response.ok;
+            } catch (error) {
+                console.error('Erro ao enviar atualização:', error);
+                return false;
+            }
+        }
 
         document.addEventListener('DOMContentLoaded', () => { loadTasks(); });
 
         async function loadTasks() {
             try {
-                const response = await fetch(WEBHOOK_URL);
+                const response = await fetch(WEBHOOK_LOAD);
                 const data = await response.json();
                 tasks = data.tasks || [];
+                updateLocalStorage({ tasksLoaded: true });
                 renderBoard();
             } catch (error) {
                 console.error('Erro ao carregar tarefas:', error);
@@ -294,22 +352,35 @@
         function handleDragEnd(e) { e.target.classList.remove('dragging'); document.querySelectorAll('.kanban-column').forEach(col => { col.classList.remove('drag-over'); }); draggedCard = null; }
         function handleDragOver(e) { e.preventDefault(); e.dataTransfer.dropEffect = 'move'; e.currentTarget.closest('.kanban-column').classList.add('drag-over'); }
         function handleDragLeave(e) { e.currentTarget.closest('.kanban-column').classList.remove('drag-over'); }
+        
         async function handleDrop(e) {
             e.preventDefault();
             const column = e.currentTarget;
             const newStatus = column.dataset.status;
             column.closest('.kanban-column').classList.remove('drag-over');
+            
             if (draggedCard) {
                 const taskId = parseInt(draggedCard.dataset.id);
                 const task = tasks.find(t => t.id === taskId);
+                
                 if (task && task.status !== newStatus) {
                     const oldStatus = task.status;
                     task.status = newStatus;
                     renderBoard();
-                    try {
-                        await fetch(WEBHOOK_URL, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: 'update_status', task_id: taskId, status: newStatus }) });
+                    
+                    // Envia para o webhook de drag and drop com tipo 1 (STATUS_CHANGE)
+                    const success = await sendUpdate(UPDATE_TYPES.STATUS_CHANGE, task, {
+                        old_status: oldStatus,
+                        new_status: newStatus
+                    });
+                    
+                    if (success) {
                         showToast('Status atualizado!', 'success');
-                    } catch (error) { console.error('Erro ao atualizar status:', error); task.status = oldStatus; renderBoard(); showToast('Erro ao atualizar status', 'error'); }
+                    } else {
+                        task.status = oldStatus;
+                        renderBoard();
+                        showToast('Erro ao atualizar status', 'error');
+                    }
                 }
             }
         }
@@ -354,39 +425,63 @@
                     const response = await fetch(SEARCH_URL, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ query }) });
                     const pessoas = await response.json();
                     if (pessoas.length > 0) {
-                        dropdown.innerHTML = pessoas.map(p => `<div class="responsavel-option" onclick="selectResponsavel(${p.id}, '${p.nome_completo}')"><div class="responsavel-option-avatar">${getIniciais(p.nome_completo)}</div><div class="responsavel-option-info"><div class="responsavel-option-name">${p.nome_completo}</div><div class="responsavel-option-email">${p.email}</div></div></div>`).join('');
+                        dropdown.innerHTML = pessoas.map(p => `<div class="responsavel-option" onclick="selectResponsavel(${p.id}, '${p.nome_completo.replace(/'/g, "\\'")}')"><div class="responsavel-option-avatar">${getIniciais(p.nome_completo)}</div><div class="responsavel-option-info"><div class="responsavel-option-name">${p.nome_completo}</div><div class="responsavel-option-email">${p.email}</div></div></div>`).join('');
                         dropdown.classList.add('active');
                     } else { dropdown.classList.remove('active'); }
                 } catch (error) { console.error('Erro na busca:', error); dropdown.classList.remove('active'); }
             }, 300);
         }
+        
         async function selectResponsavel(id, nome) {
             document.getElementById('responsavelInput').value = nome;
             document.getElementById('responsavelDropdown').classList.remove('active');
+            const oldResponsavel = currentTask.responsavel;
             currentTask.responsavel = { id, nome };
-            try {
-                await fetch(WEBHOOK_URL, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: 'update_responsavel', task_id: currentTask.id, responsavel_id: id, responsavel_nome: nome }) });
+            
+            // Envia com tipo 5 (RESPONSAVEL_CHANGE)
+            const success = await sendUpdate(UPDATE_TYPES.RESPONSAVEL_CHANGE, currentTask, {
+                old_responsavel: oldResponsavel,
+                new_responsavel: { id, nome }
+            });
+            
+            if (success) {
                 renderBoard();
                 showToast('Responsável atualizado!', 'success');
-            } catch (error) { console.error('Erro ao atualizar responsável:', error); showToast('Erro ao atualizar responsável', 'error'); }
+            } else {
+                currentTask.responsavel = oldResponsavel;
+                showToast('Erro ao atualizar responsável', 'error');
+            }
         }
 
-        function editDate(field) {
+        async function editDate(field) {
             const value = currentTask[field] ? currentTask[field].split('T')[0] : '';
             const input = document.createElement('input');
             input.type = 'date';
             input.className = 'date-input';
             input.value = value;
+            
             input.onchange = async () => {
                 const newValue = input.value;
+                const oldValue = currentTask[field];
                 currentTask[field] = newValue;
-                try {
-                    await fetch(WEBHOOK_URL, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: 'update_date', task_id: currentTask.id, field: field, value: newValue }) });
+                
+                // Envia com tipo 4 (DATA_UPDATE)
+                const success = await sendUpdate(UPDATE_TYPES.DATA_UPDATE, currentTask, {
+                    field: field,
+                    old_value: oldValue,
+                    new_value: newValue
+                });
+                
+                if (success) {
                     renderModalContent();
                     renderBoard();
                     showToast('Data atualizada!', 'success');
-                } catch (error) { console.error('Erro ao atualizar data:', error); showToast('Erro ao atualizar data', 'error'); }
+                } else {
+                    currentTask[field] = oldValue;
+                    showToast('Erro ao atualizar data', 'error');
+                }
             };
+            
             const container = event.currentTarget;
             container.innerHTML = '';
             container.appendChild(input);
@@ -396,15 +491,31 @@
         async function addComentario() {
             const texto = document.getElementById('novoComentario').value.trim();
             if (!texto) return;
-            const novoComentario = { id: Date.now(), autor_id: 1, autor_nome: 'Usuário', texto, criado_em: new Date().toISOString() };
+            
+            const novoComentario = { 
+                id: Date.now(), 
+                autor_id: 1, 
+                autor_nome: 'Usuário', 
+                texto, 
+                criado_em: new Date().toISOString() 
+            };
+            
             currentTask.comentarios = currentTask.comentarios || [];
             currentTask.comentarios.push(novoComentario);
-            try {
-                await fetch(WEBHOOK_URL, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: 'add_comment', task_id: currentTask.id, texto, autor_id: 1, autor_nome: 'Usuário' }) });
+            
+            // Envia com tipo 2 (COMMENT)
+            const success = await sendUpdate(UPDATE_TYPES.COMMENT, currentTask, {
+                comment: novoComentario
+            });
+            
+            if (success) {
                 renderModalContent();
                 renderBoard();
                 showToast('Comentário adicionado!', 'success');
-            } catch (error) { console.error('Erro ao adicionar comentário:', error); showToast('Erro ao adicionar comentário', 'error'); }
+            } else {
+                currentTask.comentarios.pop();
+                showToast('Erro ao adicionar comentário', 'error');
+            }
         }
 
         function openArquivo(idx) {
