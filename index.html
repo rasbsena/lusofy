@@ -24,11 +24,13 @@
             --accent: #ffcf00;
             --accent-hover: #ffe14d;
             --status-nao-iniciado: #6b7280;
-            --status-em-espera: #f59e0b;
-            --status-bloqueado: #ef4444;
-            --status-em-planejamento: #3b82f6;
-            --status-em-producao: #10b981;
+            --status-em-andamento: #3b82f6;
             --status-concluido: #22c55e;
+            --status-bloqueado: #ef4444;
+            --tipo-bloqueio-mapa: #8b5cf6;
+            --tipo-coletar-dados: #f59e0b;
+            --tipo-cobranca-digitada: #ec4899;
+            --tipo-checar-tarifarios: #06b6d4;
         }
         body { font-family: 'Montserrat', sans-serif; background: linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-secondary) 100%); min-height: 100vh; color: var(--text-primary); }
         h1, h2, h3, h4, h5, h6, .title-font { font-family: 'Oswald', sans-serif; }
@@ -47,11 +49,11 @@
         .main-content { padding-top: 94px; padding-bottom: 24px; min-height: 100vh; }
         .kanban-container { padding: 0 24px; overflow-x: auto; }
         .kanban-board { display: flex; gap: 16px; min-width: max-content; padding-bottom: 24px; }
-        .kanban-column { width: 320px; min-width: 320px; background: var(--bg-column); border-radius: 12px; border: 1px solid var(--border-color); display: flex; flex-direction: column; max-height: calc(100vh - 130px); }
+        .kanban-column { width: 340px; min-width: 340px; background: var(--bg-column); border-radius: 12px; border: 1px solid var(--border-color); display: flex; flex-direction: column; max-height: calc(100vh - 130px); }
         .column-header { padding: 16px; border-bottom: 1px solid var(--border-color); display: flex; align-items: center; justify-content: space-between; }
         .column-title { display: flex; align-items: center; gap: 10px; }
-        .column-status-dot { width: 12px; height: 12px; border-radius: 50%; }
-        .column-name { font-family: 'Oswald', sans-serif; font-weight: 600; font-size: 0.95rem; text-transform: uppercase; letter-spacing: 0.5px; }
+        .column-tipo-dot { width: 12px; height: 12px; border-radius: 50%; }
+        .column-name { font-family: 'Oswald', sans-serif; font-weight: 600; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 0.5px; }
         .column-count { background: var(--bg-card); color: var(--accent); font-size: 0.75rem; padding: 3px 10px; border-radius: 12px; font-weight: 600; }
         .column-cards { flex: 1; padding: 12px; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; }
         .column-cards::-webkit-scrollbar { width: 6px; }
@@ -60,79 +62,97 @@
         .task-card { background: var(--bg-card); border-radius: 10px; border: 1px solid var(--border-color); padding: 16px; cursor: grab; transition: all 0.2s ease; }
         .task-card:hover { border-color: var(--accent); transform: translateY(-2px); box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4); }
         .task-card.dragging { opacity: 0.5; cursor: grabbing; }
-        .task-card-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 8px; margin-bottom: 12px; }
-        .task-title { font-weight: 600; font-size: 0.95rem; line-height: 1.4; flex: 1; }
-        .task-priority { font-family: 'Oswald', sans-serif; font-size: 0.65rem; font-weight: 600; padding: 4px 10px; border-radius: 4px; text-transform: uppercase; letter-spacing: 0.5px; white-space: nowrap; }
+        .task-card-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 8px; margin-bottom: 10px; }
+        .task-title { font-weight: 600; font-size: 0.9rem; line-height: 1.4; flex: 1; }
+        .task-status-badge { font-family: 'Oswald', sans-serif; font-size: 0.6rem; font-weight: 600; padding: 3px 8px; border-radius: 4px; text-transform: uppercase; letter-spacing: 0.5px; white-space: nowrap; }
+        .status-nao_iniciado { background: rgba(107, 114, 128, 0.25); color: #9ca3af; border: 1px solid rgba(107, 114, 128, 0.4); }
+        .status-em_andamento { background: rgba(59, 130, 246, 0.25); color: #93c5fd; border: 1px solid rgba(59, 130, 246, 0.4); }
+        .status-concluido { background: rgba(34, 197, 94, 0.25); color: #86efac; border: 1px solid rgba(34, 197, 94, 0.4); }
+        .status-bloqueado { background: rgba(239, 68, 68, 0.25); color: #fca5a5; border: 1px solid rgba(239, 68, 68, 0.4); }
+        .task-priority { font-family: 'Oswald', sans-serif; font-size: 0.6rem; font-weight: 600; padding: 3px 8px; border-radius: 4px; text-transform: uppercase; letter-spacing: 0.5px; white-space: nowrap; margin-left: 4px; }
         .priority-urgente { background: rgba(220, 38, 38, 0.25); color: #fca5a5; border: 1px solid rgba(220, 38, 38, 0.4); }
         .priority-alta { background: rgba(249, 115, 22, 0.25); color: #fdba74; border: 1px solid rgba(249, 115, 22, 0.4); }
         .priority-media { background: rgba(234, 179, 8, 0.25); color: #fde047; border: 1px solid rgba(234, 179, 8, 0.4); }
         .priority-baixa { background: rgba(107, 114, 128, 0.25); color: #9ca3af; border: 1px solid rgba(107, 114, 128, 0.4); }
-        .task-card-info { display: flex; flex-direction: column; gap: 8px; margin-bottom: 12px; }
-        .task-info-row { display: flex; align-items: center; gap: 8px; font-size: 0.8rem; color: var(--text-secondary); }
-        .task-info-row svg { width: 14px; height: 14px; color: var(--accent); opacity: 0.8; }
-        .task-card-footer { display: flex; align-items: center; justify-content: space-between; padding-top: 12px; border-top: 1px solid var(--border-color); }
-        .task-responsavel { display: flex; align-items: center; gap: 8px; }
-        .responsavel-avatar { width: 28px; height: 28px; border-radius: 50%; background: linear-gradient(135deg, var(--accent) 0%, #ffe680 100%); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.7rem; color: var(--bg-primary); }
-        .responsavel-nome { font-size: 0.8rem; color: var(--text-secondary); font-weight: 500; }
-        .task-comments { display: flex; align-items: center; gap: 5px; font-size: 0.75rem; color: var(--text-muted); }
-        .task-comments svg { width: 14px; height: 14px; }
+        .task-badges { display: flex; flex-wrap: wrap; gap: 4px; margin-bottom: 10px; }
+        .task-card-info { display: flex; flex-direction: column; gap: 6px; margin-bottom: 10px; }
+        .task-info-row { display: flex; align-items: center; gap: 8px; font-size: 0.75rem; color: var(--text-secondary); }
+        .task-info-row svg { width: 12px; height: 12px; color: var(--accent); opacity: 0.8; }
+        .task-card-footer { display: flex; align-items: center; justify-content: space-between; padding-top: 10px; border-top: 1px solid var(--border-color); }
+        .task-responsavel { display: flex; align-items: center; gap: 6px; }
+        .responsavel-avatar { width: 24px; height: 24px; border-radius: 50%; background: linear-gradient(135deg, var(--accent) 0%, #ffe680 100%); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.6rem; color: var(--bg-primary); }
+        .responsavel-nome { font-size: 0.75rem; color: var(--text-secondary); font-weight: 500; }
+        .task-comments { display: flex; align-items: center; gap: 4px; font-size: 0.7rem; color: var(--text-muted); }
+        .task-comments svg { width: 12px; height: 12px; }
         .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0, 0, 0, 0.75); backdrop-filter: blur(4px); display: none; align-items: center; justify-content: center; z-index: 1000; padding: 24px; }
         .modal-overlay.active { display: flex; }
-        .modal { background: var(--bg-secondary); border-radius: 16px; border: 2px solid var(--border-color); width: 100%; max-width: 800px; max-height: 90vh; overflow: hidden; display: flex; flex-direction: column; box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5); }
+        .modal { background: var(--bg-secondary); border-radius: 16px; border: 2px solid var(--border-color); width: 100%; max-width: 850px; max-height: 90vh; overflow: hidden; display: flex; flex-direction: column; box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5); }
         .modal-header { padding: 20px 24px; border-bottom: 2px solid var(--accent); display: flex; align-items: center; justify-content: space-between; background: var(--bg-primary); }
-        .modal-title { font-family: 'Oswald', sans-serif; font-size: 1.4rem; font-weight: 600; color: var(--accent); text-transform: uppercase; letter-spacing: 1px; }
+        .modal-title { font-family: 'Oswald', sans-serif; font-size: 1.3rem; font-weight: 600; color: var(--accent); text-transform: uppercase; letter-spacing: 1px; }
         .modal-close { width: 36px; height: 36px; border-radius: 8px; background: var(--bg-card); border: 1px solid var(--border-color); color: var(--text-secondary); cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s ease; }
         .modal-close:hover { background: var(--accent); color: var(--bg-primary); border-color: var(--accent); }
         .modal-body { flex: 1; overflow-y: auto; padding: 24px; }
-        .modal-section { margin-bottom: 24px; }
+        .modal-section { margin-bottom: 20px; }
         .modal-section:last-child { margin-bottom: 0; }
-        .modal-section-title { font-family: 'Oswald', sans-serif; font-size: 0.85rem; font-weight: 600; color: var(--accent); margin-bottom: 10px; text-transform: uppercase; letter-spacing: 1px; display: flex; align-items: center; gap: 8px; }
+        .modal-section-title { font-family: 'Oswald', sans-serif; font-size: 0.8rem; font-weight: 600; color: var(--accent); margin-bottom: 10px; text-transform: uppercase; letter-spacing: 1px; display: flex; align-items: center; gap: 8px; }
         .modal-section-title svg { width: 16px; height: 16px; }
-        .modal-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
+        .modal-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
         @media (max-width: 600px) { .modal-grid { grid-template-columns: 1fr; } }
-        .modal-field { background: var(--bg-card); border-radius: 8px; padding: 14px; border: 1px solid var(--border-color); }
-        .modal-field-label { font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px; font-weight: 600; }
-        .modal-field-value { font-size: 0.95rem; color: var(--text-primary); font-weight: 500; }
+        .modal-field { background: var(--bg-card); border-radius: 8px; padding: 12px; border: 1px solid var(--border-color); }
+        .modal-field-label { font-size: 0.65rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px; font-weight: 600; }
+        .modal-field-value { font-size: 0.9rem; color: var(--text-primary); font-weight: 500; }
         .modal-field-value.editable { cursor: pointer; display: flex; align-items: center; gap: 8px; }
         .modal-field-value.editable:hover { color: var(--accent); }
         .modal-field-value.editable svg { width: 14px; height: 14px; opacity: 0.5; }
-        .cronometro { display: flex; align-items: center; gap: 8px; font-family: 'Oswald', monospace; font-size: 1.1rem; color: var(--accent); font-weight: 600; }
-        .cronometro svg { width: 18px; height: 18px; }
-        .descricao-box { background: var(--bg-card); border-radius: 8px; padding: 16px; border: 1px solid var(--border-color); min-height: 100px; font-size: 0.9rem; line-height: 1.6; color: var(--text-secondary); white-space: pre-wrap; }
+        .cronometro { display: flex; align-items: center; gap: 8px; font-family: 'Oswald', monospace; font-size: 1rem; color: var(--accent); font-weight: 600; }
+        .cronometro svg { width: 16px; height: 16px; }
+        .descricao-box { background: var(--bg-card); border-radius: 8px; padding: 14px; border: 1px solid var(--border-color); min-height: 80px; font-size: 0.85rem; line-height: 1.5; color: var(--text-secondary); white-space: pre-wrap; }
         .responsavel-search { position: relative; }
-        .responsavel-input { width: 100%; padding: 12px 16px; background: var(--bg-card); border: 2px solid var(--border-color); border-radius: 8px; color: var(--text-primary); font-size: 0.9rem; font-family: 'Montserrat', sans-serif; transition: all 0.2s ease; }
+        .responsavel-input { width: 100%; padding: 10px 14px; background: var(--bg-card); border: 2px solid var(--border-color); border-radius: 8px; color: var(--text-primary); font-size: 0.85rem; font-family: 'Montserrat', sans-serif; transition: all 0.2s ease; }
         .responsavel-input:focus { outline: none; border-color: var(--accent); }
-        .responsavel-dropdown { position: absolute; top: 100%; left: 0; right: 0; background: var(--bg-card); border: 2px solid var(--accent); border-top: none; border-radius: 0 0 8px 8px; max-height: 200px; overflow-y: auto; display: none; z-index: 10; }
+        .responsavel-dropdown { position: absolute; top: 100%; left: 0; right: 0; background: var(--bg-card); border: 2px solid var(--accent); border-top: none; border-radius: 0 0 8px 8px; max-height: 180px; overflow-y: auto; display: none; z-index: 10; }
         .responsavel-dropdown.active { display: block; }
-        .responsavel-option { padding: 12px 16px; cursor: pointer; display: flex; align-items: center; gap: 12px; transition: background 0.2s ease; border-bottom: 1px solid var(--border-color); }
+        .responsavel-option { padding: 10px 14px; cursor: pointer; display: flex; align-items: center; gap: 10px; transition: background 0.2s ease; border-bottom: 1px solid var(--border-color); }
         .responsavel-option:last-child { border-bottom: none; }
         .responsavel-option:hover { background: rgba(255, 207, 0, 0.1); }
-        .responsavel-option-avatar { width: 32px; height: 32px; border-radius: 50%; background: var(--accent); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.75rem; color: var(--bg-primary); }
+        .responsavel-option-avatar { width: 28px; height: 28px; border-radius: 50%; background: var(--accent); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.7rem; color: var(--bg-primary); }
         .responsavel-option-info { flex: 1; }
-        .responsavel-option-name { font-weight: 600; font-size: 0.9rem; }
-        .responsavel-option-email { font-size: 0.75rem; color: var(--text-muted); }
-        .comentarios-list { display: flex; flex-direction: column; gap: 12px; margin-bottom: 16px; }
-        .comentario-item { background: var(--bg-card); border-radius: 10px; padding: 14px; border: 1px solid var(--border-color); }
-        .comentario-header { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
-        .comentario-avatar { width: 30px; height: 30px; border-radius: 50%; background: var(--accent); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.7rem; color: var(--bg-primary); }
-        .comentario-autor { font-weight: 600; font-size: 0.85rem; }
-        .comentario-data { font-size: 0.7rem; color: var(--text-muted); margin-left: auto; }
-        .comentario-texto { font-size: 0.9rem; line-height: 1.5; color: var(--text-secondary); }
-        .comentario-form { display: flex; flex-direction: column; gap: 10px; }
-        .comentario-textarea { width: 100%; min-height: 80px; padding: 14px; background: var(--bg-card); border: 2px solid var(--border-color); border-radius: 8px; color: var(--text-primary); font-size: 0.9rem; font-family: 'Montserrat', sans-serif; resize: vertical; transition: all 0.2s ease; }
+        .responsavel-option-name { font-weight: 600; font-size: 0.85rem; }
+        .responsavel-option-email { font-size: 0.7rem; color: var(--text-muted); }
+        .comentarios-list { display: flex; flex-direction: column; gap: 10px; margin-bottom: 12px; max-height: 200px; overflow-y: auto; }
+        .comentario-item { background: var(--bg-card); border-radius: 8px; padding: 12px; border: 1px solid var(--border-color); }
+        .comentario-header { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+        .comentario-avatar { width: 26px; height: 26px; border-radius: 50%; background: var(--accent); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.65rem; color: var(--bg-primary); }
+        .comentario-autor { font-weight: 600; font-size: 0.8rem; }
+        .comentario-data { font-size: 0.65rem; color: var(--text-muted); margin-left: auto; }
+        .comentario-texto { font-size: 0.85rem; line-height: 1.4; color: var(--text-secondary); }
+        .comentario-form { display: flex; flex-direction: column; gap: 8px; }
+        .comentario-textarea { width: 100%; min-height: 60px; padding: 12px; background: var(--bg-card); border: 2px solid var(--border-color); border-radius: 8px; color: var(--text-primary); font-size: 0.85rem; font-family: 'Montserrat', sans-serif; resize: vertical; transition: all 0.2s ease; }
         .comentario-textarea:focus { outline: none; border-color: var(--accent); }
-        .comentario-btn { align-self: flex-end; padding: 10px 24px; background: var(--accent); border: none; border-radius: 6px; color: var(--bg-primary); font-family: 'Oswald', sans-serif; font-size: 0.9rem; font-weight: 600; cursor: pointer; transition: all 0.2s ease; text-transform: uppercase; letter-spacing: 1px; }
-        .comentario-btn:hover { background: var(--accent-hover); transform: translateY(-1px); }
-        .arquivos-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 12px; }
-        .arquivo-item { background: var(--bg-card); border-radius: 10px; border: 1px solid var(--border-color); overflow: hidden; cursor: pointer; transition: all 0.2s ease; }
+        .btn-primary { padding: 10px 20px; background: var(--accent); border: none; border-radius: 6px; color: var(--bg-primary); font-family: 'Oswald', sans-serif; font-size: 0.85rem; font-weight: 600; cursor: pointer; transition: all 0.2s ease; text-transform: uppercase; letter-spacing: 1px; }
+        .btn-primary:hover { background: var(--accent-hover); transform: translateY(-1px); }
+        .btn-secondary { padding: 10px 20px; background: var(--bg-card); border: 2px solid var(--border-color); border-radius: 6px; color: var(--text-primary); font-family: 'Oswald', sans-serif; font-size: 0.85rem; font-weight: 600; cursor: pointer; transition: all 0.2s ease; text-transform: uppercase; letter-spacing: 1px; }
+        .btn-secondary:hover { border-color: var(--accent); }
+        .btn-danger { padding: 10px 20px; background: rgba(239, 68, 68, 0.2); border: 2px solid #ef4444; border-radius: 6px; color: #fca5a5; font-family: 'Oswald', sans-serif; font-size: 0.85rem; font-weight: 600; cursor: pointer; transition: all 0.2s ease; text-transform: uppercase; letter-spacing: 1px; }
+        .btn-danger:hover { background: rgba(239, 68, 68, 0.3); }
+        .arquivos-section { margin-top: 10px; }
+        .arquivos-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 10px; margin-bottom: 12px; }
+        .arquivo-item { background: var(--bg-card); border-radius: 8px; border: 1px solid var(--border-color); overflow: hidden; cursor: pointer; transition: all 0.2s ease; }
         .arquivo-item:hover { border-color: var(--accent); transform: translateY(-2px); }
-        .arquivo-preview { height: 100px; background: var(--bg-column); display: flex; align-items: center; justify-content: center; overflow: hidden; }
+        .arquivo-preview { height: 80px; background: var(--bg-column); display: flex; align-items: center; justify-content: center; overflow: hidden; }
         .arquivo-preview img { width: 100%; height: 100%; object-fit: cover; }
-        .arquivo-preview svg { width: 40px; height: 40px; color: var(--accent); }
-        .arquivo-info { padding: 10px; }
-        .arquivo-nome { font-size: 0.75rem; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .date-input { background: var(--bg-card); border: 2px solid var(--border-color); border-radius: 6px; padding: 8px 12px; color: var(--text-primary); font-family: 'Montserrat', sans-serif; font-size: 0.9rem; cursor: pointer; }
-        .date-input:focus { outline: none; border-color: var(--accent); }
+        .arquivo-preview svg { width: 32px; height: 32px; color: var(--accent); }
+        .arquivo-info { padding: 8px; }
+        .arquivo-nome { font-size: 0.7rem; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .upload-area { border: 2px dashed var(--border-color); border-radius: 8px; padding: 20px; text-align: center; cursor: pointer; transition: all 0.2s ease; background: var(--bg-card); }
+        .upload-area:hover { border-color: var(--accent); background: rgba(255, 207, 0, 0.05); }
+        .upload-area svg { width: 32px; height: 32px; color: var(--accent); margin-bottom: 8px; }
+        .upload-area p { font-size: 0.8rem; color: var(--text-secondary); }
+        .upload-area small { font-size: 0.7rem; color: var(--text-muted); }
+        .upload-buttons { display: flex; gap: 10px; margin-top: 10px; }
+        .upload-buttons button { flex: 1; }
+        .date-input, .select-input { background: var(--bg-card); border: 2px solid var(--border-color); border-radius: 6px; padding: 8px 12px; color: var(--text-primary); font-family: 'Montserrat', sans-serif; font-size: 0.85rem; cursor: pointer; width: 100%; }
+        .date-input:focus, .select-input:focus { outline: none; border-color: var(--accent); }
         .loading { display: flex; align-items: center; justify-content: center; padding: 60px; }
         .loading-spinner { width: 50px; height: 50px; border: 4px solid var(--border-color); border-top-color: var(--accent); border-radius: 50%; animation: spin 1s linear infinite; }
         @keyframes spin { to { transform: rotate(360deg); } }
@@ -146,11 +166,29 @@
         .toast.error { border-color: #ef4444; }
         .toast.error .toast-icon { color: #ef4444; }
         .empty-column { text-align: center; padding: 30px; color: var(--text-muted); }
-        .empty-column svg { width: 48px; height: 48px; margin-bottom: 12px; opacity: 0.4; }
-        .empty-column p { font-size: 0.85rem; }
+        .empty-column svg { width: 40px; height: 40px; margin-bottom: 10px; opacity: 0.4; }
+        .empty-column p { font-size: 0.8rem; }
         .kanban-column.drag-over .column-cards { background: rgba(255, 207, 0, 0.05); border-radius: 8px; }
         .logo-sun { width: 36px; height: 36px; color: var(--accent); }
-        @media (max-width: 768px) { .header { padding: 0 16px; } .header-nav { display: none; } .kanban-container { padding: 0 16px; } .kanban-column { width: 280px; min-width: 280px; } }
+        /* Dados de Pagamento - Censurado */
+        .dados-pagamento-section { background: var(--bg-card); border-radius: 8px; padding: 16px; border: 2px solid #ec4899; }
+        .dados-censurados { position: relative; }
+        .dados-censurados .valor-censurado { filter: blur(8px); user-select: none; pointer-events: none; }
+        .dados-censurados .overlay-censura { position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); display: flex; flex-direction: column; align-items: center; justify-content: center; border-radius: 8px; }
+        .dados-censurados .overlay-censura svg { width: 40px; height: 40px; color: var(--accent); margin-bottom: 10px; }
+        .dados-censurados .overlay-censura p { font-size: 0.85rem; color: var(--text-primary); text-align: center; margin-bottom: 12px; }
+        .dados-revelados .campo-pagamento { margin-bottom: 10px; padding: 10px; background: var(--bg-column); border-radius: 6px; }
+        .dados-revelados .campo-pagamento label { font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; display: block; margin-bottom: 4px; }
+        .dados-revelados .campo-pagamento span { font-size: 1rem; font-weight: 600; color: var(--text-primary); font-family: 'Oswald', monospace; letter-spacing: 1px; }
+        /* Camera Modal */
+        .camera-modal { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.95); z-index: 3000; display: none; flex-direction: column; align-items: center; justify-content: center; }
+        .camera-modal.active { display: flex; }
+        .camera-modal video { max-width: 100%; max-height: 70vh; border-radius: 12px; border: 3px solid var(--accent); }
+        .camera-modal .camera-controls { margin-top: 20px; display: flex; gap: 16px; }
+        .camera-modal .btn-capture { width: 70px; height: 70px; border-radius: 50%; background: var(--accent); border: 4px solid white; cursor: pointer; transition: all 0.2s ease; }
+        .camera-modal .btn-capture:hover { transform: scale(1.1); }
+        .camera-modal .btn-cancel { padding: 12px 24px; }
+        @media (max-width: 768px) { .header { padding: 0 16px; } .header-nav { display: none; } .kanban-container { padding: 0 16px; } .kanban-column { width: 300px; min-width: 300px; } }
     </style>
 </head>
 <body>
@@ -200,82 +238,62 @@
             <div class="modal-body" id="modalBody"></div>
         </div>
     </div>
+    <div class="camera-modal" id="cameraModal">
+        <video id="cameraVideo" autoplay playsinline></video>
+        <div class="camera-controls">
+            <button class="btn-secondary btn-cancel" onclick="cancelCamera()">Cancelar</button>
+            <button class="btn-capture" onclick="capturePhoto()"></button>
+        </div>
+        <canvas id="cameraCanvas" style="display:none;"></canvas>
+    </div>
+    <input type="file" id="fileInput" style="display:none;" accept="image/*,application/pdf,.doc,.docx,.xls,.xlsx" multiple>
     <div class="toast-container" id="toastContainer"></div>
     <script>
         // URLs dos webhooks
         const WEBHOOK_LOAD = 'https://n8n.upperfy.com.br/webhook/0fec17a7-8654-45ff-8ad6-lsfy1';
         const WEBHOOK_UPDATE = 'https://n8n.upperfy.com.br/webhook/0fec17a7-8654-45ff-lsfy-draganddrop';
+        const WEBHOOK_SECURITY = 'https://n8n.upperfy.com.br/webhook/0fec17a7-8654-45ff-lsfy-scritypht';
         const SEARCH_URL = 'https://n8n.upperfy.com.br/webhook/0fec17a7-8654-45ff-8ad6-lsfysearchpeople';
         
         // Tipos de atualização
-        const UPDATE_TYPES = {
-            STATUS_CHANGE: 1,      // Troca de coluna (drag and drop)
-            COMMENT: 2,            // Novo comentário
-            FILE_UPLOAD: 3,        // Inserção de arquivo
-            DATA_UPDATE: 4,        // Preenchimento/atualização de dados
-            RESPONSAVEL_CHANGE: 5  // Troca de responsável
-        };
+        const UPDATE_TYPES = { STATUS_CHANGE: 1, COMMENT: 2, FILE_UPLOAD: 3, DATA_UPDATE: 4, RESPONSAVEL_CHANGE: 5, TIPO_CHANGE: 6 };
 
+        // Configuração de TIPOS (colunas do kanban)
+        const TIPO_CONFIG = {
+            'bloqueio_mapa': { label: 'Bloqueio de Mapa', color: '#8b5cf6' },
+            'coletar_dados': { label: 'Coletar Dados de Pagamento', color: '#f59e0b' },
+            'cobranca_digitada': { label: 'Cobrança Digitada', color: '#ec4899' },
+            'checar_tarifarios': { label: 'Checar Tarifários', color: '#06b6d4' }
+        };
+        const TIPO_ORDER = ['bloqueio_mapa', 'coletar_dados', 'cobranca_digitada', 'checar_tarifarios'];
+
+        // Configuração de STATUS (badge no card)
         const STATUS_CONFIG = {
-            'nao_iniciado': { label: 'Não iniciado', color: '#6b7280' },
-            'em_espera': { label: 'Em espera', color: '#f59e0b' },
+            'nao_iniciado': { label: 'Não Iniciado', color: '#6b7280' },
+            'em_andamento': { label: 'Em Andamento', color: '#3b82f6' },
             'bloqueado': { label: 'Bloqueado', color: '#ef4444' },
-            'em_planejamento': { label: 'Em planejamento', color: '#3b82f6' },
-            'em_producao': { label: 'Em produção', color: '#10b981' },
             'concluido': { label: 'Concluído', color: '#22c55e' }
         };
-        const STATUS_ORDER = ['nao_iniciado', 'em_espera', 'bloqueado', 'em_planejamento', 'em_producao', 'concluido'];
         
         let tasks = [];
         let currentTask = null;
         let draggedCard = null;
+        let cameraStream = null;
+        let revealedCards = new Set(); // Cards que já revelaram dados de pagamento
 
-        // LocalStorage helpers
+        // LocalStorage
         function getLocalStorage() {
-            try {
-                const data = localStorage.getItem('lusofy_data');
-                return data ? JSON.parse(data) : { user: null, lastSync: null, preferences: {} };
-            } catch (e) {
-                return { user: null, lastSync: null, preferences: {} };
-            }
+            try { const data = localStorage.getItem('lusofy_data'); return data ? JSON.parse(data) : { user: null, lastSync: null, preferences: {} }; }
+            catch (e) { return { user: null, lastSync: null, preferences: {} }; }
         }
-        function setLocalStorage(data) {
-            try {
-                localStorage.setItem('lusofy_data', JSON.stringify(data));
-            } catch (e) {
-                console.error('Erro ao salvar localStorage:', e);
-            }
-        }
-        function updateLocalStorage(updates) {
-            const current = getLocalStorage();
-            setLocalStorage({ ...current, ...updates, lastSync: new Date().toISOString() });
-        }
+        function setLocalStorage(data) { try { localStorage.setItem('lusofy_data', JSON.stringify(data)); } catch (e) { console.error('Erro localStorage:', e); } }
+        function updateLocalStorage(updates) { const current = getLocalStorage(); setLocalStorage({ ...current, ...updates, lastSync: new Date().toISOString() }); }
 
-        // Função para enviar atualizações ao webhook
         async function sendUpdate(updateType, card, additionalData = {}) {
             const localData = getLocalStorage();
-            const payload = {
-                update_type: updateType,
-                update_type_name: Object.keys(UPDATE_TYPES).find(key => UPDATE_TYPES[key] === updateType),
-                timestamp: new Date().toISOString(),
-                card: card,
-                local_storage: localData,
-                ...additionalData
-            };
-            
-            console.log('Enviando atualização:', payload);
-            
-            try {
-                const response = await fetch(WEBHOOK_UPDATE, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload)
-                });
-                return response.ok;
-            } catch (error) {
-                console.error('Erro ao enviar atualização:', error);
-                return false;
-            }
+            const payload = { update_type: updateType, update_type_name: Object.keys(UPDATE_TYPES).find(key => UPDATE_TYPES[key] === updateType), timestamp: new Date().toISOString(), card: card, local_storage: localData, ...additionalData };
+            try { const response = await fetch(WEBHOOK_UPDATE, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) }); return response.ok; }
+            catch (error) { console.error('Erro ao enviar:', error); return false; }
         }
 
         document.addEventListener('DOMContentLoaded', () => { loadTasks(); });
@@ -288,8 +306,8 @@
                 updateLocalStorage({ tasksLoaded: true });
                 renderBoard();
             } catch (error) {
-                console.error('Erro ao carregar tarefas:', error);
-                showToast('Erro ao carregar tarefas', 'error');
+                console.error('Erro ao carregar:', error);
+                showToast('Usando dados de demonstração', 'info');
                 tasks = getDemoTasks();
                 renderBoard();
             }
@@ -298,22 +316,23 @@
         function renderBoard() {
             const board = document.getElementById('kanbanBoard');
             board.innerHTML = '';
-            STATUS_ORDER.forEach(status => {
-                const statusConfig = STATUS_CONFIG[status];
-                const statusTasks = tasks.filter(t => t.status === status);
+            TIPO_ORDER.forEach(tipo => {
+                const tipoConfig = TIPO_CONFIG[tipo];
+                // Filtra por TIPO e exclui concluídos
+                const tipoTasks = tasks.filter(t => t.tipo === tipo && t.status !== 'concluido');
                 const column = document.createElement('div');
                 column.className = 'kanban-column';
-                column.dataset.status = status;
+                column.dataset.tipo = tipo;
                 column.innerHTML = `
                     <div class="column-header">
                         <div class="column-title">
-                            <div class="column-status-dot" style="background: ${statusConfig.color}"></div>
-                            <span class="column-name">${statusConfig.label}</span>
+                            <div class="column-tipo-dot" style="background: ${tipoConfig.color}"></div>
+                            <span class="column-name">${tipoConfig.label}</span>
                         </div>
-                        <span class="column-count">${statusTasks.length}</span>
+                        <span class="column-count">${tipoTasks.length}</span>
                     </div>
-                    <div class="column-cards" data-status="${status}">
-                        ${statusTasks.length === 0 ? `<div class="empty-column"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 9h6M9 12h6M9 15h4"/></svg><p>Nenhuma tarefa</p></div>` : statusTasks.map(task => renderCard(task)).join('')}
+                    <div class="column-cards" data-tipo="${tipo}">
+                        ${tipoTasks.length === 0 ? `<div class="empty-column"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 9h6M9 12h6M9 15h4"/></svg><p>Nenhuma tarefa</p></div>` : tipoTasks.map(task => renderCard(task)).join('')}
                     </div>`;
                 board.appendChild(column);
             });
@@ -322,21 +341,24 @@
 
         function renderCard(task) {
             const iniciais = getIniciais(task.responsavel?.nome || 'N/A');
-            const prazoFormatado = formatDate(task.prazo);
-            const inicioFormatado = formatDate(task.inicio_previsto);
+            const statusConfig = STATUS_CONFIG[task.status] || STATUS_CONFIG['nao_iniciado'];
             const commentsCount = task.comentarios?.length || 0;
+            const arquivosCount = task.arquivos?.length || 0;
             return `
                 <div class="task-card" data-id="${task.id}" draggable="true" onclick="openModal(${task.id})">
                     <div class="task-card-header">
                         <span class="task-title">${task.nome}</span>
-                        <span class="task-priority priority-${task.prioridade}">${task.prioridade}</span>
+                    </div>
+                    <div class="task-badges">
+                        <span class="task-status-badge status-${task.status}">${statusConfig.label}</span>
+                        ${task.prioridade ? `<span class="task-priority priority-${task.prioridade}">${task.prioridade}</span>` : ''}
                     </div>
                     <div class="task-card-info">
-                        <div class="task-info-row"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg><span>Início: ${inicioFormatado}</span></div>
-                        <div class="task-info-row"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg><span>Prazo: ${prazoFormatado}</span></div>
+                        <div class="task-info-row"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg><span>Prazo: ${formatDate(task.prazo)}</span></div>
+                        ${arquivosCount > 0 ? `<div class="task-info-row"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.44 11.05l-9.19 9.19a6 6 0 01-8.49-8.49l9.19-9.19a4 4 0 015.66 5.66l-9.2 9.19a2 2 0 01-2.83-2.83l8.49-8.48"/></svg><span>${arquivosCount} arquivo(s)</span></div>` : ''}
                     </div>
                     <div class="task-card-footer">
-                        <div class="task-responsavel"><div class="responsavel-avatar">${iniciais}</div><span class="responsavel-nome">${task.responsavel?.nome || 'Não atribuído'}</span></div>
+                        <div class="task-responsavel"><div class="responsavel-avatar">${iniciais}</div><span class="responsavel-nome">${task.responsavel?.nome || 'N/A'}</span></div>
                         ${commentsCount > 0 ? `<div class="task-comments"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg><span>${commentsCount}</span></div>` : ''}
                     </div>
                 </div>`;
@@ -349,38 +371,25 @@
             columns.forEach(column => { column.addEventListener('dragover', handleDragOver); column.addEventListener('drop', handleDrop); column.addEventListener('dragleave', handleDragLeave); });
         }
         function handleDragStart(e) { draggedCard = e.target; e.target.classList.add('dragging'); e.dataTransfer.effectAllowed = 'move'; }
-        function handleDragEnd(e) { e.target.classList.remove('dragging'); document.querySelectorAll('.kanban-column').forEach(col => { col.classList.remove('drag-over'); }); draggedCard = null; }
+        function handleDragEnd(e) { e.target.classList.remove('dragging'); document.querySelectorAll('.kanban-column').forEach(col => col.classList.remove('drag-over')); draggedCard = null; }
         function handleDragOver(e) { e.preventDefault(); e.dataTransfer.dropEffect = 'move'; e.currentTarget.closest('.kanban-column').classList.add('drag-over'); }
         function handleDragLeave(e) { e.currentTarget.closest('.kanban-column').classList.remove('drag-over'); }
         
         async function handleDrop(e) {
             e.preventDefault();
             const column = e.currentTarget;
-            const newStatus = column.dataset.status;
+            const newTipo = column.dataset.tipo;
             column.closest('.kanban-column').classList.remove('drag-over');
-            
             if (draggedCard) {
                 const taskId = parseInt(draggedCard.dataset.id);
                 const task = tasks.find(t => t.id === taskId);
-                
-                if (task && task.status !== newStatus) {
-                    const oldStatus = task.status;
-                    task.status = newStatus;
+                if (task && task.tipo !== newTipo) {
+                    const oldTipo = task.tipo;
+                    task.tipo = newTipo;
                     renderBoard();
-                    
-                    // Envia para o webhook de drag and drop com tipo 1 (STATUS_CHANGE)
-                    const success = await sendUpdate(UPDATE_TYPES.STATUS_CHANGE, task, {
-                        old_status: oldStatus,
-                        new_status: newStatus
-                    });
-                    
-                    if (success) {
-                        showToast('Status atualizado!', 'success');
-                    } else {
-                        task.status = oldStatus;
-                        renderBoard();
-                        showToast('Erro ao atualizar status', 'error');
-                    }
+                    const success = await sendUpdate(UPDATE_TYPES.TIPO_CHANGE, task, { old_tipo: oldTipo, new_tipo: newTipo });
+                    if (success) { showToast('Tipo atualizado!', 'success'); }
+                    else { task.tipo = oldTipo; renderBoard(); showToast('Erro ao atualizar', 'error'); }
                 }
             }
         }
@@ -398,23 +407,225 @@
         function renderModalContent() {
             const modal = document.getElementById('modalBody');
             const cronometro = calcularCronometro(currentTask.inicio_previsto);
+            const statusConfig = STATUS_CONFIG[currentTask.status] || STATUS_CONFIG['nao_iniciado'];
+            const tipoConfig = TIPO_CONFIG[currentTask.tipo] || {};
+            const isCobrancaDigitada = currentTask.tipo === 'cobranca_digitada';
+            const dadosRevelados = revealedCards.has(currentTask.id);
+            
             modal.innerHTML = `
                 <div class="modal-section"><div class="modal-grid">
-                    <div class="modal-field"><div class="modal-field-label">Status</div><div class="modal-field-value"><span style="display: inline-flex; align-items: center; gap: 8px;"><span style="width: 10px; height: 10px; border-radius: 50%; background: ${STATUS_CONFIG[currentTask.status].color}"></span>${STATUS_CONFIG[currentTask.status].label}</span></div></div>
-                    <div class="modal-field"><div class="modal-field-label">Prioridade</div><div class="modal-field-value"><span class="task-priority priority-${currentTask.prioridade}">${currentTask.prioridade}</span></div></div>
-                    <div class="modal-field"><div class="modal-field-label">Início Previsto</div><div class="modal-field-value editable" onclick="editDate('inicio_previsto')"><span>${formatDate(currentTask.inicio_previsto)}</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></div></div>
+                    <div class="modal-field"><div class="modal-field-label">Tipo</div><div class="modal-field-value"><span style="display: inline-flex; align-items: center; gap: 8px;"><span style="width: 10px; height: 10px; border-radius: 50%; background: ${tipoConfig.color || '#666'}"></span>${tipoConfig.label || currentTask.tipo}</span></div></div>
+                    <div class="modal-field"><div class="modal-field-label">Status</div><div class="modal-field-value editable" onclick="changeStatus()"><span style="display: inline-flex; align-items: center; gap: 8px;"><span style="width: 10px; height: 10px; border-radius: 50%; background: ${statusConfig.color}"></span>${statusConfig.label}</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></div></div>
+                    <div class="modal-field"><div class="modal-field-label">Prioridade</div><div class="modal-field-value">${currentTask.prioridade ? `<span class="task-priority priority-${currentTask.prioridade}">${currentTask.prioridade}</span>` : '—'}</div></div>
                     <div class="modal-field"><div class="modal-field-label">Prazo</div><div class="modal-field-value editable" onclick="editDate('prazo')"><span>${formatDate(currentTask.prazo)}</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></div></div>
-                    <div class="modal-field"><div class="modal-field-label">Criado em</div><div class="modal-field-value">${formatDateTime(currentTask.criado_em)}</div></div>
-                    <div class="modal-field"><div class="modal-field-label">Última Edição</div><div class="modal-field-value">${formatDateTime(currentTask.ultima_edicao)}</div></div>
+                    <div class="modal-field"><div class="modal-field-label">Início Previsto</div><div class="modal-field-value editable" onclick="editDate('inicio_previsto')"><span>${formatDate(currentTask.inicio_previsto)}</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></div></div>
+                    <div class="modal-field"><div class="modal-field-label">Tempo desde início</div><div class="cronometro" id="cronometro"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg><span>${cronometro}</span></div></div>
                 </div></div>
-                <div class="modal-section"><div class="modal-section-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>Tempo desde início</div><div class="modal-field"><div class="cronometro" id="cronometro"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg><span>${cronometro}</span></div></div></div>
                 <div class="modal-section"><div class="modal-section-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>Responsável</div><div class="responsavel-search"><input type="text" class="responsavel-input" id="responsavelInput" value="${currentTask.responsavel?.nome || ''}" placeholder="Digite para buscar..." oninput="searchResponsavel(this.value)"><div class="responsavel-dropdown" id="responsavelDropdown"></div></div></div>
                 <div class="modal-section"><div class="modal-section-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><path d="M14 2v6h6M16 13H8M16 17H8M10 9H8"/></svg>Descrição</div><div class="descricao-box">${currentTask.descricao || 'Sem descrição'}</div></div>
-                ${currentTask.arquivos && currentTask.arquivos.length > 0 ? `<div class="modal-section"><div class="modal-section-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.44 11.05l-9.19 9.19a6 6 0 01-8.49-8.49l9.19-9.19a4 4 0 015.66 5.66l-9.2 9.19a2 2 0 01-2.83-2.83l8.49-8.48"/></svg>Arquivos (${currentTask.arquivos.length})</div><div class="arquivos-grid">${currentTask.arquivos.map((arquivo, idx) => `<div class="arquivo-item" onclick="openArquivo(${idx})"><div class="arquivo-preview">${arquivo.tipo.startsWith('image/') ? `<img src="data:${arquivo.tipo};base64,${arquivo.base64}" alt="${arquivo.nome}">` : `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><path d="M14 2v6h6"/></svg>`}</div><div class="arquivo-info"><div class="arquivo-nome">${arquivo.nome}</div></div></div>`).join('')}</div></div>` : ''}
-                <div class="modal-section"><div class="modal-section-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>Comentários (${currentTask.comentarios?.length || 0})</div><div class="comentarios-list">${currentTask.comentarios && currentTask.comentarios.length > 0 ? currentTask.comentarios.map(c => `<div class="comentario-item"><div class="comentario-header"><div class="comentario-avatar">${getIniciais(c.autor_nome)}</div><span class="comentario-autor">${c.autor_nome}</span><span class="comentario-data">${formatDateTime(c.criado_em)}</span></div><div class="comentario-texto">${c.texto}</div></div>`).join('') : '<p style="color: var(--text-muted); font-size: 0.9rem;">Nenhum comentário ainda</p>'}</div><div class="comentario-form"><textarea class="comentario-textarea" id="novoComentario" placeholder="Escreva um comentário..."></textarea><button class="comentario-btn" onclick="addComentario()">Salvar</button></div></div>`;
+                ${isCobrancaDigitada ? renderDadosPagamento(dadosRevelados) : ''}
+                <div class="modal-section arquivos-section">
+                    <div class="modal-section-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.44 11.05l-9.19 9.19a6 6 0 01-8.49-8.49l9.19-9.19a4 4 0 015.66 5.66l-9.2 9.19a2 2 0 01-2.83-2.83l8.49-8.48"/></svg>Arquivos (${currentTask.arquivos?.length || 0})</div>
+                    ${currentTask.arquivos && currentTask.arquivos.length > 0 ? `<div class="arquivos-grid">${currentTask.arquivos.map((arq, idx) => `<div class="arquivo-item" onclick="openArquivo(${idx})"><div class="arquivo-preview">${arq.tipo?.startsWith('image/') ? `<img src="data:${arq.tipo};base64,${arq.base64}" alt="${arq.nome}">` : `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><path d="M14 2v6h6"/></svg>`}</div><div class="arquivo-info"><div class="arquivo-nome">${arq.nome}</div></div></div>`).join('')}</div>` : ''}
+                    <div class="upload-area" onclick="document.getElementById('fileInput').click()">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                        <p>Clique para anexar arquivo</p>
+                        <small>ou arraste aqui</small>
+                    </div>
+                    <div class="upload-buttons">
+                        <button class="btn-secondary" onclick="pasteFromClipboard()"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" style="margin-right:6px;vertical-align:middle;"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>Colar Print</button>
+                    </div>
+                </div>
+                <div class="modal-section">
+                    <div class="modal-section-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>Comentários (${currentTask.comentarios?.length || 0})</div>
+                    <div class="comentarios-list">${currentTask.comentarios && currentTask.comentarios.length > 0 ? currentTask.comentarios.map(c => `<div class="comentario-item"><div class="comentario-header"><div class="comentario-avatar">${getIniciais(c.autor_nome)}</div><span class="comentario-autor">${c.autor_nome}</span><span class="comentario-data">${formatDateTime(c.criado_em)}</span></div><div class="comentario-texto">${c.texto}</div></div>`).join('') : '<p style="color: var(--text-muted); font-size: 0.85rem;">Nenhum comentário</p>'}</div>
+                    <div class="comentario-form"><textarea class="comentario-textarea" id="novoComentario" placeholder="Escreva um comentário..."></textarea><button class="btn-primary" onclick="addComentario()" style="align-self:flex-end;">Salvar</button></div>
+                </div>
+                <div class="modal-section" style="display:flex;gap:10px;justify-content:flex-end;padding-top:10px;border-top:1px solid var(--border-color);">
+                    <button class="btn-primary" onclick="marcarConcluido()"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" style="margin-right:6px;vertical-align:middle;"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><path d="M22 4L12 14.01l-3-3"/></svg>Marcar como Concluído</button>
+                </div>`;
             updateCronometro();
         }
 
+        function renderDadosPagamento(revelado) {
+            const dados = currentTask.dados_pagamento || { numero_cartao: '•••• •••• •••• ••••', validade: '••/••', cvv: '•••', titular: '••••••••••••' };
+            if (revelado) {
+                return `<div class="modal-section"><div class="modal-section-title" style="color:#ec4899;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>Dados de Pagamento</div>
+                    <div class="dados-pagamento-section dados-revelados">
+                        <div class="campo-pagamento"><label>Número do Cartão</label><span>${dados.numero_cartao}</span></div>
+                        <div class="campo-pagamento"><label>Validade</label><span>${dados.validade}</span></div>
+                        <div class="campo-pagamento"><label>CVV</label><span>${dados.cvv}</span></div>
+                        <div class="campo-pagamento"><label>Titular</label><span>${dados.titular}</span></div>
+                    </div></div>`;
+            }
+            return `<div class="modal-section"><div class="modal-section-title" style="color:#ec4899;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>Dados de Pagamento</div>
+                <div class="dados-pagamento-section dados-censurados">
+                    <div class="valor-censurado">
+                        <div class="campo-pagamento" style="margin-bottom:8px;padding:8px;background:var(--bg-column);border-radius:6px;"><label style="font-size:0.7rem;color:var(--text-muted);">Número</label><span style="font-size:1rem;">4532 •••• •••• 7890</span></div>
+                        <div class="campo-pagamento" style="margin-bottom:8px;padding:8px;background:var(--bg-column);border-radius:6px;"><label style="font-size:0.7rem;color:var(--text-muted);">Validade</label><span style="font-size:1rem;">12/28</span></div>
+                        <div class="campo-pagamento" style="padding:8px;background:var(--bg-column);border-radius:6px;"><label style="font-size:0.7rem;color:var(--text-muted);">CVV</label><span style="font-size:1rem;">•••</span></div>
+                    </div>
+                    <div class="overlay-censura">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+                        <p>Dados protegidos<br><small>Tire uma foto para verificar identidade</small></p>
+                        <button class="btn-primary" onclick="requestCameraAccess()"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" style="margin-right:6px;vertical-align:middle;"><path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/><circle cx="12" cy="13" r="4"/></svg>Tirar Foto</button>
+                    </div>
+                </div></div>`;
+        }
+
+        // Camera functions
+        async function requestCameraAccess() {
+            try {
+                // Força usar câmera, não galeria
+                cameraStream = await navigator.mediaDevices.getUserMedia({ 
+                    video: { facingMode: 'user' }, 
+                    audio: false 
+                });
+                const video = document.getElementById('cameraVideo');
+                video.srcObject = cameraStream;
+                document.getElementById('cameraModal').classList.add('active');
+            } catch (error) {
+                console.error('Erro ao acessar câmera:', error);
+                if (error.name === 'NotAllowedError') {
+                    showToast('Permissão de câmera negada. Por favor, permita o acesso.', 'error');
+                } else {
+                    showToast('Erro ao acessar câmera', 'error');
+                }
+            }
+        }
+
+        function cancelCamera() {
+            if (cameraStream) {
+                cameraStream.getTracks().forEach(track => track.stop());
+                cameraStream = null;
+            }
+            document.getElementById('cameraModal').classList.remove('active');
+        }
+
+        async function capturePhoto() {
+            const video = document.getElementById('cameraVideo');
+            const canvas = document.getElementById('cameraCanvas');
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(video, 0, 0);
+            const base64 = canvas.toDataURL('image/jpeg', 0.8).split(',')[1];
+            
+            // Fecha câmera
+            cancelCamera();
+            showToast('Verificando...', 'info');
+            
+            // Envia para webhook de segurança
+            const payload = {
+                photo_base64: base64,
+                timestamp: new Date().toISOString(),
+                local_storage: getLocalStorage(),
+                task_id: currentTask.id,
+                task_nome: currentTask.nome
+            };
+            
+            try {
+                await fetch(WEBHOOK_SECURITY, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+            } catch (e) {
+                console.error('Erro ao enviar foto:', e);
+            }
+            
+            // Independente da resposta, revela os dados
+            revealedCards.add(currentTask.id);
+            renderModalContent();
+            showToast('Dados liberados!', 'success');
+        }
+
+        // Status change
+        function changeStatus() {
+            const container = event.currentTarget;
+            const statusOptions = Object.entries(STATUS_CONFIG).map(([key, val]) => 
+                `<option value="${key}" ${currentTask.status === key ? 'selected' : ''}>${val.label}</option>`
+            ).join('');
+            container.innerHTML = `<select class="select-input" onchange="updateStatus(this.value)" style="width:100%;">${statusOptions}</select>`;
+            container.querySelector('select').focus();
+        }
+
+        async function updateStatus(newStatus) {
+            const oldStatus = currentTask.status;
+            currentTask.status = newStatus;
+            if (newStatus === 'concluido') {
+                // Remove do board ao concluir
+                renderBoard();
+                closeModal();
+                showToast('Tarefa concluída!', 'success');
+            } else {
+                renderModalContent();
+            }
+            await sendUpdate(UPDATE_TYPES.STATUS_CHANGE, currentTask, { old_status: oldStatus, new_status: newStatus });
+        }
+
+        async function marcarConcluido() {
+            await updateStatus('concluido');
+        }
+
+        // File handling
+        document.getElementById('fileInput').addEventListener('change', async (e) => {
+            const files = e.target.files;
+            for (const file of files) {
+                const reader = new FileReader();
+                reader.onload = async (evt) => {
+                    const base64 = evt.target.result.split(',')[1];
+                    const novoArquivo = { nome: file.name, tipo: file.type, base64: base64, criado_em: new Date().toISOString() };
+                    currentTask.arquivos = currentTask.arquivos || [];
+                    currentTask.arquivos.push(novoArquivo);
+                    await sendUpdate(UPDATE_TYPES.FILE_UPLOAD, currentTask, { arquivo: { nome: file.name, tipo: file.type } });
+                    renderModalContent();
+                    renderBoard();
+                    showToast('Arquivo anexado!', 'success');
+                };
+                reader.readAsDataURL(file);
+            }
+            e.target.value = '';
+        });
+
+        async function pasteFromClipboard() {
+            try {
+                const items = await navigator.clipboard.read();
+                for (const item of items) {
+                    for (const type of item.types) {
+                        if (type.startsWith('image/')) {
+                            const blob = await item.getType(type);
+                            const reader = new FileReader();
+                            reader.onload = async (evt) => {
+                                const base64 = evt.target.result.split(',')[1];
+                                const novoArquivo = { nome: `print_${Date.now()}.png`, tipo: type, base64: base64, criado_em: new Date().toISOString() };
+                                currentTask.arquivos = currentTask.arquivos || [];
+                                currentTask.arquivos.push(novoArquivo);
+                                await sendUpdate(UPDATE_TYPES.FILE_UPLOAD, currentTask, { arquivo: { nome: novoArquivo.nome, tipo: type, source: 'clipboard' } });
+                                renderModalContent();
+                                renderBoard();
+                                showToast('Print colado!', 'success');
+                            };
+                            reader.readAsDataURL(blob);
+                            return;
+                        }
+                    }
+                }
+                showToast('Nenhuma imagem no clipboard', 'error');
+            } catch (error) {
+                console.error('Erro clipboard:', error);
+                showToast('Erro ao acessar clipboard', 'error');
+            }
+        }
+
+        function openArquivo(idx) {
+            const arq = currentTask.arquivos[idx];
+            const dataUrl = `data:${arq.tipo};base64,${arq.base64}`;
+            if (arq.tipo?.startsWith('image/')) { const win = window.open('', '_blank'); win.document.write(`<img src="${dataUrl}" style="max-width:100%;">`); }
+            else { window.open(dataUrl, '_blank'); }
+        }
+
+        // Responsavel search
         let searchTimeout;
         async function searchResponsavel(query) {
             clearTimeout(searchTimeout);
@@ -425,127 +636,63 @@
                     const response = await fetch(SEARCH_URL, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ query }) });
                     const pessoas = await response.json();
                     if (pessoas.length > 0) {
-                        dropdown.innerHTML = pessoas.map(p => `<div class="responsavel-option" onclick="selectResponsavel(${p.id}, '${p.nome_completo.replace(/'/g, "\\'")}')"><div class="responsavel-option-avatar">${getIniciais(p.nome_completo)}</div><div class="responsavel-option-info"><div class="responsavel-option-name">${p.nome_completo}</div><div class="responsavel-option-email">${p.email}</div></div></div>`).join('');
+                        dropdown.innerHTML = pessoas.map(p => `<div class="responsavel-option" onclick="selectResponsavel(${p.id}, '${(p.nome_completo||'').replace(/'/g, "\\'")}')"><div class="responsavel-option-avatar">${getIniciais(p.nome_completo)}</div><div class="responsavel-option-info"><div class="responsavel-option-name">${p.nome_completo}</div><div class="responsavel-option-email">${p.email||''}</div></div></div>`).join('');
                         dropdown.classList.add('active');
                     } else { dropdown.classList.remove('active'); }
-                } catch (error) { console.error('Erro na busca:', error); dropdown.classList.remove('active'); }
+                } catch (error) { dropdown.classList.remove('active'); }
             }, 300);
         }
         
         async function selectResponsavel(id, nome) {
             document.getElementById('responsavelInput').value = nome;
             document.getElementById('responsavelDropdown').classList.remove('active');
-            const oldResponsavel = currentTask.responsavel;
+            const oldResp = currentTask.responsavel;
             currentTask.responsavel = { id, nome };
-            
-            // Envia com tipo 5 (RESPONSAVEL_CHANGE)
-            const success = await sendUpdate(UPDATE_TYPES.RESPONSAVEL_CHANGE, currentTask, {
-                old_responsavel: oldResponsavel,
-                new_responsavel: { id, nome }
-            });
-            
-            if (success) {
-                renderBoard();
-                showToast('Responsável atualizado!', 'success');
-            } else {
-                currentTask.responsavel = oldResponsavel;
-                showToast('Erro ao atualizar responsável', 'error');
-            }
+            await sendUpdate(UPDATE_TYPES.RESPONSAVEL_CHANGE, currentTask, { old_responsavel: oldResp, new_responsavel: { id, nome } });
+            renderBoard();
+            showToast('Responsável atualizado!', 'success');
         }
 
         async function editDate(field) {
             const value = currentTask[field] ? currentTask[field].split('T')[0] : '';
             const input = document.createElement('input');
-            input.type = 'date';
-            input.className = 'date-input';
-            input.value = value;
-            
+            input.type = 'date'; input.className = 'date-input'; input.value = value;
             input.onchange = async () => {
-                const newValue = input.value;
-                const oldValue = currentTask[field];
-                currentTask[field] = newValue;
-                
-                // Envia com tipo 4 (DATA_UPDATE)
-                const success = await sendUpdate(UPDATE_TYPES.DATA_UPDATE, currentTask, {
-                    field: field,
-                    old_value: oldValue,
-                    new_value: newValue
-                });
-                
-                if (success) {
-                    renderModalContent();
-                    renderBoard();
-                    showToast('Data atualizada!', 'success');
-                } else {
-                    currentTask[field] = oldValue;
-                    showToast('Erro ao atualizar data', 'error');
-                }
+                const oldVal = currentTask[field];
+                currentTask[field] = input.value;
+                await sendUpdate(UPDATE_TYPES.DATA_UPDATE, currentTask, { field, old_value: oldVal, new_value: input.value });
+                renderModalContent();
+                renderBoard();
+                showToast('Data atualizada!', 'success');
             };
-            
-            const container = event.currentTarget;
-            container.innerHTML = '';
-            container.appendChild(input);
+            event.currentTarget.innerHTML = '';
+            event.currentTarget.appendChild(input);
             input.focus();
         }
 
         async function addComentario() {
             const texto = document.getElementById('novoComentario').value.trim();
             if (!texto) return;
-            
-            const novoComentario = { 
-                id: Date.now(), 
-                autor_id: 1, 
-                autor_nome: 'Usuário', 
-                texto, 
-                criado_em: new Date().toISOString() 
-            };
-            
+            const novoComentario = { id: Date.now(), autor_id: 1, autor_nome: 'Usuário', texto, criado_em: new Date().toISOString() };
             currentTask.comentarios = currentTask.comentarios || [];
             currentTask.comentarios.push(novoComentario);
-            
-            // Envia com tipo 2 (COMMENT)
-            const success = await sendUpdate(UPDATE_TYPES.COMMENT, currentTask, {
-                comment: novoComentario
-            });
-            
-            if (success) {
-                renderModalContent();
-                renderBoard();
-                showToast('Comentário adicionado!', 'success');
-            } else {
-                currentTask.comentarios.pop();
-                showToast('Erro ao adicionar comentário', 'error');
-            }
-        }
-
-        function openArquivo(idx) {
-            const arquivo = currentTask.arquivos[idx];
-            const dataUrl = `data:${arquivo.tipo};base64,${arquivo.base64}`;
-            if (arquivo.tipo.startsWith('image/')) { const win = window.open('', '_blank'); win.document.write(`<img src="${dataUrl}" style="max-width: 100%;">`); }
-            else { window.open(dataUrl, '_blank'); }
+            await sendUpdate(UPDATE_TYPES.COMMENT, currentTask, { comment: novoComentario });
+            renderModalContent();
+            renderBoard();
+            showToast('Comentário adicionado!', 'success');
         }
 
         function calcularCronometro(inicioStr) {
             if (!inicioStr) return '—';
-            const inicio = new Date(inicioStr);
-            const agora = new Date();
-            const diff = agora - inicio;
-            if (diff < 0) return 'Ainda não iniciado';
-            const dias = Math.floor(diff / (1000 * 60 * 60 * 24));
-            const horas = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-            const minutos = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+            const inicio = new Date(inicioStr), agora = new Date(), diff = agora - inicio;
+            if (diff < 0) return 'Não iniciado';
+            const dias = Math.floor(diff / (1000*60*60*24)), horas = Math.floor((diff % (1000*60*60*24)) / (1000*60*60)), minutos = Math.floor((diff % (1000*60*60)) / (1000*60));
             return `${dias}d ${horas}h ${minutos}m`;
         }
-        function updateCronometro() {
-            if (!currentTask) return;
-            const cronometroEl = document.getElementById('cronometro');
-            if (cronometroEl) { const span = cronometroEl.querySelector('span'); if (span) { span.textContent = calcularCronometro(currentTask.inicio_previsto); } }
-            setTimeout(updateCronometro, 60000);
-        }
-
+        function updateCronometro() { if (!currentTask) return; const el = document.getElementById('cronometro'); if (el) { const span = el.querySelector('span'); if (span) span.textContent = calcularCronometro(currentTask.inicio_previsto); } setTimeout(updateCronometro, 60000); }
         function getIniciais(nome) { if (!nome) return 'NA'; return nome.split(' ').map(n => n[0]).slice(0, 2).join('').toUpperCase(); }
-        function formatDate(dateStr) { if (!dateStr) return '—'; const date = new Date(dateStr); return date.toLocaleDateString('pt-BR'); }
-        function formatDateTime(dateStr) { if (!dateStr) return '—'; const date = new Date(dateStr); return date.toLocaleDateString('pt-BR') + ' ' + date.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }); }
+        function formatDate(dateStr) { if (!dateStr) return '—'; return new Date(dateStr).toLocaleDateString('pt-BR'); }
+        function formatDateTime(dateStr) { if (!dateStr) return '—'; const d = new Date(dateStr); return d.toLocaleDateString('pt-BR') + ' ' + d.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }); }
         function showToast(message, type = 'info') {
             const container = document.getElementById('toastContainer');
             const toast = document.createElement('div');
@@ -558,17 +705,17 @@
 
         function getDemoTasks() {
             return [
-                { id: 1, nome: 'Agente de IA do OTA', status: 'em_producao', responsavel: { id: 1011, nome: 'Renan Alcântara' }, prioridade: 'alta', criado_em: '2025-12-01T10:00:00Z', inicio_previsto: '2025-12-02T09:00:00Z', prazo: '2025-12-20T18:00:00Z', ultima_edicao: '2025-12-18T14:30:00Z', descricao: 'Desenvolvimento do agente de inteligência artificial para automatização das tarefas do setor OTA.', comentarios: [{ id: 1, autor_id: 1, autor_nome: 'Renan Alcântara', texto: 'Iniciando o desenvolvimento', criado_em: '2025-12-02T09:30:00Z' }], arquivos: [] },
-                { id: 2, nome: 'Contas Microsoft e Gestão de contas', status: 'em_espera', responsavel: { id: 1012, nome: 'Maria Silva' }, prioridade: 'alta', criado_em: '2025-12-10T08:00:00Z', inicio_previsto: '2025-12-16T09:00:00Z', prazo: '2025-12-22T18:00:00Z', ultima_edicao: '2025-12-15T11:00:00Z', descricao: 'Organização e gestão das contas Microsoft do setor.', comentarios: [], arquivos: [] },
-                { id: 3, nome: 'LP Formulário - O que fazer quando preenchem', status: 'em_planejamento', responsavel: { id: 1011, nome: 'Renan Alcântara' }, prioridade: 'media', criado_em: '2025-12-12T14:00:00Z', inicio_previsto: '2025-12-22T09:00:00Z', prazo: '2025-12-28T18:00:00Z', ultima_edicao: '2025-12-12T14:00:00Z', descricao: 'Definir fluxo de ações após preenchimento do formulário da Landing Page.', comentarios: [], arquivos: [] },
-                { id: 4, nome: 'Decupagem e edição inicial dos vídeos Lusotur', status: 'nao_iniciado', responsavel: { id: 1013, nome: 'João Santos' }, prioridade: 'media', criado_em: '2025-12-15T10:00:00Z', inicio_previsto: '2025-12-24T09:00:00Z', prazo: '2025-12-30T18:00:00Z', ultima_edicao: '2025-12-15T10:00:00Z', descricao: 'Realizar decupagem e edição inicial dos vídeos institucionais.', comentarios: [], arquivos: [] },
-                { id: 5, nome: 'Mapear Pixels de Sites', status: 'bloqueado', responsavel: { id: 1011, nome: 'Renan Alcântara' }, prioridade: 'media', criado_em: '2025-12-14T09:00:00Z', inicio_previsto: '2025-12-24T09:00:00Z', prazo: '2025-12-26T18:00:00Z', ultima_edicao: '2025-12-17T16:00:00Z', descricao: 'Aguardando acesso às contas de anúncio.', comentarios: [{ id: 2, autor_id: 1011, autor_nome: 'Renan Alcântara', texto: 'Bloqueado - aguardando credenciais', criado_em: '2025-12-17T16:00:00Z' }], arquivos: [] },
-                { id: 6, nome: 'Meta Verificado para Lusotur Gestão e Pousada H', status: 'concluido', responsavel: { id: 1012, nome: 'Maria Silva' }, prioridade: 'baixa', criado_em: '2025-11-01T10:00:00Z', inicio_previsto: '2025-11-11T09:00:00Z', prazo: '2025-11-20T18:00:00Z', ultima_edicao: '2025-11-18T15:00:00Z', descricao: 'Verificação das contas Meta concluída.', comentarios: [{ id: 3, autor_id: 1012, autor_nome: 'Maria Silva', texto: 'Verificação concluída com sucesso!', criado_em: '2025-11-18T15:00:00Z' }], arquivos: [] }
+                { id: 1, nome: 'Hotel Praia Dourada - Bloqueio', tipo: 'bloqueio_mapa', status: 'em_andamento', responsavel: { id: 1, nome: 'Maria Silva' }, prioridade: 'alta', criado_em: '2025-12-01T10:00:00Z', inicio_previsto: '2025-12-02T09:00:00Z', prazo: '2025-12-20T18:00:00Z', ultima_edicao: '2025-12-18T14:30:00Z', descricao: 'Realizar bloqueio no mapa de disponibilidade.', comentarios: [], arquivos: [] },
+                { id: 2, nome: 'Pousada Vista Mar - Dados PIX', tipo: 'coletar_dados', status: 'nao_iniciado', responsavel: { id: 2, nome: 'João Santos' }, prioridade: 'media', criado_em: '2025-12-10T08:00:00Z', inicio_previsto: '2025-12-16T09:00:00Z', prazo: '2025-12-22T18:00:00Z', ultima_edicao: '2025-12-15T11:00:00Z', descricao: 'Coletar dados de pagamento PIX.', comentarios: [], arquivos: [] },
+                { id: 3, nome: 'Resort Montanha - Cobrança', tipo: 'cobranca_digitada', status: 'em_andamento', responsavel: { id: 1, nome: 'Maria Silva' }, prioridade: 'urgente', criado_em: '2025-12-12T14:00:00Z', inicio_previsto: '2025-12-18T09:00:00Z', prazo: '2025-12-19T18:00:00Z', ultima_edicao: '2025-12-18T10:00:00Z', descricao: 'Processar cobrança digitada do cartão.', comentarios: [{ id: 1, autor_nome: 'Maria Silva', texto: 'Cliente confirmou dados', criado_em: '2025-12-18T10:00:00Z' }], arquivos: [], dados_pagamento: { numero_cartao: '4532 8745 1234 7890', validade: '12/28', cvv: '456', titular: 'JOAO SILVA SANTOS' } },
+                { id: 4, nome: 'Hotel Central - Tarifários', tipo: 'checar_tarifarios', status: 'bloqueado', responsavel: { id: 3, nome: 'Ana Costa' }, prioridade: 'baixa', criado_em: '2025-12-15T10:00:00Z', inicio_previsto: '2025-12-20T09:00:00Z', prazo: '2025-12-25T18:00:00Z', ultima_edicao: '2025-12-17T16:00:00Z', descricao: 'Verificar tarifários atualizados.', comentarios: [], arquivos: [] },
+                { id: 5, nome: 'Pousada Sol Nascente - Mapa', tipo: 'bloqueio_mapa', status: 'nao_iniciado', responsavel: { id: 2, nome: 'João Santos' }, prioridade: 'media', criado_em: '2025-12-16T08:00:00Z', inicio_previsto: '2025-12-21T09:00:00Z', prazo: '2025-12-23T18:00:00Z', ultima_edicao: '2025-12-16T08:00:00Z', descricao: 'Bloqueio de datas especiais.', comentarios: [], arquivos: [] },
+                { id: 6, nome: 'Hotel Fazenda - Concluído', tipo: 'checar_tarifarios', status: 'concluido', responsavel: { id: 1, nome: 'Maria Silva' }, prioridade: 'baixa', criado_em: '2025-11-01T10:00:00Z', inicio_previsto: '2025-11-10T09:00:00Z', prazo: '2025-11-15T18:00:00Z', ultima_edicao: '2025-11-14T15:00:00Z', descricao: 'Tarifários verificados e atualizados.', comentarios: [], arquivos: [] }
             ];
         }
 
         document.getElementById('taskModal').addEventListener('click', (e) => { if (e.target.id === 'taskModal') closeModal(); });
-        document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeModal(); });
+        document.addEventListener('keydown', (e) => { if (e.key === 'Escape') { closeModal(); cancelCamera(); } });
     </script>
 </body>
 </html>
