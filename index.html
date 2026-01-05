@@ -199,6 +199,34 @@
         .error-state p { color: var(--text-muted); margin-bottom: 16px; }
         @media (max-width: 768px) { .header { padding: 0 16px; } .header-nav { display: none; } .kanban-container { padding: 0 16px; } .kanban-column { width: 300px; min-width: 300px; } }
         @media (max-width: 600px) { .dados-pagamento-form .form-row { grid-template-columns: 1fr; } }
+        .confirm-modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(6px); display: none; align-items: center; justify-content: center; z-index: 4000; padding: 24px; }
+        .confirm-modal-overlay.active { display: flex; }
+        .confirm-modal { background: var(--bg-secondary); border-radius: 16px; border: 2px solid var(--accent); width: 100%; max-width: 450px; overflow: hidden; box-shadow: 0 25px 50px rgba(0,0,0,0.5); }
+        .confirm-modal-header { padding: 16px 20px; border-bottom: 2px solid var(--accent); background: var(--bg-primary); display: flex; align-items: center; gap: 12px; }
+        .confirm-modal-header svg { width: 24px; height: 24px; color: var(--accent); }
+        .confirm-modal-header h3 { font-family: 'Oswald', sans-serif; font-size: 1.1rem; color: var(--accent); text-transform: uppercase; letter-spacing: 1px; }
+        .confirm-modal-body { padding: 20px; }
+        .confirm-card-preview { background: var(--bg-card); border-radius: 12px; padding: 20px; border: 2px solid var(--border-color); margin-bottom: 16px; }
+        .confirm-card-preview .card-number { font-family: 'Oswald', monospace; font-size: 1.4rem; letter-spacing: 3px; color: var(--text-primary); margin-bottom: 16px; text-align: center; }
+        .confirm-card-preview .card-details { display: flex; justify-content: space-between; }
+        .confirm-card-preview .card-field { }
+        .confirm-card-preview .card-field label { font-size: 0.6rem; color: var(--text-muted); text-transform: uppercase; display: block; margin-bottom: 2px; }
+        .confirm-card-preview .card-field span { font-family: 'Oswald', sans-serif; font-size: 0.95rem; color: var(--text-primary); letter-spacing: 1px; }
+        .confirm-warning { background: rgba(245, 158, 11, 0.15); border: 1px solid rgba(245, 158, 11, 0.4); border-radius: 8px; padding: 12px; margin-bottom: 16px; display: flex; align-items: flex-start; gap: 10px; }
+        .confirm-warning svg { width: 20px; height: 20px; color: #f59e0b; flex-shrink: 0; margin-top: 2px; }
+        .confirm-warning p { font-size: 0.8rem; color: var(--text-secondary); line-height: 1.4; }
+        .confirm-modal-footer { display: flex; gap: 12px; }
+        .confirm-modal-footer button { flex: 1; }
+        .dados-pagamento-section.completo { border-color: #22c55e; background: rgba(34, 197, 94, 0.08); }
+        .dados-pagamento-section.completo .section-status { display: flex; align-items: center; gap: 8px; padding: 10px; background: rgba(34, 197, 94, 0.2); border-radius: 6px; margin-bottom: 12px; }
+        .dados-pagamento-section.completo .section-status svg { width: 20px; height: 20px; color: #22c55e; }
+        .dados-pagamento-section.completo .section-status span { font-family: 'Oswald', sans-serif; font-size: 0.85rem; color: #86efac; text-transform: uppercase; letter-spacing: 1px; }
+        .dados-censurados-coletar { position: relative; }
+        .dados-censurados-coletar .campo-pagamento { margin-bottom: 8px; padding: 10px; background: var(--bg-column); border-radius: 6px; }
+        .dados-censurados-coletar .campo-pagamento label { font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; display: block; margin-bottom: 4px; }
+        .dados-censurados-coletar .campo-pagamento span { font-size: 1rem; font-weight: 600; color: var(--text-primary); font-family: 'Oswald', monospace; letter-spacing: 1px; }
+        .btn-edit-dados { margin-top: 12px; width: 100%; background: transparent; border: 2px dashed var(--border-color); color: var(--text-muted); }
+        .btn-edit-dados:hover { border-color: var(--accent); color: var(--text-primary); background: rgba(255, 207, 0, 0.05); }
     </style>
 </head>
 <body>
@@ -257,6 +285,41 @@
         <canvas id="cameraCanvas" style="display:none;"></canvas>
     </div>
     <input type="file" id="fileInput" style="display:none;" accept="image/*,application/pdf,.doc,.docx,.xls,.xlsx" multiple>
+    <div class="confirm-modal-overlay" id="confirmModal">
+        <div class="confirm-modal">
+            <div class="confirm-modal-header">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+                <h3>Confirmar Dados do Cartão</h3>
+            </div>
+            <div class="confirm-modal-body">
+                <div class="confirm-card-preview">
+                    <div class="card-number" id="confirmCardNumber">0000 0000 0000 0000</div>
+                    <div class="card-details">
+                        <div class="card-field">
+                            <label>Nome</label>
+                            <span id="confirmCardName">NOME DO TITULAR</span>
+                        </div>
+                        <div class="card-field">
+                            <label>Validade</label>
+                            <span id="confirmCardExpiry">MM/AA</span>
+                        </div>
+                        <div class="card-field">
+                            <label>CVC</label>
+                            <span id="confirmCardCvc">***</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="confirm-warning">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+                    <p>Confira os dados antes de salvar. Após salvar, os dados serão criptografados e só poderão ser visualizados na etapa de Cobrança Digitada.</p>
+                </div>
+                <div class="confirm-modal-footer">
+                    <button class="btn-secondary" onclick="closeConfirmModal()">Voltar e Editar</button>
+                    <button class="btn-primary" onclick="confirmarSalvarDados()">Confirmar e Salvar</button>
+                </div>
+            </div>
+        </div>
+    </div>
     <div class="toast-container" id="toastContainer"></div>
     <script>
         const WEBHOOK_LOAD = 'https://n8n.upperfy.com.br/webhook/0fec17a7-8654-45ff-8ad6-lsfy1';
@@ -467,12 +530,31 @@
         }
 
         function renderFormularioDadosPagamento() {
+            const dadosSalvos = currentTask.numero_cartao && currentTask.nome_cartao && currentTask.validade_cartao;
+            
+            if (dadosSalvos) {
+                // Mostrar dados censurados com estado "completo"
+                const ultimosDigitos = currentTask.numero_cartao.replace(/\s/g, '').slice(-4);
+                return '<div class="modal-section"><div class="modal-section-title" style="color:#22c55e;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>Dados de Pagamento</div>' +
+                    '<div class="dados-pagamento-section completo">' +
+                    '<div class="section-status"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><path d="M22 4L12 14.01l-3-3"/></svg><span>Dados salvos com sucesso</span></div>' +
+                    '<div class="dados-censurados-coletar">' +
+                    '<div class="campo-pagamento"><label>Número do Cartão</label><span>•••• •••• •••• ' + ultimosDigitos + '</span></div>' +
+                    '<div class="campo-pagamento"><label>Nome no Cartão</label><span>' + currentTask.nome_cartao + '</span></div>' +
+                    '<div class="campo-pagamento"><label>Validade</label><span>' + currentTask.validade_cartao + '</span></div>' +
+                    '<div class="campo-pagamento"><label>CVC</label><span>•••</span></div>' +
+                    '</div>' +
+                    '<button class="btn-secondary btn-edit-dados" onclick="habilitarEdicaoDados()"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" style="margin-right:6px;vertical-align:middle;"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>Editar Dados</button>' +
+                    '</div></div>';
+            }
+            
+            // Mostrar formulário para preenchimento
             return '<div class="modal-section"><div class="modal-section-title" style="color:#f59e0b;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>Dados de Pagamento</div>' +
                 '<div class="dados-pagamento-section"><div class="dados-pagamento-form">' +
                 '<div class="form-row full"><div><label>Número do Cartão</label><input type="text" id="inputNumeroCartao" value="' + (currentTask.numero_cartao || '') + '" placeholder="0000 0000 0000 0000" maxlength="19" oninput="formatCartaoNumero(this)"></div></div>' +
                 '<div class="form-row full"><div><label>Nome no Cartão</label><input type="text" id="inputNomeCartao" value="' + (currentTask.nome_cartao || '') + '" placeholder="NOME COMO ESTÁ NO CARTÃO" style="text-transform: uppercase;" oninput="this.value = this.value.toUpperCase()"></div></div>' +
                 '<div class="form-row"><div><label>Validade</label><input type="text" id="inputValidadeCartao" value="' + (currentTask.validade_cartao || '') + '" placeholder="MM/AA" maxlength="5" oninput="formatValidade(this)"></div><div><label>CVC</label><input type="text" id="inputCvcCartao" value="" placeholder="000" maxlength="4" oninput="this.value = this.value.replace(/\\D/g, \'\')"></div></div>' +
-                '<div style="display:flex;justify-content:flex-end;margin-top:8px;"><button class="btn-primary" onclick="salvarDadosCartao()"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" style="margin-right:6px;vertical-align:middle;"><path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>Salvar Dados</button></div>' +
+                '<div style="display:flex;justify-content:flex-end;margin-top:8px;"><button class="btn-primary" onclick="abrirConfirmacaoDados()"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" style="margin-right:6px;vertical-align:middle;"><path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>Salvar Dados</button></div>' +
                 '</div></div></div>';
         }
 
@@ -503,6 +585,71 @@
 
         function formatCartaoNumero(input) { let value = input.value.replace(/\D/g, ''); value = value.replace(/(\d{4})(?=\d)/g, '$1 '); input.value = value.substring(0, 19); }
         function formatValidade(input) { let value = input.value.replace(/\D/g, ''); if (value.length >= 2) { value = value.substring(0, 2) + '/' + value.substring(2); } input.value = value.substring(0, 5); }
+
+        let pendingCardData = null;
+
+        function abrirConfirmacaoDados() {
+            const numero = document.getElementById('inputNumeroCartao').value.trim();
+            const nome = document.getElementById('inputNomeCartao').value.trim();
+            const validade = document.getElementById('inputValidadeCartao').value.trim();
+            const cvc = document.getElementById('inputCvcCartao').value.trim();
+            
+            if (!numero || !nome || !validade || !cvc) { showToast('Preencha todos os campos', 'error'); return; }
+            if (numero.replace(/\s/g, '').length < 13) { showToast('Número do cartão inválido', 'error'); return; }
+            if (validade.length < 5) { showToast('Validade inválida', 'error'); return; }
+            if (cvc.length < 3) { showToast('CVC inválido', 'error'); return; }
+            
+            // Guardar dados pendentes
+            pendingCardData = { numero_cartao: numero, nome_cartao: nome, validade_cartao: validade, cvc_cartao: cvc };
+            
+            // Preencher modal de confirmação
+            document.getElementById('confirmCardNumber').textContent = numero;
+            document.getElementById('confirmCardName').textContent = nome;
+            document.getElementById('confirmCardExpiry').textContent = validade;
+            document.getElementById('confirmCardCvc').textContent = cvc;
+            
+            // Abrir modal
+            document.getElementById('confirmModal').classList.add('active');
+        }
+
+        function closeConfirmModal() {
+            document.getElementById('confirmModal').classList.remove('active');
+            pendingCardData = null;
+        }
+
+        async function confirmarSalvarDados() {
+            if (!pendingCardData) return;
+            
+            closeConfirmModal();
+            showToast('Salvando...', 'info');
+            
+            // Atualizar tarefa local
+            currentTask.numero_cartao = pendingCardData.numero_cartao;
+            currentTask.nome_cartao = pendingCardData.nome_cartao;
+            currentTask.validade_cartao = pendingCardData.validade_cartao;
+            
+            const success = await sendUpdate(UPDATE_TYPES.CARTAO_ADD, currentTask, { dados_cartao: pendingCardData });
+            
+            if (success) {
+                pendingCardData = null;
+                renderModalContent();
+                showToast('Dados salvos com sucesso!', 'success');
+            } else {
+                // Reverter alterações locais
+                currentTask.numero_cartao = null;
+                currentTask.nome_cartao = null;
+                currentTask.validade_cartao = null;
+                showToast('Erro ao salvar dados', 'error');
+            }
+        }
+
+        function habilitarEdicaoDados() {
+            // Limpar dados locais para voltar ao formulário
+            currentTask.numero_cartao = null;
+            currentTask.nome_cartao = null;
+            currentTask.validade_cartao = null;
+            renderModalContent();
+        }
 
         async function salvarDadosCartao() {
             const numero = document.getElementById('inputNumeroCartao').value.trim();
@@ -718,7 +865,8 @@
         }
 
         document.getElementById('taskModal').addEventListener('click', function(e) { if (e.target.id === 'taskModal') closeModal(); });
-        document.addEventListener('keydown', function(e) { if (e.key === 'Escape') { closeModal(); cancelCamera(); } });
+        document.getElementById('confirmModal').addEventListener('click', function(e) { if (e.target.id === 'confirmModal') closeConfirmModal(); });
+        document.addEventListener('keydown', function(e) { if (e.key === 'Escape') { closeModal(); cancelCamera(); closeConfirmModal(); } });
     </script>
 </body>
 </html>
