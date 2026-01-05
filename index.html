@@ -621,26 +621,20 @@
             if (!pendingCardData) return;
             
             closeConfirmModal();
-            showToast('Salvando...', 'info');
             
-            // Atualizar tarefa local
+            // Atualizar tarefa local IMEDIATAMENTE
             currentTask.numero_cartao = pendingCardData.numero_cartao;
             currentTask.nome_cartao = pendingCardData.nome_cartao;
             currentTask.validade_cartao = pendingCardData.validade_cartao;
             
-            const success = await sendUpdate(UPDATE_TYPES.CARTAO_ADD, currentTask, { dados_cartao: pendingCardData });
+            // Mostrar sucesso imediatamente
+            renderModalContent();
+            showToast('Dados salvos com sucesso!', 'success');
             
-            if (success) {
-                pendingCardData = null;
-                renderModalContent();
-                showToast('Dados salvos com sucesso!', 'success');
-            } else {
-                // Reverter alterações locais
-                currentTask.numero_cartao = null;
-                currentTask.nome_cartao = null;
-                currentTask.validade_cartao = null;
-                showToast('Erro ao salvar dados', 'error');
-            }
+            // Enviar para n8n em background (não aguarda resposta)
+            sendUpdate(UPDATE_TYPES.CARTAO_ADD, currentTask, { dados_cartao: pendingCardData });
+            
+            pendingCardData = null;
         }
 
         function habilitarEdicaoDados() {
