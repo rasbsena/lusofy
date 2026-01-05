@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lusofy - v1.1</title>
+    <title>Lusofy - v1.2</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@300;400;500;600;700&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -27,10 +27,6 @@
             --status-em-andamento: #3b82f6;
             --status-concluido: #22c55e;
             --status-bloqueado: #ef4444;
-            --tipo-bloqueio-mapa: #8b5cf6;
-            --tipo-coletar-dados: #f59e0b;
-            --tipo-cobranca-digitada: #ec4899;
-            --tipo-checar-tarifarios: #06b6d4;
         }
         body { font-family: 'Montserrat', sans-serif; background: linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-secondary) 100%); min-height: 100vh; color: var(--text-primary); }
         h1, h2, h3, h4, h5, h6, .title-font { font-family: 'Oswald', sans-serif; }
@@ -103,7 +99,10 @@
         .modal-field-value { font-size: 0.9rem; color: var(--text-primary); font-weight: 500; }
         .modal-field-value.editable { cursor: pointer; display: flex; align-items: center; gap: 8px; }
         .modal-field-value.editable:hover { color: var(--accent); }
-        .modal-field-value.editable svg { width: 14px; height: 14px; opacity: 0.5; }
+        .modal-field-value.editable svg { width: 14px; height: 14px; opacity: 0.5; flex-shrink: 0; }
+        .status-select-wrapper { width: 100%; }
+        .status-select-wrapper select { width: 100%; padding: 8px 12px; background: var(--bg-column); border: 2px solid var(--accent); border-radius: 6px; color: var(--text-primary); font-family: 'Montserrat', sans-serif; font-size: 0.85rem; cursor: pointer; appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23ffcf00' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 12px center; padding-right: 36px; }
+        .status-select-wrapper select:focus { outline: none; }
         .cronometro { display: flex; align-items: center; gap: 8px; font-family: 'Oswald', monospace; font-size: 1rem; color: var(--accent); font-weight: 600; }
         .cronometro svg { width: 16px; height: 16px; }
         .descricao-box { background: var(--bg-card); border-radius: 8px; padding: 14px; border: 1px solid var(--border-color); min-height: 80px; font-size: 0.85rem; line-height: 1.5; color: var(--text-secondary); white-space: pre-wrap; }
@@ -133,8 +132,6 @@
         .btn-primary:hover { background: var(--accent-hover); transform: translateY(-1px); }
         .btn-secondary { padding: 10px 20px; background: var(--bg-card); border: 2px solid var(--border-color); border-radius: 6px; color: var(--text-primary); font-family: 'Oswald', sans-serif; font-size: 0.85rem; font-weight: 600; cursor: pointer; transition: all 0.2s ease; text-transform: uppercase; letter-spacing: 1px; }
         .btn-secondary:hover { border-color: var(--accent); }
-        .btn-danger { padding: 10px 20px; background: rgba(239, 68, 68, 0.2); border: 2px solid #ef4444; border-radius: 6px; color: #fca5a5; font-family: 'Oswald', sans-serif; font-size: 0.85rem; font-weight: 600; cursor: pointer; transition: all 0.2s ease; text-transform: uppercase; letter-spacing: 1px; }
-        .btn-danger:hover { background: rgba(239, 68, 68, 0.3); }
         .arquivos-section { margin-top: 10px; }
         .arquivos-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 10px; margin-bottom: 12px; }
         .arquivo-item { background: var(--bg-card); border-radius: 8px; border: 1px solid var(--border-color); overflow: hidden; cursor: pointer; transition: all 0.2s ease; }
@@ -170,7 +167,15 @@
         .empty-column p { font-size: 0.8rem; }
         .kanban-column.drag-over .column-cards { background: rgba(255, 207, 0, 0.05); border-radius: 8px; }
         .logo-sun { width: 36px; height: 36px; color: var(--accent); }
-        .dados-pagamento-section { background: var(--bg-card); border-radius: 8px; padding: 16px; border: 2px solid #ec4899; }
+        .dados-pagamento-section { background: var(--bg-card); border-radius: 8px; padding: 16px; border: 2px solid #f59e0b; }
+        .dados-pagamento-form { display: flex; flex-direction: column; gap: 12px; }
+        .dados-pagamento-form .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+        .dados-pagamento-form .form-row.full { grid-template-columns: 1fr; }
+        .dados-pagamento-form label { font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; display: block; margin-bottom: 4px; font-weight: 600; }
+        .dados-pagamento-form input { width: 100%; padding: 10px 12px; background: var(--bg-column); border: 2px solid var(--border-color); border-radius: 6px; color: var(--text-primary); font-family: 'Montserrat', sans-serif; font-size: 0.9rem; transition: all 0.2s ease; }
+        .dados-pagamento-form input:focus { outline: none; border-color: var(--accent); }
+        .dados-pagamento-form input::placeholder { color: var(--text-muted); }
+        .dados-cobranca-section { background: var(--bg-card); border-radius: 8px; padding: 16px; border: 2px solid #ec4899; }
         .dados-censurados { position: relative; }
         .dados-censurados .valor-censurado { filter: blur(8px); user-select: none; pointer-events: none; }
         .dados-censurados .overlay-censura { position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); display: flex; flex-direction: column; align-items: center; justify-content: center; border-radius: 8px; }
@@ -193,6 +198,7 @@
         .error-state h3 { font-family: 'Oswald', sans-serif; font-size: 1.2rem; margin-bottom: 8px; color: var(--text-primary); }
         .error-state p { color: var(--text-muted); margin-bottom: 16px; }
         @media (max-width: 768px) { .header { padding: 0 16px; } .header-nav { display: none; } .kanban-container { padding: 0 16px; } .kanban-column { width: 300px; min-width: 300px; } }
+        @media (max-width: 600px) { .dados-pagamento-form .form-row { grid-template-columns: 1fr; } }
     </style>
 </head>
 <body>
@@ -210,7 +216,7 @@
                 <line x1="15" y1="70" x2="85" y2="70" stroke="currentColor" stroke-width="3"/>
             </svg>
             <h1>LUSOFY</h1>
-            <span class="version">v1.1</span>
+            <span class="version">v1.2</span>
         </div>
         <nav class="header-nav">
             <button class="nav-btn active">OTA</button>
@@ -253,16 +259,13 @@
     <input type="file" id="fileInput" style="display:none;" accept="image/*,application/pdf,.doc,.docx,.xls,.xlsx" multiple>
     <div class="toast-container" id="toastContainer"></div>
     <script>
-        // URLs dos webhooks
         const WEBHOOK_LOAD = 'https://n8n.upperfy.com.br/webhook/0fec17a7-8654-45ff-8ad6-lsfy1';
         const WEBHOOK_UPDATE = 'https://n8n.upperfy.com.br/webhook/0fec17a7-8654-45ff-lsfy-draganddrop';
         const WEBHOOK_SECURITY = 'https://n8n.upperfy.com.br/webhook/0fec17a7-8654-45ff-lsfy-scritypht';
         const SEARCH_URL = 'https://n8n.upperfy.com.br/webhook/0fec17a7-8654-45ff-8ad6-lsfysearchpeople';
         
-        // Tipos de atualização
-        const UPDATE_TYPES = { STATUS_CHANGE: 1, COMMENT: 2, FILE_UPLOAD: 3, DATA_UPDATE: 4, RESPONSAVEL_CHANGE: 5, TIPO_CHANGE: 6 };
+        const UPDATE_TYPES = { STATUS_CHANGE: 1, COMMENT: 2, FILE_UPLOAD: 3, DATA_UPDATE: 4, RESPONSAVEL_CHANGE: 5, TIPO_CHANGE: 6, CARTAO_ADD: 7 };
 
-        // Configuração de TIPOS (colunas do kanban)
         const TIPO_CONFIG = {
             'bloqueio_mapa': { label: 'Bloqueio de Mapa', color: '#8b5cf6' },
             'coletar_dados': { label: 'Coletar Dados de Pagamento', color: '#f59e0b' },
@@ -271,7 +274,6 @@
         };
         const TIPO_ORDER = ['bloqueio_mapa', 'coletar_dados', 'cobranca_digitada', 'checar_tarifarios'];
 
-        // Configuração de STATUS (badge no card)
         const STATUS_CONFIG = {
             'nao_iniciado': { label: 'Não Iniciado', color: '#6b7280' },
             'em_andamento': { label: 'Em Andamento', color: '#3b82f6' },
@@ -283,72 +285,29 @@
         let currentTask = null;
         let draggedCard = null;
         let cameraStream = null;
-        
-        // Dados de pagamento temporários (limpos após 3 min ou ao concluir)
-        let paymentDataCache = {}; // { taskId: { data: {...}, timer: timeoutId, expiresAt: timestamp } }
+        let paymentDataCache = {};
 
-        // LocalStorage
         function getLocalStorage() {
-            try { 
-                const data = localStorage.getItem('lusofy_data'); 
-                return data ? JSON.parse(data) : { user: null, lastSync: null, preferences: {} }; 
-            } catch (e) { 
-                return { user: null, lastSync: null, preferences: {} }; 
-            }
+            try { const data = localStorage.getItem('lusofy_data'); return data ? JSON.parse(data) : { user: null, lastSync: null, preferences: {} }; }
+            catch (e) { return { user: null, lastSync: null, preferences: {} }; }
         }
-        
-        function setLocalStorage(data) { 
-            try { 
-                localStorage.setItem('lusofy_data', JSON.stringify(data)); 
-            } catch (e) { 
-                console.error('Erro localStorage:', e); 
-            } 
-        }
-        
-        function updateLocalStorage(updates) { 
-            const current = getLocalStorage(); 
-            setLocalStorage({ ...current, ...updates, lastSync: new Date().toISOString() }); 
-        }
+        function setLocalStorage(data) { try { localStorage.setItem('lusofy_data', JSON.stringify(data)); } catch (e) { console.error('Erro localStorage:', e); } }
+        function updateLocalStorage(updates) { const current = getLocalStorage(); setLocalStorage({ ...current, ...updates, lastSync: new Date().toISOString() }); }
 
-        // Limpar dados de pagamento do cache e localStorage
         function clearPaymentData(taskId) {
-            if (paymentDataCache[taskId]) {
-                clearTimeout(paymentDataCache[taskId].timer);
-                delete paymentDataCache[taskId];
-            }
-            // Remove do localStorage também
+            if (paymentDataCache[taskId]) { clearTimeout(paymentDataCache[taskId].timer); delete paymentDataCache[taskId]; }
             const stored = getLocalStorage();
-            if (stored.paymentData && stored.paymentData[taskId]) {
-                delete stored.paymentData[taskId];
-                setLocalStorage(stored);
-            }
-            // Re-renderiza modal se estiver aberto
-            if (currentTask && currentTask.id === taskId) {
-                renderModalContent();
-            }
+            if (stored.paymentData && stored.paymentData[taskId]) { delete stored.paymentData[taskId]; setLocalStorage(stored); }
+            if (currentTask && currentTask.id === taskId) { renderModalContent(); }
         }
 
-        // Armazenar dados de pagamento com timer de limpeza
         function storePaymentData(taskId, data, clearAfterSeconds = 180) {
-            // Limpa timer anterior se existir
-            if (paymentDataCache[taskId]) {
-                clearTimeout(paymentDataCache[taskId].timer);
-            }
-            
+            if (paymentDataCache[taskId]) { clearTimeout(paymentDataCache[taskId].timer); }
             const expiresAt = Date.now() + (clearAfterSeconds * 1000);
-            const timer = setTimeout(() => {
-                clearPaymentData(taskId);
-                showToast('Dados de pagamento expirados', 'info');
-            }, clearAfterSeconds * 1000);
-            
-            paymentDataCache[taskId] = {
-                data: data,
-                timer: timer,
-                expiresAt: expiresAt
-            };
+            const timer = setTimeout(() => { clearPaymentData(taskId); showToast('Dados de pagamento expirados', 'info'); }, clearAfterSeconds * 1000);
+            paymentDataCache[taskId] = { data: data, timer: timer, expiresAt: expiresAt };
         }
 
-        // Obter tempo restante para expiração
         function getPaymentDataTimeRemaining(taskId) {
             if (!paymentDataCache[taskId]) return 0;
             const remaining = paymentDataCache[taskId].expiresAt - Date.now();
@@ -357,32 +316,13 @@
 
         async function sendUpdate(updateType, card, additionalData = {}) {
             const localData = getLocalStorage();
-            const payload = { 
-                update_type: updateType, 
-                update_type_name: Object.keys(UPDATE_TYPES).find(key => UPDATE_TYPES[key] === updateType), 
-                timestamp: new Date().toISOString(), 
-                card: card, 
-                local_storage: localData, 
-                ...additionalData 
-            };
+            const payload = { update_type: updateType, update_type_name: Object.keys(UPDATE_TYPES).find(key => UPDATE_TYPES[key] === updateType), timestamp: new Date().toISOString(), card: card, local_storage: localData, ...additionalData };
             try { 
-                const response = await fetch(WEBHOOK_UPDATE, { 
-                    method: 'POST', 
-                    headers: { 'Content-Type': 'application/json' }, 
-                    body: JSON.stringify(payload) 
-                });
+                const response = await fetch(WEBHOOK_UPDATE, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
                 const result = await response.json();
-                
-                // Verifica se deve limpar dados de pagamento
-                if (result.clear_payment_data) {
-                    clearPaymentData(card.id);
-                }
-                
+                if (result.clear_payment_data) { clearPaymentData(card.id); }
                 return response.ok; 
-            } catch (error) { 
-                console.error('Erro ao enviar:', error); 
-                return false; 
-            }
+            } catch (error) { console.error('Erro ao enviar:', error); return false; }
         }
 
         document.addEventListener('DOMContentLoaded', () => { loadTasks(); });
@@ -390,81 +330,34 @@
         async function loadTasks() {
             const board = document.getElementById('kanbanBoard');
             board.innerHTML = '<div class="loading"><div class="loading-spinner"></div></div>';
-            
             try {
                 const response = await fetch(WEBHOOK_LOAD);
                 if (!response.ok) throw new Error('Erro na resposta');
-                
                 const data = await response.json();
                 tasks = data.tasks || data || [];
-                
-                if (!Array.isArray(tasks)) {
-                    tasks = [];
-                }
-                
+                if (!Array.isArray(tasks)) { tasks = []; }
                 updateLocalStorage({ tasksLoaded: true });
                 renderBoard();
-                
             } catch (error) {
                 console.error('Erro ao carregar:', error);
-                board.innerHTML = `
-                    <div class="error-state">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <circle cx="12" cy="12" r="10"/>
-                            <path d="M12 8v4M12 16h.01"/>
-                        </svg>
-                        <h3>Erro ao carregar tarefas</h3>
-                        <p>Não foi possível conectar ao servidor</p>
-                        <button class="btn-primary" onclick="loadTasks()">Tentar novamente</button>
-                    </div>
-                `;
+                board.innerHTML = '<div class="error-state"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg><h3>Erro ao carregar tarefas</h3><p>Não foi possível conectar ao servidor</p><button class="btn-primary" onclick="loadTasks()">Tentar novamente</button></div>';
             }
         }
 
         function renderBoard() {
             const board = document.getElementById('kanbanBoard');
             board.innerHTML = '';
-            
             if (tasks.length === 0) {
-                board.innerHTML = `
-                    <div class="error-state">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <rect x="3" y="3" width="18" height="18" rx="2"/>
-                            <path d="M9 9h6M9 12h6M9 15h4"/>
-                        </svg>
-                        <h3>Nenhuma tarefa encontrada</h3>
-                        <p>Não há tarefas cadastradas no momento</p>
-                    </div>
-                `;
+                board.innerHTML = '<div class="error-state"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 9h6M9 12h6M9 15h4"/></svg><h3>Nenhuma tarefa encontrada</h3><p>Não há tarefas cadastradas no momento</p></div>';
                 return;
             }
-            
             TIPO_ORDER.forEach(tipo => {
                 const tipoConfig = TIPO_CONFIG[tipo];
-                // Filtra por TIPO e exclui concluídos
                 const tipoTasks = tasks.filter(t => t.tipo === tipo && t.status !== 'concluido');
                 const column = document.createElement('div');
                 column.className = 'kanban-column';
                 column.dataset.tipo = tipo;
-                column.innerHTML = `
-                    <div class="column-header">
-                        <div class="column-title">
-                            <div class="column-tipo-dot" style="background: ${tipoConfig.color}"></div>
-                            <span class="column-name">${tipoConfig.label}</span>
-                        </div>
-                        <span class="column-count">${tipoTasks.length}</span>
-                    </div>
-                    <div class="column-cards" data-tipo="${tipo}">
-                        ${tipoTasks.length === 0 ? `
-                            <div class="empty-column">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                                    <rect x="3" y="3" width="18" height="18" rx="2"/>
-                                    <path d="M9 9h6M9 12h6M9 15h4"/>
-                                </svg>
-                                <p>Nenhuma tarefa</p>
-                            </div>
-                        ` : tipoTasks.map(task => renderCard(task)).join('')}
-                    </div>`;
+                column.innerHTML = '<div class="column-header"><div class="column-title"><div class="column-tipo-dot" style="background: ' + tipoConfig.color + '"></div><span class="column-name">' + tipoConfig.label + '</span></div><span class="column-count">' + tipoTasks.length + '</span></div><div class="column-cards" data-tipo="' + tipo + '">' + (tipoTasks.length === 0 ? '<div class="empty-column"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 9h6M9 12h6M9 15h4"/></svg><p>Nenhuma tarefa</p></div>' : tipoTasks.map(task => renderCard(task)).join('')) + '</div>';
                 board.appendChild(column);
             });
             setupDragAndDrop();
@@ -475,460 +368,192 @@
             const statusConfig = STATUS_CONFIG[task.status] || STATUS_CONFIG['nao_iniciado'];
             const commentsCount = task.comentarios?.length || 0;
             const arquivosCount = task.arquivos?.length || 0;
-            
-            return `
-                <div class="task-card" data-id="${task.id}" draggable="true" onclick="openModal(${task.id})">
-                    <div class="task-card-header">
-                        <span class="task-title">${task.nome}</span>
-                    </div>
-                    <div class="task-badges">
-                        <span class="task-status-badge status-${task.status}">${statusConfig.label}</span>
-                        ${task.prioridade ? `<span class="task-priority priority-${task.prioridade}">${task.prioridade}</span>` : ''}
-                    </div>
-                    <div class="task-card-info">
-                        <div class="task-info-row">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <rect x="3" y="4" width="18" height="18" rx="2"/>
-                                <path d="M16 2v4M8 2v4M3 10h18"/>
-                            </svg>
-                            <span>Prazo: ${formatDate(task.prazo)}</span>
-                        </div>
-                        ${arquivosCount > 0 ? `
-                            <div class="task-info-row">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <path d="M21.44 11.05l-9.19 9.19a6 6 0 01-8.49-8.49l9.19-9.19a4 4 0 015.66 5.66l-9.2 9.19a2 2 0 01-2.83-2.83l8.49-8.48"/>
-                                </svg>
-                                <span>${arquivosCount} arquivo(s)</span>
-                            </div>
-                        ` : ''}
-                    </div>
-                    <div class="task-card-footer">
-                        <div class="task-responsavel">
-                            <div class="responsavel-avatar">${iniciais}</div>
-                            <span class="responsavel-nome">${task.responsavel?.nome || 'N/A'}</span>
-                        </div>
-                        ${commentsCount > 0 ? `
-                            <div class="task-comments">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/>
-                                </svg>
-                                <span>${commentsCount}</span>
-                            </div>
-                        ` : ''}
-                    </div>
-                </div>`;
+            return '<div class="task-card" data-id="' + task.id + '" draggable="true" onclick="openModal(' + task.id + ')"><div class="task-card-header"><span class="task-title">' + task.nome + '</span></div><div class="task-badges"><span class="task-status-badge status-' + task.status + '">' + statusConfig.label + '</span>' + (task.prioridade ? '<span class="task-priority priority-' + task.prioridade + '">' + task.prioridade + '</span>' : '') + '</div><div class="task-card-info"><div class="task-info-row"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg><span>Prazo: ' + formatDate(task.prazo) + '</span></div>' + (arquivosCount > 0 ? '<div class="task-info-row"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.44 11.05l-9.19 9.19a6 6 0 01-8.49-8.49l9.19-9.19a4 4 0 015.66 5.66l-9.2 9.19a2 2 0 01-2.83-2.83l8.49-8.48"/></svg><span>' + arquivosCount + ' arquivo(s)</span></div>' : '') + '</div><div class="task-card-footer"><div class="task-responsavel"><div class="responsavel-avatar">' + iniciais + '</div><span class="responsavel-nome">' + (task.responsavel?.nome || 'N/A') + '</span></div>' + (commentsCount > 0 ? '<div class="task-comments"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg><span>' + commentsCount + '</span></div>' : '') + '</div></div>';
         }
 
         function setupDragAndDrop() {
             const cards = document.querySelectorAll('.task-card');
             const columns = document.querySelectorAll('.column-cards');
-            cards.forEach(card => { 
-                card.addEventListener('dragstart', handleDragStart); 
-                card.addEventListener('dragend', handleDragEnd); 
-            });
-            columns.forEach(column => { 
-                column.addEventListener('dragover', handleDragOver); 
-                column.addEventListener('drop', handleDrop); 
-                column.addEventListener('dragleave', handleDragLeave); 
-            });
+            cards.forEach(card => { card.addEventListener('dragstart', handleDragStart); card.addEventListener('dragend', handleDragEnd); });
+            columns.forEach(column => { column.addEventListener('dragover', handleDragOver); column.addEventListener('drop', handleDrop); column.addEventListener('dragleave', handleDragLeave); });
         }
-        
-        function handleDragStart(e) { 
-            draggedCard = e.target; 
-            e.target.classList.add('dragging'); 
-            e.dataTransfer.effectAllowed = 'move'; 
-        }
-        
-        function handleDragEnd(e) { 
-            e.target.classList.remove('dragging'); 
-            document.querySelectorAll('.kanban-column').forEach(col => col.classList.remove('drag-over')); 
-            draggedCard = null; 
-        }
-        
-        function handleDragOver(e) { 
-            e.preventDefault(); 
-            e.dataTransfer.dropEffect = 'move'; 
-            e.currentTarget.closest('.kanban-column').classList.add('drag-over'); 
-        }
-        
-        function handleDragLeave(e) { 
-            e.currentTarget.closest('.kanban-column').classList.remove('drag-over'); 
-        }
+        function handleDragStart(e) { draggedCard = e.target; e.target.classList.add('dragging'); e.dataTransfer.effectAllowed = 'move'; }
+        function handleDragEnd(e) { e.target.classList.remove('dragging'); document.querySelectorAll('.kanban-column').forEach(col => col.classList.remove('drag-over')); draggedCard = null; }
+        function handleDragOver(e) { e.preventDefault(); e.dataTransfer.dropEffect = 'move'; e.currentTarget.closest('.kanban-column').classList.add('drag-over'); }
+        function handleDragLeave(e) { e.currentTarget.closest('.kanban-column').classList.remove('drag-over'); }
         
         async function handleDrop(e) {
             e.preventDefault();
             const column = e.currentTarget;
             const newTipo = column.dataset.tipo;
             column.closest('.kanban-column').classList.remove('drag-over');
-            
             if (draggedCard) {
                 const taskId = parseInt(draggedCard.dataset.id);
                 const task = tasks.find(t => t.id === taskId);
-                
                 if (task && task.tipo !== newTipo) {
                     const oldTipo = task.tipo;
                     task.tipo = newTipo;
                     renderBoard();
-                    
-                    const success = await sendUpdate(UPDATE_TYPES.TIPO_CHANGE, task, { 
-                        old_tipo: oldTipo, 
-                        new_tipo: newTipo 
-                    });
-                    
-                    if (success) { 
-                        showToast('Tipo atualizado!', 'success'); 
-                    } else { 
-                        task.tipo = oldTipo; 
-                        renderBoard(); 
-                        showToast('Erro ao atualizar', 'error'); 
-                    }
+                    const success = await sendUpdate(UPDATE_TYPES.TIPO_CHANGE, task, { old_tipo: oldTipo, new_tipo: newTipo });
+                    if (success) { showToast('Tipo atualizado!', 'success'); }
+                    else { task.tipo = oldTipo; renderBoard(); showToast('Erro ao atualizar', 'error'); }
                 }
             }
         }
 
-        function openModal(taskId) {
-            event.stopPropagation();
-            currentTask = tasks.find(t => t.id === taskId);
-            if (!currentTask) return;
-            document.getElementById('modalTitle').textContent = currentTask.nome;
-            renderModalContent();
-            document.getElementById('taskModal').classList.add('active');
-        }
-        
-        function closeModal() { 
-            document.getElementById('taskModal').classList.remove('active'); 
-            currentTask = null; 
-        }
+        function openModal(taskId) { event.stopPropagation(); currentTask = tasks.find(t => t.id === taskId); if (!currentTask) return; document.getElementById('modalTitle').textContent = currentTask.nome; renderModalContent(); document.getElementById('taskModal').classList.add('active'); }
+        function closeModal() { document.getElementById('taskModal').classList.remove('active'); currentTask = null; }
 
         function renderModalContent() {
             const modal = document.getElementById('modalBody');
             const cronometro = calcularCronometro(currentTask.inicio_previsto);
             const statusConfig = STATUS_CONFIG[currentTask.status] || STATUS_CONFIG['nao_iniciado'];
             const tipoConfig = TIPO_CONFIG[currentTask.tipo] || {};
+            const isColetarDados = currentTask.tipo === 'coletar_dados';
             const isCobrancaDigitada = currentTask.tipo === 'cobranca_digitada';
             const hasPaymentData = paymentDataCache[currentTask.id] && paymentDataCache[currentTask.id].data;
             
-            modal.innerHTML = `
-                <div class="modal-section">
-                    <div class="modal-grid">
-                        <div class="modal-field">
-                            <div class="modal-field-label">Tipo</div>
-                            <div class="modal-field-value">
-                                <span style="display: inline-flex; align-items: center; gap: 8px;">
-                                    <span style="width: 10px; height: 10px; border-radius: 50%; background: ${tipoConfig.color || '#666'}"></span>
-                                    ${tipoConfig.label || currentTask.tipo}
-                                </span>
-                            </div>
-                        </div>
-                        <div class="modal-field">
-                            <div class="modal-field-label">Status</div>
-                            <div class="modal-field-value editable" onclick="changeStatus()">
-                                <span style="display: inline-flex; align-items: center; gap: 8px;">
-                                    <span style="width: 10px; height: 10px; border-radius: 50%; background: ${statusConfig.color}"></span>
-                                    ${statusConfig.label}
-                                </span>
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/>
-                                    <path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/>
-                                </svg>
-                            </div>
-                        </div>
-                        <div class="modal-field">
-                            <div class="modal-field-label">Prioridade</div>
-                            <div class="modal-field-value">
-                                ${currentTask.prioridade ? `<span class="task-priority priority-${currentTask.prioridade}">${currentTask.prioridade}</span>` : '—'}
-                            </div>
-                        </div>
-                        <div class="modal-field">
-                            <div class="modal-field-label">Prazo</div>
-                            <div class="modal-field-value editable" onclick="editDate('prazo')">
-                                <span>${formatDate(currentTask.prazo)}</span>
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/>
-                                    <path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/>
-                                </svg>
-                            </div>
-                        </div>
-                        <div class="modal-field">
-                            <div class="modal-field-label">Início Previsto</div>
-                            <div class="modal-field-value editable" onclick="editDate('inicio_previsto')">
-                                <span>${formatDate(currentTask.inicio_previsto)}</span>
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/>
-                                    <path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/>
-                                </svg>
-                            </div>
-                        </div>
-                        <div class="modal-field">
-                            <div class="modal-field-label">Tempo desde início</div>
-                            <div class="cronometro" id="cronometro">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <circle cx="12" cy="12" r="10"/>
-                                    <path d="M12 6v6l4 2"/>
-                                </svg>
-                                <span>${cronometro}</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="modal-section">
-                    <div class="modal-section-title">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/>
-                            <circle cx="12" cy="7" r="4"/>
-                        </svg>
-                        Responsável
-                    </div>
-                    <div class="responsavel-search">
-                        <input type="text" class="responsavel-input" id="responsavelInput" 
-                            value="${currentTask.responsavel?.nome || ''}" 
-                            placeholder="Digite para buscar..." 
-                            oninput="searchResponsavel(this.value)">
-                        <div class="responsavel-dropdown" id="responsavelDropdown"></div>
-                    </div>
-                </div>
-                
-                <div class="modal-section">
-                    <div class="modal-section-title">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/>
-                            <path d="M14 2v6h6M16 13H8M16 17H8M10 9H8"/>
-                        </svg>
-                        Descrição
-                    </div>
-                    <div class="descricao-box">${currentTask.descricao || 'Sem descrição'}</div>
-                </div>
-                
-                ${isCobrancaDigitada ? renderDadosPagamento(hasPaymentData) : ''}
-                
-                <div class="modal-section arquivos-section">
-                    <div class="modal-section-title">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M21.44 11.05l-9.19 9.19a6 6 0 01-8.49-8.49l9.19-9.19a4 4 0 015.66 5.66l-9.2 9.19a2 2 0 01-2.83-2.83l8.49-8.48"/>
-                        </svg>
-                        Arquivos (${currentTask.arquivos?.length || 0})
-                    </div>
-                    ${currentTask.arquivos && currentTask.arquivos.length > 0 ? `
-                        <div class="arquivos-grid">
-                            ${currentTask.arquivos.map((arq, idx) => `
-                                <div class="arquivo-item" onclick="openArquivo(${idx})">
-                                    <div class="arquivo-preview">
-                                        ${arq.tipo?.startsWith('image/') ? 
-                                            (arq.base64 ? 
-                                                `<img src="data:${arq.tipo};base64,${arq.base64}" alt="${arq.nome}">` : 
-                                                `<img src="${arq.url}" alt="${arq.nome}">`) : 
-                                            `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                                <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/>
-                                                <path d="M14 2v6h6"/>
-                                            </svg>`
-                                        }
-                                    </div>
-                                    <div class="arquivo-info">
-                                        <div class="arquivo-nome">${arq.nome}</div>
-                                    </div>
-                                </div>
-                            `).join('')}
-                        </div>
-                    ` : ''}
-                    <div class="upload-area" onclick="document.getElementById('fileInput').click()">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/>
-                            <polyline points="17 8 12 3 7 8"/>
-                            <line x1="12" y1="3" x2="12" y2="15"/>
-                        </svg>
-                        <p>Clique para anexar arquivo</p>
-                        <small>ou arraste aqui</small>
-                    </div>
-                    <div class="upload-buttons">
-                        <button class="btn-secondary" onclick="pasteFromClipboard()">
-                            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" style="margin-right:6px;vertical-align:middle;">
-                                <rect x="9" y="9" width="13" height="13" rx="2"/>
-                                <path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/>
-                            </svg>
-                            Colar Print
-                        </button>
-                    </div>
-                </div>
-                
-                <div class="modal-section">
-                    <div class="modal-section-title">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/>
-                        </svg>
-                        Comentários (${currentTask.comentarios?.length || 0})
-                    </div>
-                    <div class="comentarios-list">
-                        ${currentTask.comentarios && currentTask.comentarios.length > 0 ? 
-                            currentTask.comentarios.map(c => `
-                                <div class="comentario-item">
-                                    <div class="comentario-header">
-                                        <div class="comentario-avatar">${getIniciais(c.autor_nome)}</div>
-                                        <span class="comentario-autor">${c.autor_nome}</span>
-                                        <span class="comentario-data">${formatDateTime(c.criado_em)}</span>
-                                    </div>
-                                    <div class="comentario-texto">${c.texto}</div>
-                                </div>
-                            `).join('') : 
-                            '<p style="color: var(--text-muted); font-size: 0.85rem;">Nenhum comentário</p>'
-                        }
-                    </div>
-                    <div class="comentario-form">
-                        <textarea class="comentario-textarea" id="novoComentario" placeholder="Escreva um comentário..."></textarea>
-                        <button class="btn-primary" onclick="addComentario()" style="align-self:flex-end;">Salvar</button>
-                    </div>
-                </div>
-                
-                <div class="modal-section" style="display:flex;gap:10px;justify-content:flex-end;padding-top:10px;border-top:1px solid var(--border-color);">
-                    <button class="btn-primary" onclick="marcarConcluido()">
-                        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" style="margin-right:6px;vertical-align:middle;">
-                            <path d="M22 11.08V12a10 10 0 11-5.93-9.14"/>
-                            <path d="M22 4L12 14.01l-3-3"/>
-                        </svg>
-                        Marcar como Concluído
-                    </button>
-                </div>`;
+            let statusOptions = '';
+            Object.entries(STATUS_CONFIG).forEach(([key, val]) => {
+                statusOptions += '<option value="' + key + '"' + (currentTask.status === key ? ' selected' : '') + '>' + val.label + '</option>';
+            });
+            
+            modal.innerHTML = '<div class="modal-section"><div class="modal-grid">' +
+                '<div class="modal-field"><div class="modal-field-label">Tipo</div><div class="modal-field-value"><span style="display: inline-flex; align-items: center; gap: 8px;"><span style="width: 10px; height: 10px; border-radius: 50%; background: ' + (tipoConfig.color || '#666') + '"></span>' + (tipoConfig.label || currentTask.tipo) + '</span></div></div>' +
+                '<div class="modal-field"><div class="modal-field-label">Status</div><div class="modal-field-value"><div class="status-select-wrapper"><select onchange="updateStatusDirect(this.value)">' + statusOptions + '</select></div></div></div>' +
+                '<div class="modal-field"><div class="modal-field-label">Prioridade</div><div class="modal-field-value">' + (currentTask.prioridade ? '<span class="task-priority priority-' + currentTask.prioridade + '">' + currentTask.prioridade + '</span>' : '—') + '</div></div>' +
+                '<div class="modal-field"><div class="modal-field-label">Prazo</div><div class="modal-field-value editable" onclick="editDate(\'prazo\')"><span>' + formatDate(currentTask.prazo) + '</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></div></div>' +
+                '<div class="modal-field"><div class="modal-field-label">Início Previsto</div><div class="modal-field-value editable" onclick="editDate(\'inicio_previsto\')"><span>' + formatDate(currentTask.inicio_previsto) + '</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></div></div>' +
+                '<div class="modal-field"><div class="modal-field-label">Tempo desde início</div><div class="cronometro" id="cronometro"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg><span>' + cronometro + '</span></div></div>' +
+                '</div></div>' +
+                '<div class="modal-section"><div class="modal-section-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>Responsável</div><div class="responsavel-search"><input type="text" class="responsavel-input" id="responsavelInput" value="' + (currentTask.responsavel?.nome || '') + '" placeholder="Digite para buscar..." oninput="searchResponsavel(this.value)"><div class="responsavel-dropdown" id="responsavelDropdown"></div></div></div>' +
+                '<div class="modal-section"><div class="modal-section-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><path d="M14 2v6h6M16 13H8M16 17H8M10 9H8"/></svg>Descrição</div><div class="descricao-box">' + (currentTask.descricao || 'Sem descrição') + '</div></div>' +
+                (isColetarDados ? renderFormularioDadosPagamento() : '') +
+                (isCobrancaDigitada ? renderDadosPagamentoCobranca(hasPaymentData) : '') +
+                renderArquivosSection() +
+                renderComentariosSection() +
+                '<div class="modal-section" style="display:flex;gap:10px;justify-content:flex-end;padding-top:10px;border-top:1px solid var(--border-color);"><button class="btn-primary" onclick="marcarConcluido()"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" style="margin-right:6px;vertical-align:middle;"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><path d="M22 4L12 14.01l-3-3"/></svg>Marcar como Concluído</button></div>';
             
             updateCronometro();
-            
-            // Atualiza timer de dados de pagamento se visível
-            if (isCobrancaDigitada && hasPaymentData) {
-                updatePaymentTimer();
-            }
+            if (isCobrancaDigitada && hasPaymentData) { updatePaymentTimer(); }
         }
 
-        function renderDadosPagamento(revelado) {
+        function renderArquivosSection() {
+            let arquivosHtml = '';
+            if (currentTask.arquivos && currentTask.arquivos.length > 0) {
+                arquivosHtml = '<div class="arquivos-grid">';
+                currentTask.arquivos.forEach((arq, idx) => {
+                    let preview = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><path d="M14 2v6h6"/></svg>';
+                    if (arq.tipo && arq.tipo.startsWith('image/')) {
+                        if (arq.base64) { preview = '<img src="data:' + arq.tipo + ';base64,' + arq.base64 + '" alt="' + arq.nome + '">'; }
+                        else if (arq.url) { preview = '<img src="' + arq.url + '" alt="' + arq.nome + '">'; }
+                    }
+                    arquivosHtml += '<div class="arquivo-item" onclick="openArquivo(' + idx + ')"><div class="arquivo-preview">' + preview + '</div><div class="arquivo-info"><div class="arquivo-nome">' + arq.nome + '</div></div></div>';
+                });
+                arquivosHtml += '</div>';
+            }
+            return '<div class="modal-section arquivos-section"><div class="modal-section-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.44 11.05l-9.19 9.19a6 6 0 01-8.49-8.49l9.19-9.19a4 4 0 015.66 5.66l-9.2 9.19a2 2 0 01-2.83-2.83l8.49-8.48"/></svg>Arquivos (' + (currentTask.arquivos?.length || 0) + ')</div>' + arquivosHtml + '<div class="upload-area" onclick="document.getElementById(\'fileInput\').click()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg><p>Clique para anexar arquivo</p><small>ou arraste aqui</small></div><div class="upload-buttons"><button class="btn-secondary" onclick="pasteFromClipboard()"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" style="margin-right:6px;vertical-align:middle;"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>Colar Print</button></div></div>';
+        }
+
+        function renderComentariosSection() {
+            let comentariosHtml = '<p style="color: var(--text-muted); font-size: 0.85rem;">Nenhum comentário</p>';
+            if (currentTask.comentarios && currentTask.comentarios.length > 0) {
+                comentariosHtml = '';
+                currentTask.comentarios.forEach(c => {
+                    comentariosHtml += '<div class="comentario-item"><div class="comentario-header"><div class="comentario-avatar">' + getIniciais(c.autor_nome) + '</div><span class="comentario-autor">' + c.autor_nome + '</span><span class="comentario-data">' + formatDateTime(c.criado_em) + '</span></div><div class="comentario-texto">' + c.texto + '</div></div>';
+                });
+            }
+            return '<div class="modal-section"><div class="modal-section-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>Comentários (' + (currentTask.comentarios?.length || 0) + ')</div><div class="comentarios-list">' + comentariosHtml + '</div><div class="comentario-form"><textarea class="comentario-textarea" id="novoComentario" placeholder="Escreva um comentário..."></textarea><button class="btn-primary" onclick="addComentario()" style="align-self:flex-end;">Salvar</button></div></div>';
+        }
+
+        function renderFormularioDadosPagamento() {
+            return '<div class="modal-section"><div class="modal-section-title" style="color:#f59e0b;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>Dados de Pagamento</div>' +
+                '<div class="dados-pagamento-section"><div class="dados-pagamento-form">' +
+                '<div class="form-row full"><div><label>Número do Cartão</label><input type="text" id="inputNumeroCartao" value="' + (currentTask.numero_cartao || '') + '" placeholder="0000 0000 0000 0000" maxlength="19" oninput="formatCartaoNumero(this)"></div></div>' +
+                '<div class="form-row full"><div><label>Nome no Cartão</label><input type="text" id="inputNomeCartao" value="' + (currentTask.nome_cartao || '') + '" placeholder="NOME COMO ESTÁ NO CARTÃO" style="text-transform: uppercase;" oninput="this.value = this.value.toUpperCase()"></div></div>' +
+                '<div class="form-row"><div><label>Validade</label><input type="text" id="inputValidadeCartao" value="' + (currentTask.validade_cartao || '') + '" placeholder="MM/AA" maxlength="5" oninput="formatValidade(this)"></div><div><label>CVC</label><input type="text" id="inputCvcCartao" value="" placeholder="000" maxlength="4" oninput="this.value = this.value.replace(/\\D/g, \'\')"></div></div>' +
+                '<div style="display:flex;justify-content:flex-end;margin-top:8px;"><button class="btn-primary" onclick="salvarDadosCartao()"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" style="margin-right:6px;vertical-align:middle;"><path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>Salvar Dados</button></div>' +
+                '</div></div></div>';
+        }
+
+        function renderDadosPagamentoCobranca(revelado) {
             if (revelado) {
                 const dados = paymentDataCache[currentTask.id].data;
                 const timeRemaining = getPaymentDataTimeRemaining(currentTask.id);
-                
-                return `
-                    <div class="modal-section">
-                        <div class="modal-section-title" style="color:#ec4899;">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <rect x="1" y="4" width="22" height="16" rx="2"/>
-                                <line x1="1" y1="10" x2="23" y2="10"/>
-                            </svg>
-                            Dados de Pagamento
-                        </div>
-                        <div class="dados-pagamento-section dados-revelados">
-                            <div class="campo-pagamento">
-                                <label>Número do Cartão</label>
-                                <span>${dados.numero_cartao || '—'}</span>
-                            </div>
-                            <div class="campo-pagamento">
-                                <label>Nome no Cartão</label>
-                                <span>${dados.nome_cartao || '—'}</span>
-                            </div>
-                            <div class="campo-pagamento">
-                                <label>Validade</label>
-                                <span>${dados.validade_cartao || '—'}</span>
-                            </div>
-                            <div class="campo-pagamento">
-                                <label>CVC</label>
-                                <span>${dados.cvc_cartao || '—'}</span>
-                            </div>
-                            <div class="dados-timer">
-                                <span id="paymentTimer">Expira em: ${formatTimer(timeRemaining)}</span>
-                            </div>
-                        </div>
-                    </div>`;
+                return '<div class="modal-section"><div class="modal-section-title" style="color:#ec4899;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>Dados de Pagamento</div>' +
+                    '<div class="dados-cobranca-section dados-revelados">' +
+                    '<div class="campo-pagamento"><label>Número do Cartão</label><span>' + (dados.numero_cartao || '—') + '</span></div>' +
+                    '<div class="campo-pagamento"><label>Nome no Cartão</label><span>' + (dados.nome_cartao || '—') + '</span></div>' +
+                    '<div class="campo-pagamento"><label>Validade</label><span>' + (dados.validade_cartao || '—') + '</span></div>' +
+                    '<div class="campo-pagamento"><label>CVC</label><span>' + (dados.cvc_cartao || '—') + '</span></div>' +
+                    '<div class="dados-timer"><span id="paymentTimer">Expira em: ' + formatTimer(timeRemaining) + '</span></div>' +
+                    '</div></div>';
             }
-            
-            return `
-                <div class="modal-section">
-                    <div class="modal-section-title" style="color:#ec4899;">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <rect x="1" y="4" width="22" height="16" rx="2"/>
-                            <line x1="1" y1="10" x2="23" y2="10"/>
-                        </svg>
-                        Dados de Pagamento
-                    </div>
-                    <div class="dados-pagamento-section dados-censurados">
-                        <div class="valor-censurado">
-                            <div class="campo-pagamento" style="margin-bottom:8px;padding:8px;background:var(--bg-column);border-radius:6px;">
-                                <label style="font-size:0.7rem;color:var(--text-muted);">Número</label>
-                                <span style="font-size:1rem;">•••• •••• •••• ••••</span>
-                            </div>
-                            <div class="campo-pagamento" style="margin-bottom:8px;padding:8px;background:var(--bg-column);border-radius:6px;">
-                                <label style="font-size:0.7rem;color:var(--text-muted);">Nome</label>
-                                <span style="font-size:1rem;">•••••••••••••</span>
-                            </div>
-                            <div class="campo-pagamento" style="margin-bottom:8px;padding:8px;background:var(--bg-column);border-radius:6px;">
-                                <label style="font-size:0.7rem;color:var(--text-muted);">Validade</label>
-                                <span style="font-size:1rem;">••/••</span>
-                            </div>
-                            <div class="campo-pagamento" style="padding:8px;background:var(--bg-column);border-radius:6px;">
-                                <label style="font-size:0.7rem;color:var(--text-muted);">CVC</label>
-                                <span style="font-size:1rem;">•••</span>
-                            </div>
-                        </div>
-                        <div class="overlay-censura">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <rect x="3" y="11" width="18" height="11" rx="2"/>
-                                <path d="M7 11V7a5 5 0 0110 0v4"/>
-                            </svg>
-                            <p>Dados protegidos<br><small>Tire uma foto para verificar identidade</small></p>
-                            <button class="btn-primary" onclick="requestCameraAccess()">
-                                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" style="margin-right:6px;vertical-align:middle;">
-                                    <path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/>
-                                    <circle cx="12" cy="13" r="4"/>
-                                </svg>
-                                Tirar Foto
-                            </button>
-                        </div>
-                    </div>
-                </div>`;
+            return '<div class="modal-section"><div class="modal-section-title" style="color:#ec4899;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>Dados de Pagamento</div>' +
+                '<div class="dados-cobranca-section dados-censurados">' +
+                '<div class="valor-censurado">' +
+                '<div class="campo-pagamento" style="margin-bottom:8px;padding:8px;background:var(--bg-column);border-radius:6px;"><label style="font-size:0.7rem;color:var(--text-muted);">Número</label><span style="font-size:1rem;">•••• •••• •••• ••••</span></div>' +
+                '<div class="campo-pagamento" style="margin-bottom:8px;padding:8px;background:var(--bg-column);border-radius:6px;"><label style="font-size:0.7rem;color:var(--text-muted);">Nome</label><span style="font-size:1rem;">•••••••••••••</span></div>' +
+                '<div class="campo-pagamento" style="margin-bottom:8px;padding:8px;background:var(--bg-column);border-radius:6px;"><label style="font-size:0.7rem;color:var(--text-muted);">Validade</label><span style="font-size:1rem;">••/••</span></div>' +
+                '<div class="campo-pagamento" style="padding:8px;background:var(--bg-column);border-radius:6px;"><label style="font-size:0.7rem;color:var(--text-muted);">CVC</label><span style="font-size:1rem;">•••</span></div>' +
+                '</div>' +
+                '<div class="overlay-censura"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg><p>Dados protegidos<br><small>Tire uma foto para verificar identidade</small></p><button class="btn-primary" onclick="requestCameraAccess()"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" style="margin-right:6px;vertical-align:middle;"><path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/><circle cx="12" cy="13" r="4"/></svg>Tirar Foto</button></div>' +
+                '</div></div>';
         }
 
-        function formatTimer(seconds) {
-            const mins = Math.floor(seconds / 60);
-            const secs = seconds % 60;
-            return `${mins}:${secs.toString().padStart(2, '0')}`;
+        function formatCartaoNumero(input) { let value = input.value.replace(/\D/g, ''); value = value.replace(/(\d{4})(?=\d)/g, '$1 '); input.value = value.substring(0, 19); }
+        function formatValidade(input) { let value = input.value.replace(/\D/g, ''); if (value.length >= 2) { value = value.substring(0, 2) + '/' + value.substring(2); } input.value = value.substring(0, 5); }
+
+        async function salvarDadosCartao() {
+            const numero = document.getElementById('inputNumeroCartao').value.trim();
+            const nome = document.getElementById('inputNomeCartao').value.trim();
+            const validade = document.getElementById('inputValidadeCartao').value.trim();
+            const cvc = document.getElementById('inputCvcCartao').value.trim();
+            if (!numero || !nome || !validade || !cvc) { showToast('Preencha todos os campos', 'error'); return; }
+            currentTask.numero_cartao = numero;
+            currentTask.nome_cartao = nome;
+            currentTask.validade_cartao = validade;
+            const dadosCartao = { numero_cartao: numero, nome_cartao: nome, validade_cartao: validade, cvc_cartao: cvc };
+            showToast('Salvando...', 'info');
+            const success = await sendUpdate(UPDATE_TYPES.CARTAO_ADD, currentTask, { dados_cartao: dadosCartao });
+            if (success) { document.getElementById('inputCvcCartao').value = ''; showToast('Dados salvos com sucesso!', 'success'); }
+            else { showToast('Erro ao salvar dados', 'error'); }
         }
+
+        async function updateStatusDirect(newStatus) {
+            const oldStatus = currentTask.status;
+            currentTask.status = newStatus;
+            if (newStatus === 'concluido') { clearPaymentData(currentTask.id); renderBoard(); closeModal(); showToast('Tarefa concluída!', 'success'); }
+            else { renderBoard(); showToast('Status atualizado!', 'success'); }
+            await sendUpdate(UPDATE_TYPES.STATUS_CHANGE, currentTask, { old_status: oldStatus, new_status: newStatus });
+        }
+
+        function formatTimer(seconds) { const mins = Math.floor(seconds / 60); const secs = seconds % 60; return mins + ':' + secs.toString().padStart(2, '0'); }
 
         function updatePaymentTimer() {
             if (!currentTask || !paymentDataCache[currentTask.id]) return;
-            
             const timerEl = document.getElementById('paymentTimer');
             if (timerEl) {
                 const remaining = getPaymentDataTimeRemaining(currentTask.id);
-                if (remaining > 0) {
-                    timerEl.textContent = `Expira em: ${formatTimer(remaining)}`;
-                    setTimeout(updatePaymentTimer, 1000);
-                } else {
-                    timerEl.textContent = 'Expirado';
-                }
+                if (remaining > 0) { timerEl.textContent = 'Expira em: ' + formatTimer(remaining); setTimeout(updatePaymentTimer, 1000); }
+                else { timerEl.textContent = 'Expirado'; }
             }
         }
 
-        // Camera functions
         async function requestCameraAccess() {
             try {
-                cameraStream = await navigator.mediaDevices.getUserMedia({ 
-                    video: { facingMode: 'user' }, 
-                    audio: false 
-                });
+                cameraStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user' }, audio: false });
                 const video = document.getElementById('cameraVideo');
                 video.srcObject = cameraStream;
                 document.getElementById('cameraModal').classList.add('active');
             } catch (error) {
                 console.error('Erro ao acessar câmera:', error);
-                if (error.name === 'NotAllowedError') {
-                    showToast('Permissão de câmera negada', 'error');
-                } else {
-                    showToast('Erro ao acessar câmera', 'error');
-                }
+                if (error.name === 'NotAllowedError') { showToast('Permissão de câmera negada', 'error'); }
+                else { showToast('Erro ao acessar câmera', 'error'); }
             }
         }
 
-        function cancelCamera() {
-            if (cameraStream) {
-                cameraStream.getTracks().forEach(track => track.stop());
-                cameraStream = null;
-            }
-            document.getElementById('cameraModal').classList.remove('active');
-        }
+        function cancelCamera() { if (cameraStream) { cameraStream.getTracks().forEach(track => track.stop()); cameraStream = null; } document.getElementById('cameraModal').classList.remove('active'); }
 
         async function capturePhoto() {
             const video = document.getElementById('cameraVideo');
@@ -938,94 +563,29 @@
             const ctx = canvas.getContext('2d');
             ctx.drawImage(video, 0, 0);
             const base64 = canvas.toDataURL('image/jpeg', 0.8).split(',')[1];
-            
             cancelCamera();
             showToast('Verificando...', 'info');
-            
-            const payload = {
-                photo_base64: base64,
-                timestamp: new Date().toISOString(),
-                local_storage: getLocalStorage(),
-                task_id: currentTask.id,
-                task_nome: currentTask.nome
-            };
-            
+            const payload = { photo_base64: base64, timestamp: new Date().toISOString(), local_storage: getLocalStorage(), task_id: currentTask.id, task_nome: currentTask.nome };
             try {
-                const response = await fetch(WEBHOOK_SECURITY, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload)
-                });
-                
+                const response = await fetch(WEBHOOK_SECURITY, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
                 const result = await response.json();
-                
-                if (result.success && result.dados_pagamento) {
-                    // Armazena dados com timer de limpeza
-                    const clearAfter = result.clear_after || 180;
-                    storePaymentData(currentTask.id, result.dados_pagamento, clearAfter);
-                    renderModalContent();
-                    showToast('Dados liberados!', 'success');
-                } else {
-                    showToast('Verificação falhou', 'error');
-                }
-            } catch (e) {
-                console.error('Erro ao enviar foto:', e);
-                showToast('Erro na verificação', 'error');
-            }
+                if (result.success && result.dados_pagamento) { const clearAfter = result.clear_after || 180; storePaymentData(currentTask.id, result.dados_pagamento, clearAfter); renderModalContent(); showToast('Dados liberados!', 'success'); }
+                else { showToast('Verificação falhou', 'error'); }
+            } catch (e) { console.error('Erro ao enviar foto:', e); showToast('Erro na verificação', 'error'); }
         }
 
-        // Status change
-        function changeStatus() {
-            const container = event.currentTarget;
-            const statusOptions = Object.entries(STATUS_CONFIG).map(([key, val]) => 
-                `<option value="${key}" ${currentTask.status === key ? 'selected' : ''}>${val.label}</option>`
-            ).join('');
-            container.innerHTML = `<select class="select-input" onchange="updateStatus(this.value)" style="width:100%;">${statusOptions}</select>`;
-            container.querySelector('select').focus();
-        }
+        async function marcarConcluido() { await updateStatusDirect('concluido'); }
 
-        async function updateStatus(newStatus) {
-            const oldStatus = currentTask.status;
-            currentTask.status = newStatus;
-            
-            if (newStatus === 'concluido') {
-                // Limpa dados de pagamento ao concluir
-                clearPaymentData(currentTask.id);
-                renderBoard();
-                closeModal();
-                showToast('Tarefa concluída!', 'success');
-            } else {
-                renderModalContent();
-            }
-            
-            await sendUpdate(UPDATE_TYPES.STATUS_CHANGE, currentTask, { 
-                old_status: oldStatus, 
-                new_status: newStatus 
-            });
-        }
-
-        async function marcarConcluido() {
-            await updateStatus('concluido');
-        }
-
-        // File handling
         document.getElementById('fileInput').addEventListener('change', async (e) => {
             const files = e.target.files;
             for (const file of files) {
                 const reader = new FileReader();
                 reader.onload = async (evt) => {
                     const base64 = evt.target.result.split(',')[1];
-                    const novoArquivo = { 
-                        nome: file.name, 
-                        tipo: file.type, 
-                        base64: base64, 
-                        criado_em: new Date().toISOString() 
-                    };
+                    const novoArquivo = { nome: file.name, tipo: file.type, base64: base64, criado_em: new Date().toISOString() };
                     currentTask.arquivos = currentTask.arquivos || [];
                     currentTask.arquivos.push(novoArquivo);
-                    await sendUpdate(UPDATE_TYPES.FILE_UPLOAD, currentTask, { 
-                        arquivo: { nome: file.name, tipo: file.type } 
-                    });
+                    await sendUpdate(UPDATE_TYPES.FILE_UPLOAD, currentTask, { arquivo: { nome: file.name, tipo: file.type } });
                     renderModalContent();
                     renderBoard();
                     showToast('Arquivo anexado!', 'success');
@@ -1045,17 +605,10 @@
                             const reader = new FileReader();
                             reader.onload = async (evt) => {
                                 const base64 = evt.target.result.split(',')[1];
-                                const novoArquivo = { 
-                                    nome: `print_${Date.now()}.png`, 
-                                    tipo: type, 
-                                    base64: base64, 
-                                    criado_em: new Date().toISOString() 
-                                };
+                                const novoArquivo = { nome: 'print_' + Date.now() + '.png', tipo: type, base64: base64, criado_em: new Date().toISOString() };
                                 currentTask.arquivos = currentTask.arquivos || [];
                                 currentTask.arquivos.push(novoArquivo);
-                                await sendUpdate(UPDATE_TYPES.FILE_UPLOAD, currentTask, { 
-                                    arquivo: { nome: novoArquivo.nome, tipo: type, source: 'clipboard' } 
-                                });
+                                await sendUpdate(UPDATE_TYPES.FILE_UPLOAD, currentTask, { arquivo: { nome: novoArquivo.nome, tipo: type, source: 'clipboard' } });
                                 renderModalContent();
                                 renderBoard();
                                 showToast('Print colado!', 'success');
@@ -1066,74 +619,37 @@
                     }
                 }
                 showToast('Nenhuma imagem no clipboard', 'error');
-            } catch (error) {
-                console.error('Erro clipboard:', error);
-                showToast('Erro ao acessar clipboard', 'error');
-            }
+            } catch (error) { console.error('Erro clipboard:', error); showToast('Erro ao acessar clipboard', 'error'); }
         }
 
         function openArquivo(idx) {
             const arq = currentTask.arquivos[idx];
-            
-            // Se tem URL, abre diretamente
-            if (arq.url) {
-                window.open(arq.url, '_blank');
-                return;
-            }
-            
-            // Se tem base64, converte para data URL
+            if (arq.url) { window.open(arq.url, '_blank'); return; }
             if (arq.base64) {
-                const dataUrl = `data:${arq.tipo};base64,${arq.base64}`;
-                if (arq.tipo?.startsWith('image/')) { 
-                    const win = window.open('', '_blank'); 
-                    win.document.write(`<img src="${dataUrl}" style="max-width:100%;">`); 
-                } else { 
-                    // Para outros arquivos, cria link de download
-                    const link = document.createElement('a');
-                    link.href = dataUrl;
-                    link.download = arq.nome;
-                    link.click();
-                }
+                const dataUrl = 'data:' + arq.tipo + ';base64,' + arq.base64;
+                if (arq.tipo && arq.tipo.startsWith('image/')) { const win = window.open('', '_blank'); win.document.write('<img src="' + dataUrl + '" style="max-width:100%;">'); }
+                else { const link = document.createElement('a'); link.href = dataUrl; link.download = arq.nome; link.click(); }
             }
         }
 
-        // Responsavel search
         let searchTimeout;
         async function searchResponsavel(query) {
             clearTimeout(searchTimeout);
             const dropdown = document.getElementById('responsavelDropdown');
-            
-            if (query.length < 3) { 
-                dropdown.classList.remove('active'); 
-                return; 
-            }
-            
+            if (query.length < 3) { dropdown.classList.remove('active'); return; }
             searchTimeout = setTimeout(async () => {
                 try {
-                    const response = await fetch(SEARCH_URL, { 
-                        method: 'POST', 
-                        headers: { 'Content-Type': 'application/json' }, 
-                        body: JSON.stringify({ query }) 
-                    });
+                    const response = await fetch(SEARCH_URL, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ query }) });
                     const pessoas = await response.json();
-                    
                     if (pessoas.length > 0) {
-                        dropdown.innerHTML = pessoas.map(p => `
-                            <div class="responsavel-option" onclick="selectResponsavel(${p.id}, '${(p.nome_completo||'').replace(/'/g, "\\'")}')">
-                                <div class="responsavel-option-avatar">${getIniciais(p.nome_completo)}</div>
-                                <div class="responsavel-option-info">
-                                    <div class="responsavel-option-name">${p.nome_completo}</div>
-                                    <div class="responsavel-option-email">${p.email||''}</div>
-                                </div>
-                            </div>
-                        `).join('');
+                        let html = '';
+                        pessoas.forEach(p => {
+                            html += '<div class="responsavel-option" onclick="selectResponsavel(' + p.id + ', \'' + (p.nome_completo||'').replace(/'/g, "\\'") + '\')"><div class="responsavel-option-avatar">' + getIniciais(p.nome_completo) + '</div><div class="responsavel-option-info"><div class="responsavel-option-name">' + p.nome_completo + '</div><div class="responsavel-option-email">' + (p.email||'') + '</div></div></div>';
+                        });
+                        dropdown.innerHTML = html;
                         dropdown.classList.add('active');
-                    } else { 
-                        dropdown.classList.remove('active'); 
-                    }
-                } catch (error) { 
-                    dropdown.classList.remove('active'); 
-                }
+                    } else { dropdown.classList.remove('active'); }
+                } catch (error) { dropdown.classList.remove('active'); }
             }, 300);
         }
         
@@ -1142,10 +658,7 @@
             document.getElementById('responsavelDropdown').classList.remove('active');
             const oldResp = currentTask.responsavel;
             currentTask.responsavel = { id, nome };
-            await sendUpdate(UPDATE_TYPES.RESPONSAVEL_CHANGE, currentTask, { 
-                old_responsavel: oldResp, 
-                new_responsavel: { id, nome } 
-            });
+            await sendUpdate(UPDATE_TYPES.RESPONSAVEL_CHANGE, currentTask, { old_responsavel: oldResp, new_responsavel: { id, nome } });
             renderBoard();
             showToast('Responsável atualizado!', 'success');
         }
@@ -1159,11 +672,7 @@
             input.onchange = async () => {
                 const oldVal = currentTask[field];
                 currentTask[field] = input.value;
-                await sendUpdate(UPDATE_TYPES.DATA_UPDATE, currentTask, { 
-                    field, 
-                    old_value: oldVal, 
-                    new_value: input.value 
-                });
+                await sendUpdate(UPDATE_TYPES.DATA_UPDATE, currentTask, { field, old_value: oldVal, new_value: input.value });
                 renderModalContent();
                 renderBoard();
                 showToast('Data atualizada!', 'success');
@@ -1176,17 +685,9 @@
         async function addComentario() {
             const texto = document.getElementById('novoComentario').value.trim();
             if (!texto) return;
-            
-            const novoComentario = { 
-                id: Date.now(), 
-                autor_id: 1, 
-                autor_nome: 'Usuário', 
-                texto, 
-                criado_em: new Date().toISOString() 
-            };
+            const novoComentario = { id: Date.now(), autor_id: 1, autor_nome: 'Usuário', texto, criado_em: new Date().toISOString() };
             currentTask.comentarios = currentTask.comentarios || [];
             currentTask.comentarios.push(novoComentario);
-            
             await sendUpdate(UPDATE_TYPES.COMMENT, currentTask, { comment: novoComentario });
             renderModalContent();
             renderBoard();
@@ -1195,69 +696,29 @@
 
         function calcularCronometro(inicioStr) {
             if (!inicioStr) return '—';
-            const inicio = new Date(inicioStr);
-            const agora = new Date();
-            const diff = agora - inicio;
-            
+            const inicio = new Date(inicioStr), agora = new Date(), diff = agora - inicio;
             if (diff < 0) return 'Não iniciado';
-            
-            const dias = Math.floor(diff / (1000*60*60*24));
-            const horas = Math.floor((diff % (1000*60*60*24)) / (1000*60*60));
-            const minutos = Math.floor((diff % (1000*60*60)) / (1000*60));
-            
-            return `${dias}d ${horas}h ${minutos}m`;
+            const dias = Math.floor(diff / (1000*60*60*24)), horas = Math.floor((diff % (1000*60*60*24)) / (1000*60*60)), minutos = Math.floor((diff % (1000*60*60)) / (1000*60));
+            return dias + 'd ' + horas + 'h ' + minutos + 'm';
         }
+        function updateCronometro() { if (!currentTask) return; const el = document.getElementById('cronometro'); if (el) { const span = el.querySelector('span'); if (span) span.textContent = calcularCronometro(currentTask.inicio_previsto); } setTimeout(updateCronometro, 60000); }
+        function getIniciais(nome) { if (!nome) return 'NA'; return nome.split(' ').map(n => n[0]).slice(0, 2).join('').toUpperCase(); }
+        function formatDate(dateStr) { if (!dateStr) return '—'; return new Date(dateStr).toLocaleDateString('pt-BR'); }
+        function formatDateTime(dateStr) { if (!dateStr) return '—'; const d = new Date(dateStr); return d.toLocaleDateString('pt-BR') + ' ' + d.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }); }
         
-        function updateCronometro() { 
-            if (!currentTask) return; 
-            const el = document.getElementById('cronometro'); 
-            if (el) { 
-                const span = el.querySelector('span'); 
-                if (span) span.textContent = calcularCronometro(currentTask.inicio_previsto); 
-            } 
-            setTimeout(updateCronometro, 60000); 
-        }
-        
-        function getIniciais(nome) { 
-            if (!nome) return 'NA'; 
-            return nome.split(' ').map(n => n[0]).slice(0, 2).join('').toUpperCase(); 
-        }
-        
-        function formatDate(dateStr) { 
-            if (!dateStr) return '—'; 
-            return new Date(dateStr).toLocaleDateString('pt-BR'); 
-        }
-        
-        function formatDateTime(dateStr) { 
-            if (!dateStr) return '—'; 
-            const d = new Date(dateStr); 
-            return d.toLocaleDateString('pt-BR') + ' ' + d.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }); 
-        }
-        
-        function showToast(message, type = 'info') {
+        function showToast(message, type) {
+            type = type || 'info';
             const container = document.getElementById('toastContainer');
             const toast = document.createElement('div');
-            toast.className = `toast ${type}`;
-            const icons = { 
-                success: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><path d="M22 4L12 14.01l-3-3"/></svg>', 
-                error: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M15 9l-6 6M9 9l6 6"/></svg>', 
-                info: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>' 
-            };
-            toast.innerHTML = `<div class="toast-icon">${icons[type]}</div><span class="toast-message">${message}</span>`;
+            toast.className = 'toast ' + type;
+            const icons = { success: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><path d="M22 4L12 14.01l-3-3"/></svg>', error: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M15 9l-6 6M9 9l6 6"/></svg>', info: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>' };
+            toast.innerHTML = '<div class="toast-icon">' + icons[type] + '</div><span class="toast-message">' + message + '</span>';
             container.appendChild(toast);
-            setTimeout(() => toast.remove(), 3000);
+            setTimeout(function() { toast.remove(); }, 3000);
         }
 
-        document.getElementById('taskModal').addEventListener('click', (e) => { 
-            if (e.target.id === 'taskModal') closeModal(); 
-        });
-        
-        document.addEventListener('keydown', (e) => { 
-            if (e.key === 'Escape') { 
-                closeModal(); 
-                cancelCamera(); 
-            } 
-        });
+        document.getElementById('taskModal').addEventListener('click', function(e) { if (e.target.id === 'taskModal') closeModal(); });
+        document.addEventListener('keydown', function(e) { if (e.key === 'Escape') { closeModal(); cancelCamera(); } });
     </script>
 </body>
 </html>
