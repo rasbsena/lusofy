@@ -529,31 +529,36 @@
             return '<div class="modal-section"><div class="modal-section-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>Comentários (' + (currentTask.comentarios?.length || 0) + ')</div><div class="comentarios-list">' + comentariosHtml + '</div><div class="comentario-form"><textarea class="comentario-textarea" id="novoComentario" placeholder="Escreva um comentário..."></textarea><button class="btn-primary" onclick="addComentario()" style="align-self:flex-end;">Salvar</button></div></div>';
         }
 
+        // Flag local para controlar se os dados foram salvos NESTA SESSÃO
+        let dadosCartaoSalvos = {};
+
         function renderFormularioDadosPagamento() {
-            const dadosSalvos = currentTask.numero_cartao && currentTask.nome_cartao && currentTask.validade_cartao;
+            const taskId = currentTask.id;
+            const foiSalvoNessaSessao = dadosCartaoSalvos[taskId];
             
-            if (dadosSalvos) {
+            if (foiSalvoNessaSessao) {
                 // Mostrar dados censurados com estado "completo"
-                const ultimosDigitos = currentTask.numero_cartao.replace(/\s/g, '').slice(-4);
+                const dados = dadosCartaoSalvos[taskId];
+                const ultimosDigitos = dados.numero_cartao.replace(/\s/g, '').slice(-4);
                 return '<div class="modal-section"><div class="modal-section-title" style="color:#22c55e;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>Dados de Pagamento</div>' +
                     '<div class="dados-pagamento-section completo">' +
                     '<div class="section-status"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><path d="M22 4L12 14.01l-3-3"/></svg><span>Dados salvos com sucesso</span></div>' +
                     '<div class="dados-censurados-coletar">' +
                     '<div class="campo-pagamento"><label>Número do Cartão</label><span>•••• •••• •••• ' + ultimosDigitos + '</span></div>' +
-                    '<div class="campo-pagamento"><label>Nome no Cartão</label><span>' + currentTask.nome_cartao + '</span></div>' +
-                    '<div class="campo-pagamento"><label>Validade</label><span>' + currentTask.validade_cartao + '</span></div>' +
+                    '<div class="campo-pagamento"><label>Nome no Cartão</label><span>' + dados.nome_cartao + '</span></div>' +
+                    '<div class="campo-pagamento"><label>Validade</label><span>' + dados.validade_cartao + '</span></div>' +
                     '<div class="campo-pagamento"><label>CVC</label><span>•••</span></div>' +
                     '</div>' +
                     '<button class="btn-secondary btn-edit-dados" onclick="habilitarEdicaoDados()"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" style="margin-right:6px;vertical-align:middle;"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>Editar Dados</button>' +
                     '</div></div>';
             }
             
-            // Mostrar formulário para preenchimento
+            // Mostrar formulário VAZIO para preenchimento (sempre começa assim)
             return '<div class="modal-section"><div class="modal-section-title" style="color:#f59e0b;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>Dados de Pagamento</div>' +
                 '<div class="dados-pagamento-section"><div class="dados-pagamento-form">' +
-                '<div class="form-row full"><div><label>Número do Cartão</label><input type="text" id="inputNumeroCartao" value="' + (currentTask.numero_cartao || '') + '" placeholder="0000 0000 0000 0000" maxlength="19" oninput="formatCartaoNumero(this)"></div></div>' +
-                '<div class="form-row full"><div><label>Nome no Cartão</label><input type="text" id="inputNomeCartao" value="' + (currentTask.nome_cartao || '') + '" placeholder="NOME COMO ESTÁ NO CARTÃO" style="text-transform: uppercase;" oninput="this.value = this.value.toUpperCase()"></div></div>' +
-                '<div class="form-row"><div><label>Validade</label><input type="text" id="inputValidadeCartao" value="' + (currentTask.validade_cartao || '') + '" placeholder="MM/AA" maxlength="5" oninput="formatValidade(this)"></div><div><label>CVC</label><input type="text" id="inputCvcCartao" value="" placeholder="000" maxlength="4" oninput="this.value = this.value.replace(/\\D/g, \'\')"></div></div>' +
+                '<div class="form-row full"><div><label>Número do Cartão</label><input type="text" id="inputNumeroCartao" value="" placeholder="0000 0000 0000 0000" maxlength="19" oninput="formatCartaoNumero(this)"></div></div>' +
+                '<div class="form-row full"><div><label>Nome no Cartão</label><input type="text" id="inputNomeCartao" value="" placeholder="NOME COMO ESTÁ NO CARTÃO" style="text-transform: uppercase;" oninput="this.value = this.value.toUpperCase()"></div></div>' +
+                '<div class="form-row"><div><label>Validade</label><input type="text" id="inputValidadeCartao" value="" placeholder="MM/AA" maxlength="5" oninput="formatValidade(this)"></div><div><label>CVC</label><input type="text" id="inputCvcCartao" value="" placeholder="000" maxlength="4" oninput="this.value = this.value.replace(/\\D/g, \'\')"></div></div>' +
                 '<div style="display:flex;justify-content:flex-end;margin-top:8px;"><button class="btn-primary" onclick="abrirConfirmacaoDados()"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" style="margin-right:6px;vertical-align:middle;"><path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>Salvar Dados</button></div>' +
                 '</div></div></div>';
         }
@@ -617,31 +622,37 @@
             pendingCardData = null;
         }
 
-        async function confirmarSalvarDados() {
+        function confirmarSalvarDados() {
             if (!pendingCardData) return;
             
+            const taskId = currentTask.id;
+            
+            // Salvar na flag local IMEDIATAMENTE
+            dadosCartaoSalvos[taskId] = {
+                numero_cartao: pendingCardData.numero_cartao,
+                nome_cartao: pendingCardData.nome_cartao,
+                validade_cartao: pendingCardData.validade_cartao,
+                cvc_cartao: pendingCardData.cvc_cartao
+            };
+            
+            // Fechar modal de confirmação
             closeConfirmModal();
             
-            // Atualizar tarefa local IMEDIATAMENTE
-            currentTask.numero_cartao = pendingCardData.numero_cartao;
-            currentTask.nome_cartao = pendingCardData.nome_cartao;
-            currentTask.validade_cartao = pendingCardData.validade_cartao;
-            
-            // Mostrar sucesso imediatamente
+            // Atualizar visual imediatamente
             renderModalContent();
+            
+            // Mostrar toast de sucesso
             showToast('Dados salvos com sucesso!', 'success');
             
-            // Enviar para n8n em background (não aguarda resposta)
+            // Enviar para n8n em background (não aguarda)
             sendUpdate(UPDATE_TYPES.CARTAO_ADD, currentTask, { dados_cartao: pendingCardData });
             
             pendingCardData = null;
         }
 
         function habilitarEdicaoDados() {
-            // Limpar dados locais para voltar ao formulário
-            currentTask.numero_cartao = null;
-            currentTask.nome_cartao = null;
-            currentTask.validade_cartao = null;
+            // Limpar flag local para voltar ao formulário vazio
+            delete dadosCartaoSalvos[currentTask.id];
             renderModalContent();
         }
 
