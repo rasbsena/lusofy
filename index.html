@@ -835,7 +835,8 @@
         }
 
         async function addComentario() {
-            const texto = document.getElementById('novoComentario').value.trim();
+            const textarea = document.getElementById('novoComentario');
+            const texto = textarea.value.trim();
             if (!texto) return;
             const novoComentario = { id: Date.now(), autor_id: 1, autor_nome: 'Usuário', texto, criado_em: new Date().toISOString() };
             currentTask.comentarios = currentTask.comentarios || [];
@@ -845,6 +846,17 @@
             renderBoard();
             showToast('Comentário adicionado!', 'success');
         }
+
+        // Shift+Enter para enviar comentário
+        document.addEventListener('keydown', function(e) {
+            if (e.shiftKey && e.key === 'Enter') {
+                const textarea = document.getElementById('novoComentario');
+                if (textarea && document.activeElement === textarea) {
+                    e.preventDefault();
+                    addComentario();
+                }
+            }
+        });
 
         function calcularCronometro(inicioStr) {
             if (!inicioStr) return '—';
