@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lusofy - Beta 1.3</title>
+    <title>Lusofy - Beta 1.4</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@300;400;500;600;700&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -243,6 +243,38 @@
         .dados-censurados-coletar .campo-pagamento span { font-size: 1rem; font-weight: 600; color: var(--text-primary); font-family: 'Oswald', monospace; letter-spacing: 1px; }
         .btn-edit-dados { margin-top: 12px; width: 100%; background: transparent; border: 2px dashed var(--border-color); color: var(--text-muted); }
         .btn-edit-dados:hover { border-color: var(--accent); color: var(--text-primary); background: rgba(255, 207, 0, 0.05); }
+        /* Dashboard */
+        .dashboard { background: var(--bg-column); border-bottom: 1px solid var(--border-color); padding: 20px 24px; margin-top: 70px; display: none; }
+        .dashboard.active { display: block; }
+        .charts-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 16px; }
+        .chart-card { background: var(--bg-card); border-radius: 12px; padding: 16px; border: 1px solid var(--border-color); }
+        .chart-card-title { font-family: 'Oswald'; font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 12px; }
+        .chart-container { height: 150px; }
+        .chart-legend { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; justify-content: center; }
+        .chart-legend-item { display: flex; align-items: center; gap: 4px; font-size: 0.65rem; color: var(--text-secondary); }
+        .chart-legend-color { width: 10px; height: 10px; border-radius: 2px; }
+        .dashboard-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 16px; }
+        .dashboard-card { background: var(--bg-card); border-radius: 12px; padding: 16px; border: 1px solid var(--border-color); }
+        .dashboard-card-title { font-family: 'Oswald'; font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; }
+        .dashboard-card-value { font-family: 'Oswald'; font-size: 2rem; font-weight: 700; color: var(--accent); }
+        .dashboard-card-subtitle { font-size: 0.75rem; color: var(--text-secondary); margin-top: 4px; }
+        .dashboard-card.status-card { display: flex; flex-direction: column; gap: 8px; }
+        .status-row { display: flex; justify-content: space-between; align-items: center; padding: 6px 0; border-bottom: 1px solid var(--border-color); }
+        .status-row:last-child { border-bottom: none; }
+        .status-row .status-label { display: flex; align-items: center; gap: 8px; font-size: 0.8rem; }
+        .status-row .status-dot { width: 10px; height: 10px; border-radius: 50%; }
+        .status-row .status-count { font-family: 'Oswald'; font-size: 1.1rem; font-weight: 600; }
+        .productivity-bar { height: 8px; background: var(--bg-column); border-radius: 4px; overflow: hidden; margin-top: 8px; }
+        .productivity-bar-fill { height: 100%; background: linear-gradient(90deg, var(--accent) 0%, #22c55e 100%); border-radius: 4px; transition: width 0.5s ease; }
+        body.light-theme .dashboard { background: #fff; }
+        body.light-theme .dashboard-card, body.light-theme .chart-card { background: linear-gradient(135deg, #041f43 0%, #062a5a 100%); color: #fff; border-color: #1a4a7a; }
+        body.light-theme .dashboard-card-title, body.light-theme .chart-card-title, body.light-theme .chart-legend-item { color: #b8c7db !important; }
+        body.light-theme .dashboard-card-value { color: #ffcf00 !important; }
+        body.light-theme .status-row { border-color: #1a4a7a !important; }
+        body.light-theme .status-row .status-label, body.light-theme .status-row .status-count { color: #b8c7db !important; }
+        body.light-theme .dashboard-card-subtitle { color: #b8c7db !important; }
+        @media (max-width: 1200px) { .charts-row { grid-template-columns: 1fr 1fr; } }
+        @media (max-width: 768px) { .charts-row { grid-template-columns: 1fr; } }
     </style>
 </head>
 <body>
@@ -260,7 +292,7 @@
                 <line x1="15" y1="70" x2="85" y2="70" stroke="currentColor" stroke-width="3"/>
             </svg>
             <h1>LUSOFY</h1>
-            <span class="version">Beta 1.3</span>
+            <span class="version">Beta 1.4</span>
         </div>
         <nav class="header-nav">
             <button class="nav-btn active">OTA</button>
@@ -272,6 +304,9 @@
             <input type="text" id="searchInput" placeholder="Buscar tarefas..." oninput="handleSearch(this.value)" style="width:100%;padding:10px 16px 10px 40px;background:var(--bg-card);border:2px solid var(--border-color);border-radius:8px;color:var(--text-primary);font-size:0.85rem;">
         </div>
         <div class="header-profile" style="display:flex;gap:8px;">
+            <button class="profile-btn" onclick="toggleDashboard()" style="padding:8px 12px;" id="btnDashboard">
+                <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+            </button>
             <button class="profile-btn" onclick="toggleTheme()" style="padding:8px 12px;">
                 <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
             </button>
@@ -281,7 +316,61 @@
             </button>
         </div>
     </header>
-    <main class="main-content">
+    
+    <!-- Dashboard -->
+    <div class="dashboard" id="dashboard">
+        <div class="charts-row">
+            <div class="chart-card">
+                <div class="chart-card-title">Conclusões por Dia (7 dias)</div>
+                <div class="chart-container"><canvas id="chartLine"></canvas></div>
+            </div>
+            <div class="chart-card">
+                <div class="chart-card-title">Concluídas por Responsável</div>
+                <div class="chart-container"><canvas id="chartPie"></canvas></div>
+                <div class="chart-legend" id="chartPieLegend"></div>
+            </div>
+            <div class="chart-card">
+                <div class="chart-card-title">Pendentes por Responsável</div>
+                <div class="chart-container"><canvas id="chartBar"></canvas></div>
+            </div>
+        </div>
+        <div class="dashboard-grid">
+            <div class="dashboard-card">
+                <div class="dashboard-card-title">Total Ativas</div>
+                <div class="dashboard-card-value" id="dashTotalTasks">0</div>
+                <div class="dashboard-card-subtitle">pendentes</div>
+            </div>
+            <div class="dashboard-card status-card">
+                <div class="dashboard-card-title">Por Status</div>
+                <div class="status-row"><span class="status-label"><span class="status-dot" style="background:#6b7280;"></span>Não Iniciado</span><span class="status-count" id="dashNaoIniciado">0</span></div>
+                <div class="status-row"><span class="status-label"><span class="status-dot" style="background:#3b82f6;"></span>Em Andamento</span><span class="status-count" id="dashEmAndamento">0</span></div>
+                <div class="status-row"><span class="status-label"><span class="status-dot" style="background:#ef4444;"></span>Bloqueado</span><span class="status-count" id="dashBloqueado">0</span></div>
+                <div class="status-row"><span class="status-label"><span class="status-dot" style="background:#22c55e;"></span>Concluído</span><span class="status-count" id="dashConcluido">0</span></div>
+            </div>
+            <div class="dashboard-card">
+                <div class="dashboard-card-title">Concluídas Hoje</div>
+                <div class="dashboard-card-value" id="dashConcluidasHoje">0</div>
+                <div class="dashboard-card-subtitle">finalizadas</div>
+            </div>
+            <div class="dashboard-card">
+                <div class="dashboard-card-title">Taxa de Conclusão</div>
+                <div class="dashboard-card-value" id="dashTaxaConclusao">0%</div>
+                <div class="productivity-bar"><div class="productivity-bar-fill" id="dashProgressBar" style="width:0%;"></div></div>
+            </div>
+            <div class="dashboard-card">
+                <div class="dashboard-card-title">Atrasadas</div>
+                <div class="dashboard-card-value" style="color:#ef4444;" id="dashAtrasadas">0</div>
+                <div class="dashboard-card-subtitle">prazo vencido</div>
+            </div>
+            <div class="dashboard-card">
+                <div class="dashboard-card-title">Urgentes</div>
+                <div class="dashboard-card-value" style="color:#f59e0b;" id="dashUrgentes">0</div>
+                <div class="dashboard-card-subtitle">prioridade máxima</div>
+            </div>
+        </div>
+    </div>
+    
+    <main class="main-content" id="mainContent">
         <div class="kanban-container">
             <div class="kanban-board" id="kanbanBoard">
                 <div class="loading"><div class="loading-spinner"></div></div>
@@ -928,6 +1017,247 @@
         document.getElementById('taskModal').addEventListener('click', function(e) { if (e.target.id === 'taskModal') closeModal(); });
         document.getElementById('confirmModal').addEventListener('click', function(e) { if (e.target.id === 'confirmModal') closeConfirmModal(); });
         document.addEventListener('keydown', function(e) { if (e.key === 'Escape') { closeModal(); cancelCamera(); closeConfirmModal(); } });
+        
+        // Dashboard
+        function toggleDashboard() {
+            const dash = document.getElementById('dashboard');
+            const main = document.getElementById('mainContent');
+            dash.classList.toggle('active');
+            if (dash.classList.contains('active')) {
+                main.style.paddingTop = '24px';
+                updateDashboard();
+                setTimeout(function() { drawLineChart(); drawPieChart(); drawBarChart(); }, 100);
+            } else {
+                main.style.paddingTop = '94px';
+            }
+        }
+        
+        function updateDashboard() {
+            const total = tasks.filter(t => t.status !== 'concluido').length;
+            document.getElementById('dashTotalTasks').textContent = total;
+            document.getElementById('dashNaoIniciado').textContent = tasks.filter(t => t.status === 'nao_iniciado').length;
+            document.getElementById('dashEmAndamento').textContent = tasks.filter(t => t.status === 'em_andamento').length;
+            document.getElementById('dashBloqueado').textContent = tasks.filter(t => t.status === 'bloqueado').length;
+            const concluido = tasks.filter(t => t.status === 'concluido').length;
+            document.getElementById('dashConcluido').textContent = concluido;
+            const hoje = new Date().toDateString();
+            document.getElementById('dashConcluidasHoje').textContent = tasks.filter(t => t.status === 'concluido' && t.concluido_em && new Date(t.concluido_em).toDateString() === hoje).length;
+            const taxa = tasks.length > 0 ? Math.round((concluido / tasks.length) * 100) : 0;
+            document.getElementById('dashTaxaConclusao').textContent = taxa + '%';
+            document.getElementById('dashProgressBar').style.width = taxa + '%';
+            document.getElementById('dashAtrasadas').textContent = tasks.filter(t => t.prazo && new Date(t.prazo) < new Date() && t.status !== 'concluido').length;
+            document.getElementById('dashUrgentes').textContent = tasks.filter(t => t.prioridade === 'urgente' && t.status !== 'concluido').length;
+        }
+        
+        // Gráfico de Linha - Conclusões por dia
+        function drawLineChart() {
+            const canvas = document.getElementById('chartLine');
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+            const rect = canvas.parentElement.getBoundingClientRect();
+            canvas.width = rect.width;
+            canvas.height = rect.height;
+            
+            const days = [], counts = [];
+            for (let i = 6; i >= 0; i--) {
+                const d = new Date();
+                d.setDate(d.getDate() - i);
+                days.push(d.toLocaleDateString('pt-BR', {weekday:'short'}).replace('.',''));
+                counts.push(tasks.filter(t => t.status === 'concluido' && t.concluido_em && new Date(t.concluido_em).toDateString() === d.toDateString()).length);
+            }
+            
+            const max = Math.max(...counts, 1);
+            const pad = {top:20, right:20, bottom:30, left:35};
+            const w = canvas.width - pad.left - pad.right;
+            const h = canvas.height - pad.top - pad.bottom;
+            
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            // Grid
+            ctx.strokeStyle = 'rgba(255,255,255,0.1)';
+            ctx.lineWidth = 1;
+            for (let i = 0; i <= 4; i++) {
+                const y = pad.top + (h/4) * i;
+                ctx.beginPath();
+                ctx.moveTo(pad.left, y);
+                ctx.lineTo(canvas.width - pad.right, y);
+                ctx.stroke();
+            }
+            
+            // Linha
+            ctx.strokeStyle = '#ffcf00';
+            ctx.lineWidth = 3;
+            ctx.lineCap = 'round';
+            ctx.lineJoin = 'round';
+            ctx.beginPath();
+            counts.forEach((c, i) => {
+                const x = pad.left + (w / (counts.length - 1 || 1)) * i;
+                const y = pad.top + h - (c / max) * h;
+                i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+            });
+            ctx.stroke();
+            
+            // Pontos
+            ctx.fillStyle = '#ffcf00';
+            counts.forEach((c, i) => {
+                const x = pad.left + (w / (counts.length - 1 || 1)) * i;
+                const y = pad.top + h - (c / max) * h;
+                ctx.beginPath();
+                ctx.arc(x, y, 5, 0, Math.PI * 2);
+                ctx.fill();
+            });
+            
+            // Labels X
+            ctx.fillStyle = 'rgba(255,255,255,0.6)';
+            ctx.font = '10px Montserrat';
+            ctx.textAlign = 'center';
+            days.forEach((d, i) => ctx.fillText(d, pad.left + (w / (days.length - 1 || 1)) * i, canvas.height - 8));
+            
+            // Labels Y
+            ctx.textAlign = 'right';
+            for (let i = 0; i <= 4; i++) {
+                ctx.fillText(Math.round(max - (max / 4) * i), pad.left - 8, pad.top + (h / 4) * i + 4);
+            }
+        }
+        
+        // Gráfico de Pizza - Concluídas por responsável
+        function drawPieChart() {
+            const canvas = document.getElementById('chartPie');
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+            const rect = canvas.parentElement.getBoundingClientRect();
+            canvas.width = rect.width;
+            canvas.height = rect.height;
+            
+            const concluidas = tasks.filter(t => t.status === 'concluido' && t.responsavel && t.responsavel.nome);
+            const porResp = {};
+            concluidas.forEach(t => {
+                porResp[t.responsavel.nome] = (porResp[t.responsavel.nome] || 0) + 1;
+            });
+            
+            const data = Object.entries(porResp).sort((a, b) => b[1] - a[1]).slice(0, 5);
+            const total = data.reduce((s, d) => s + d[1], 0) || 1;
+            const colors = ['#ffcf00', '#3b82f6', '#22c55e', '#ec4899', '#8b5cf6'];
+            
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            const cx = canvas.width / 2;
+            const cy = canvas.height / 2;
+            const r = Math.min(cx, cy) - 10;
+            
+            if (data.length === 0) {
+                ctx.fillStyle = 'rgba(255,255,255,0.4)';
+                ctx.font = '12px Montserrat';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText('Sem dados', cx, cy);
+                document.getElementById('chartPieLegend').innerHTML = '';
+                return;
+            }
+            
+            let start = -Math.PI / 2;
+            data.forEach((d, i) => {
+                const slice = (d[1] / total) * Math.PI * 2;
+                ctx.fillStyle = colors[i % colors.length];
+                ctx.beginPath();
+                ctx.moveTo(cx, cy);
+                ctx.arc(cx, cy, r, start, start + slice);
+                ctx.closePath();
+                ctx.fill();
+                start += slice;
+            });
+            
+            // Centro (donut)
+            const isLight = document.body.classList.contains('light-theme');
+            ctx.fillStyle = isLight ? '#041f43' : '#0a3570';
+            ctx.beginPath();
+            ctx.arc(cx, cy, r * 0.5, 0, Math.PI * 2);
+            ctx.fill();
+            
+            ctx.fillStyle = '#fff';
+            ctx.font = 'bold 18px Oswald';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText(total, cx, cy);
+            
+            // Legenda
+            document.getElementById('chartPieLegend').innerHTML = data.map((d, i) =>
+                '<div class="chart-legend-item"><span class="chart-legend-color" style="background:' + colors[i] + '"></span>' + d[0].split(' ')[0] + ' (' + d[1] + ')</div>'
+            ).join('');
+        }
+        
+        // Gráfico de Barras - Pendentes por responsável
+        function drawBarChart() {
+            const canvas = document.getElementById('chartBar');
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+            const rect = canvas.parentElement.getBoundingClientRect();
+            canvas.width = rect.width;
+            canvas.height = rect.height;
+            
+            const pendentes = tasks.filter(t => t.status !== 'concluido' && t.responsavel && t.responsavel.nome);
+            const porResp = {};
+            pendentes.forEach(t => {
+                porResp[t.responsavel.nome] = (porResp[t.responsavel.nome] || 0) + 1;
+            });
+            
+            const data = Object.entries(porResp).sort((a, b) => b[1] - a[1]).slice(0, 6);
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            if (data.length === 0) {
+                ctx.fillStyle = 'rgba(255,255,255,0.4)';
+                ctx.font = '12px Montserrat';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText('Sem dados', canvas.width / 2, canvas.height / 2);
+                return;
+            }
+            
+            const max = Math.max(...data.map(d => d[1]), 1);
+            const pad = {top: 15, right: 10, bottom: 45, left: 10};
+            const w = canvas.width - pad.left - pad.right;
+            const h = canvas.height - pad.top - pad.bottom;
+            const barW = (w / data.length) * 0.7;
+            const gap = (w / data.length) * 0.3;
+            
+            data.forEach((d, i) => {
+                const x = pad.left + (w / data.length) * i + gap / 2;
+                const barH = (d[1] / max) * h;
+                const y = pad.top + h - barH;
+                
+                // Gradient
+                const grad = ctx.createLinearGradient(x, y, x, y + barH);
+                grad.addColorStop(0, '#ffcf00');
+                grad.addColorStop(1, '#f59e0b');
+                ctx.fillStyle = grad;
+                
+                // Barra com cantos arredondados
+                ctx.beginPath();
+                ctx.moveTo(x + 4, y);
+                ctx.lineTo(x + barW - 4, y);
+                ctx.quadraticCurveTo(x + barW, y, x + barW, y + 4);
+                ctx.lineTo(x + barW, y + barH);
+                ctx.lineTo(x, y + barH);
+                ctx.lineTo(x, y + 4);
+                ctx.quadraticCurveTo(x, y, x + 4, y);
+                ctx.fill();
+                
+                // Valor
+                ctx.fillStyle = '#fff';
+                ctx.font = 'bold 12px Oswald';
+                ctx.textAlign = 'center';
+                ctx.fillText(d[1], x + barW / 2, y - 5);
+                
+                // Nome
+                ctx.fillStyle = 'rgba(255,255,255,0.6)';
+                ctx.font = '9px Montserrat';
+                ctx.save();
+                ctx.translate(x + barW / 2, canvas.height - 5);
+                ctx.rotate(-Math.PI / 4);
+                ctx.textAlign = 'right';
+                ctx.fillText(d[0].split(' ')[0], 0, 0);
+                ctx.restore();
+            });
+        }
         
         function toggleTheme() {
             document.body.classList.toggle('light-theme');
