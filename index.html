@@ -25,54 +25,7 @@
             --accent-hover: #ffe14d;
         }
         body { font-family: 'Montserrat', sans-serif; background: linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-secondary) 100%); min-height: 100vh; color: var(--text-primary); transition: all 0.3s ease; }
-        body.light-theme { 
-            --bg-primary: #f0f4f8; 
-            --bg-secondary: #e2e8f0; 
-            --bg-card: linear-gradient(135deg, #041f43 0%, #0a3570 100%); 
-            --bg-card-solid: #041f43;
-            --bg-column: #ffffff; 
-            --text-primary: #1e293b; 
-            --text-secondary: #475569; 
-            --text-muted: #94a3b8; 
-            --border-color: #cbd5e1; 
-            --accent: #ffcf00; 
-            --accent-hover: #ffe14d; 
-            background: linear-gradient(135deg, #f0f4f8 0%, #e2e8f0 100%); 
-        }
-        body.light-theme .task-card {
-            background: linear-gradient(135deg, #041f43 0%, #0a3570 100%);
-            color: #ffffff;
-            border-color: #1a4a7a;
-        }
-        body.light-theme .task-card .task-title,
-        body.light-theme .task-card .task-info-row,
-        body.light-theme .task-card .responsavel-nome,
-        body.light-theme .task-card .task-comments { color: #ffffff; }
-        body.light-theme .task-card .task-info-row { color: #b8c7db; }
-        body.light-theme .task-card .responsavel-nome { color: #b8c7db; }
-        body.light-theme .task-card .task-comments { color: #7a8fa8; }
-        body.light-theme .task-card:hover { border-color: var(--accent); box-shadow: 0 8px 30px rgba(4, 31, 67, 0.4); }
-        body.light-theme .kanban-column { background: #ffffff; border-color: #e2e8f0; box-shadow: 0 4px 15px rgba(0,0,0,0.08); }
-        body.light-theme .column-header { border-color: #e2e8f0; }
-        body.light-theme .column-count { background: #041f43; color: #ffcf00; }
-        body.light-theme .dashboard { background: #ffffff; border-color: #e2e8f0; }
-        body.light-theme .dashboard-card { background: linear-gradient(135deg, #041f43 0%, #062a5a 100%); color: #ffffff; border-color: #1a4a7a; }
-        body.light-theme .dashboard-card-title { color: #b8c7db; }
-        body.light-theme .dashboard-card-value { color: #ffcf00; }
-        body.light-theme .dashboard-card-subtitle { color: #b8c7db; }
-        body.light-theme .status-row { border-color: #1a4a7a; }
-        body.light-theme .status-row .status-label { color: #b8c7db; }
-        body.light-theme .status-row .status-count { color: #ffffff; }
-        body.light-theme .filters-bar { background: #ffffff; border-color: #e2e8f0; }
-        body.light-theme .header { background: rgba(255,255,255,0.98); box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
-        body.light-theme .header-logo h1 { color: #041f43; }
-        body.light-theme .search-box input { background: #f0f4f8; border-color: #e2e8f0; color: #1e293b; }
-        body.light-theme .header-btn { background: #f0f4f8; border-color: #e2e8f0; color: #475569; }
-        body.light-theme .header-btn:hover { border-color: #041f43; color: #041f43; }
-        body.light-theme .btn-new-task { background: #041f43; color: #ffcf00; border-color: #041f43; }
-        body.light-theme .nav-btn { color: #475569; }
-        body.light-theme .nav-btn:hover { background: rgba(4, 31, 67, 0.1); color: #041f43; }
-        body.light-theme .nav-btn.active { background: #041f43; color: #ffcf00; }
+        body.light-theme { --bg-primary: #f0f4f8; --bg-secondary: #e2e8f0; --bg-card: #ffffff; --bg-column: #f8fafc; --text-primary: #1e293b; --text-secondary: #475569; --text-muted: #94a3b8; --border-color: #cbd5e1; --accent: #041f43; --accent-hover: #062a5a; background: linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-secondary) 100%); }
         h1, h2, h3, h4, h5, h6, .title-font { font-family: 'Oswald', sans-serif; }
         
         /* Header */
@@ -92,10 +45,6 @@
         .header-btn:hover { border-color: var(--accent); color: var(--accent); }
         .header-btn.active { background: var(--accent); color: var(--bg-primary); border-color: var(--accent); }
         .header-btn .badge { position: absolute; top: -4px; right: -4px; width: 18px; height: 18px; background: #ef4444; border-radius: 50%; font-size: 0.65rem; font-weight: 700; display: flex; align-items: center; justify-content: center; color: white; }
-        .header-nav { display: flex; gap: 4px; }
-        .nav-btn { padding: 8px 16px; border-radius: 6px; font-family: 'Oswald', sans-serif; font-size: 0.8rem; font-weight: 500; cursor: pointer; transition: all 0.2s ease; border: 2px solid transparent; background: transparent; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 1px; }
-        .nav-btn:hover { background: rgba(255, 207, 0, 0.1); color: var(--text-primary); border-color: rgba(255, 207, 0, 0.3); }
-        .nav-btn.active { background: var(--accent); color: var(--bg-primary); border-color: var(--accent); font-weight: 600; }
         .btn-new-task { padding: 10px 16px; width: auto; gap: 6px; font-family: 'Oswald', sans-serif; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 1px; background: var(--accent); color: var(--bg-primary); border-color: var(--accent); font-weight: 600; }
         .btn-new-task:hover { background: var(--accent-hover); }
         .logo-sun { width: 36px; height: 36px; color: var(--accent); }
@@ -116,18 +65,6 @@
         .status-row .status-count { font-family: 'Oswald', sans-serif; font-size: 1.1rem; font-weight: 600; }
         .productivity-bar { height: 8px; background: var(--bg-column); border-radius: 4px; overflow: hidden; margin-top: 8px; }
         .productivity-bar-fill { height: 100%; background: linear-gradient(90deg, var(--accent) 0%, #22c55e 100%); border-radius: 4px; transition: width 0.5s ease; }
-        .charts-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 16px; }
-        .chart-card { background: var(--bg-card); border-radius: 12px; padding: 16px; border: 1px solid var(--border-color); }
-        body.light-theme .chart-card { background: linear-gradient(135deg, #041f43 0%, #062a5a 100%); border-color: #1a4a7a; }
-        .chart-card-title { font-family: 'Oswald', sans-serif; font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 12px; }
-        body.light-theme .chart-card-title { color: #b8c7db; }
-        .chart-container { height: 150px; position: relative; }
-        .chart-canvas { width: 100%; height: 100%; }
-        .chart-legend { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; justify-content: center; }
-        .chart-legend-item { display: flex; align-items: center; gap: 4px; font-size: 0.65rem; color: var(--text-secondary); }
-        body.light-theme .chart-legend-item { color: #b8c7db; }
-        .chart-legend-color { width: 10px; height: 10px; border-radius: 2px; }
-        @media (max-width: 1024px) { .charts-row { grid-template-columns: 1fr; } }
         
         /* Filters */
         .filters-bar { background: var(--bg-column); border-bottom: 1px solid var(--border-color); padding: 12px 24px; margin-top: 70px; display: none; }
@@ -428,13 +365,8 @@
                 <line x1="15" y1="70" x2="85" y2="70" stroke="currentColor" stroke-width="3"/>
             </svg>
             <h1>LUSOFY</h1>
-            <span class="version">Beta 1.3</span>
+            <span class="version">v1.3</span>
         </div>
-        <nav class="header-nav">
-            <button class="nav-btn active">OTA</button>
-            <button class="nav-btn" onclick="showToast('Faturamento em breve','info')">Faturamento</button>
-            <button class="nav-btn" onclick="showToast('Financeiro em breve','info')">Financeiro</button>
-        </nav>
         <div class="header-center">
             <div class="search-box">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
@@ -462,35 +394,11 @@
             <button class="header-btn" id="btnShortcuts" onclick="toggleShortcuts()" title="Atalhos (?)">
                 <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 015.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
             </button>
-            <button class="header-btn" onclick="showToast('Meu Perfil em breve','info')" title="Meu Perfil">
-                <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-            </button>
         </div>
     </header>
 
     <!-- Dashboard -->
     <div class="dashboard" id="dashboard">
-        <div class="charts-row">
-            <div class="chart-card">
-                <div class="chart-card-title">Conclusões por Dia (Últimos 7 dias)</div>
-                <div class="chart-container">
-                    <canvas id="chartLine" class="chart-canvas"></canvas>
-                </div>
-            </div>
-            <div class="chart-card">
-                <div class="chart-card-title">Concluídas por Responsável</div>
-                <div class="chart-container">
-                    <canvas id="chartPie" class="chart-canvas"></canvas>
-                </div>
-                <div class="chart-legend" id="chartPieLegend"></div>
-            </div>
-            <div class="chart-card">
-                <div class="chart-card-title">Pendentes por Responsável</div>
-                <div class="chart-container">
-                    <canvas id="chartBar" class="chart-canvas"></canvas>
-                </div>
-            </div>
-        </div>
         <div class="dashboard-grid">
             <div class="dashboard-card">
                 <div class="dashboard-card-title">Total de Tarefas</div>
@@ -793,24 +701,6 @@
         // INICIALIZAÇÃO
         // =====================
         document.addEventListener('DOMContentLoaded', () => {
-            // Polyfill para roundRect
-            if (!CanvasRenderingContext2D.prototype.roundRect) {
-                CanvasRenderingContext2D.prototype.roundRect = function(x, y, w, h, r) {
-                    if (typeof r === 'undefined') r = [0,0,0,0];
-                    if (typeof r === 'number') r = [r,r,r,r];
-                    this.moveTo(x + r[0], y);
-                    this.lineTo(x + w - r[1], y);
-                    this.quadraticCurveTo(x + w, y, x + w, y + r[1]);
-                    this.lineTo(x + w, y + h - r[2]);
-                    this.quadraticCurveTo(x + w, y + h, x + w - r[2], y + h);
-                    this.lineTo(x + r[3], y + h);
-                    this.quadraticCurveTo(x, y + h, x, y + h - r[3]);
-                    this.lineTo(x, y + r[0]);
-                    this.quadraticCurveTo(x, y, x + r[0], y);
-                    this.closePath();
-                    return this;
-                };
-            }
             loadTasks();
             loadTheme();
             requestNotificationPermission();
@@ -923,218 +813,6 @@
             document.getElementById('dashProgressBar').style.width = taxa + '%';
             document.getElementById('dashAtrasadas').textContent = atrasadas;
             document.getElementById('dashUrgentes').textContent = urgentes;
-
-            // Desenhar gráficos
-            drawLineChart();
-            drawPieChart();
-            drawBarChart();
-        }
-
-        // Gráfico de Linha - Conclusões por dia
-        function drawLineChart() {
-            const canvas = document.getElementById('chartLine');
-            if (!canvas) return;
-            const ctx = canvas.getContext('2d');
-            const rect = canvas.parentElement.getBoundingClientRect();
-            canvas.width = rect.width;
-            canvas.height = rect.height;
-
-            // Dados dos últimos 7 dias
-            const days = [];
-            const counts = [];
-            for (let i = 6; i >= 0; i--) {
-                const date = new Date();
-                date.setDate(date.getDate() - i);
-                const dateStr = date.toDateString();
-                const dayName = date.toLocaleDateString('pt-BR', { weekday: 'short' }).replace('.', '');
-                days.push(dayName);
-                const count = tasks.filter(t => t.status === 'concluido' && t.concluido_em && new Date(t.concluido_em).toDateString() === dateStr).length;
-                counts.push(count);
-            }
-
-            const maxCount = Math.max(...counts, 1);
-            const padding = { top: 20, right: 20, bottom: 30, left: 40 };
-            const chartWidth = canvas.width - padding.left - padding.right;
-            const chartHeight = canvas.height - padding.top - padding.bottom;
-
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-            // Grid
-            ctx.strokeStyle = 'rgba(255,255,255,0.1)';
-            ctx.lineWidth = 1;
-            for (let i = 0; i <= 4; i++) {
-                const y = padding.top + (chartHeight / 4) * i;
-                ctx.beginPath();
-                ctx.moveTo(padding.left, y);
-                ctx.lineTo(canvas.width - padding.right, y);
-                ctx.stroke();
-            }
-
-            // Linha
-            ctx.strokeStyle = '#ffcf00';
-            ctx.lineWidth = 3;
-            ctx.lineCap = 'round';
-            ctx.lineJoin = 'round';
-            ctx.beginPath();
-            counts.forEach((count, i) => {
-                const x = padding.left + (chartWidth / (counts.length - 1)) * i;
-                const y = padding.top + chartHeight - (count / maxCount) * chartHeight;
-                if (i === 0) ctx.moveTo(x, y);
-                else ctx.lineTo(x, y);
-            });
-            ctx.stroke();
-
-            // Pontos
-            ctx.fillStyle = '#ffcf00';
-            counts.forEach((count, i) => {
-                const x = padding.left + (chartWidth / (counts.length - 1)) * i;
-                const y = padding.top + chartHeight - (count / maxCount) * chartHeight;
-                ctx.beginPath();
-                ctx.arc(x, y, 5, 0, Math.PI * 2);
-                ctx.fill();
-            });
-
-            // Labels X
-            ctx.fillStyle = 'rgba(255,255,255,0.6)';
-            ctx.font = '10px Montserrat';
-            ctx.textAlign = 'center';
-            days.forEach((day, i) => {
-                const x = padding.left + (chartWidth / (days.length - 1)) * i;
-                ctx.fillText(day, x, canvas.height - 8);
-            });
-
-            // Labels Y
-            ctx.textAlign = 'right';
-            for (let i = 0; i <= 4; i++) {
-                const y = padding.top + (chartHeight / 4) * i;
-                const val = Math.round(maxCount - (maxCount / 4) * i);
-                ctx.fillText(val, padding.left - 8, y + 4);
-            }
-        }
-
-        // Gráfico de Pizza - Concluídas por responsável
-        function drawPieChart() {
-            const canvas = document.getElementById('chartPie');
-            if (!canvas) return;
-            const ctx = canvas.getContext('2d');
-            const rect = canvas.parentElement.getBoundingClientRect();
-            canvas.width = rect.width;
-            canvas.height = rect.height;
-
-            const concluidas = tasks.filter(t => t.status === 'concluido' && t.responsavel?.nome);
-            const porResponsavel = {};
-            concluidas.forEach(t => {
-                const nome = t.responsavel.nome;
-                porResponsavel[nome] = (porResponsavel[nome] || 0) + 1;
-            });
-
-            const data = Object.entries(porResponsavel).sort((a, b) => b[1] - a[1]).slice(0, 5);
-            const total = data.reduce((sum, d) => sum + d[1], 0) || 1;
-            const colors = ['#ffcf00', '#3b82f6', '#22c55e', '#ec4899', '#8b5cf6'];
-
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-            const centerX = canvas.width / 2;
-            const centerY = canvas.height / 2;
-            const radius = Math.min(centerX, centerY) - 10;
-
-            let startAngle = -Math.PI / 2;
-            data.forEach((d, i) => {
-                const sliceAngle = (d[1] / total) * Math.PI * 2;
-                ctx.fillStyle = colors[i % colors.length];
-                ctx.beginPath();
-                ctx.moveTo(centerX, centerY);
-                ctx.arc(centerX, centerY, radius, startAngle, startAngle + sliceAngle);
-                ctx.closePath();
-                ctx.fill();
-                startAngle += sliceAngle;
-            });
-
-            // Centro vazio (donut)
-            ctx.fillStyle = document.body.classList.contains('light-theme') ? '#041f43' : '#0a3570';
-            ctx.beginPath();
-            ctx.arc(centerX, centerY, radius * 0.5, 0, Math.PI * 2);
-            ctx.fill();
-
-            // Texto central
-            ctx.fillStyle = '#ffffff';
-            ctx.font = 'bold 20px Oswald';
-            ctx.textAlign = 'center';
-            ctx.textBaseline = 'middle';
-            ctx.fillText(total, centerX, centerY);
-
-            // Legenda
-            const legend = document.getElementById('chartPieLegend');
-            if (legend) {
-                legend.innerHTML = data.map((d, i) => `<div class="chart-legend-item"><span class="chart-legend-color" style="background:${colors[i]}"></span>${d[0].split(' ')[0]} (${d[1]})</div>`).join('');
-            }
-        }
-
-        // Gráfico de Barras - Pendentes por responsável
-        function drawBarChart() {
-            const canvas = document.getElementById('chartBar');
-            if (!canvas) return;
-            const ctx = canvas.getContext('2d');
-            const rect = canvas.parentElement.getBoundingClientRect();
-            canvas.width = rect.width;
-            canvas.height = rect.height;
-
-            const pendentes = tasks.filter(t => t.status !== 'concluido' && t.responsavel?.nome);
-            const porResponsavel = {};
-            pendentes.forEach(t => {
-                const nome = t.responsavel.nome;
-                porResponsavel[nome] = (porResponsavel[nome] || 0) + 1;
-            });
-
-            const data = Object.entries(porResponsavel).sort((a, b) => b[1] - a[1]).slice(0, 6);
-            if (data.length === 0) {
-                ctx.clearRect(0, 0, canvas.width, canvas.height);
-                ctx.fillStyle = 'rgba(255,255,255,0.4)';
-                ctx.font = '12px Montserrat';
-                ctx.textAlign = 'center';
-                ctx.fillText('Sem dados', canvas.width / 2, canvas.height / 2);
-                return;
-            }
-
-            const maxCount = Math.max(...data.map(d => d[1]), 1);
-            const padding = { top: 10, right: 10, bottom: 40, left: 10 };
-            const chartWidth = canvas.width - padding.left - padding.right;
-            const chartHeight = canvas.height - padding.top - padding.bottom;
-            const barWidth = (chartWidth / data.length) * 0.7;
-            const gap = (chartWidth / data.length) * 0.3;
-
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-            data.forEach((d, i) => {
-                const x = padding.left + (chartWidth / data.length) * i + gap / 2;
-                const barHeight = (d[1] / maxCount) * chartHeight;
-                const y = padding.top + chartHeight - barHeight;
-
-                // Barra com gradiente
-                const gradient = ctx.createLinearGradient(x, y, x, y + barHeight);
-                gradient.addColorStop(0, '#ffcf00');
-                gradient.addColorStop(1, '#f59e0b');
-                ctx.fillStyle = gradient;
-                ctx.beginPath();
-                ctx.roundRect(x, y, barWidth, barHeight, [4, 4, 0, 0]);
-                ctx.fill();
-
-                // Valor
-                ctx.fillStyle = '#ffffff';
-                ctx.font = 'bold 12px Oswald';
-                ctx.textAlign = 'center';
-                ctx.fillText(d[1], x + barWidth / 2, y - 5);
-
-                // Nome
-                ctx.fillStyle = 'rgba(255,255,255,0.6)';
-                ctx.font = '9px Montserrat';
-                ctx.save();
-                ctx.translate(x + barWidth / 2, canvas.height - 5);
-                ctx.rotate(-Math.PI / 4);
-                ctx.textAlign = 'right';
-                ctx.fillText(d[0].split(' ')[0], 0, 0);
-                ctx.restore();
-            });
         }
 
         // =====================
@@ -1188,18 +866,12 @@
         // =====================
         function handleSearch(query) {
             query = query.toLowerCase().trim();
-            if (!query) { 
-                filteredTasks = [...tasks]; 
-                renderBoard(); 
-                return; 
-            }
-            filteredTasks = tasks.filter(t => {
-                const nome = (t.nome || '').toLowerCase();
-                const descricao = (t.descricao || '').toLowerCase();
-                const responsavel = (t.responsavel?.nome || '').toLowerCase();
-                const tipo = (TIPO_CONFIG[t.tipo]?.label || '').toLowerCase();
-                return nome.includes(query) || descricao.includes(query) || responsavel.includes(query) || tipo.includes(query);
-            });
+            if (!query) { filteredTasks = [...tasks]; renderBoard(); return; }
+            filteredTasks = tasks.filter(t => 
+                t.nome?.toLowerCase().includes(query) ||
+                t.descricao?.toLowerCase().includes(query) ||
+                t.responsavel?.nome?.toLowerCase().includes(query)
+            );
             renderBoard();
         }
 
@@ -1251,7 +923,7 @@
                 board.appendChild(column);
             });
 
-            // Coluna de Concluídos Recentes
+            // Coluna de Concluídos
             const concluidoTasks = filteredTasks.filter(t => t.status === 'concluido').slice(0, 10);
             const colConcluido = document.createElement('div');
             colConcluido.className = 'kanban-column concluidos';
@@ -1259,7 +931,7 @@
                 <div class="column-header">
                     <div class="column-title">
                         <div class="column-tipo-dot" style="background:#22c55e"></div>
-                        <span class="column-name">Concluídos Recentes</span>
+                        <span class="column-name">Concluídos</span>
                     </div>
                     <span class="column-count">${concluidoTasks.length}</span>
                 </div>
