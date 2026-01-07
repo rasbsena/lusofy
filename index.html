@@ -316,6 +316,14 @@
         .busca-avancada-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
         .busca-avancada-footer { display: flex; gap: 12px; margin-top: 20px; }
         .busca-avancada-footer button { flex: 1; }
+        /* Tela de Acesso Negado */
+        .acesso-negado { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: var(--bg-primary); display: flex; align-items: center; justify-content: center; z-index: 9999; }
+        .acesso-negado-card { background: var(--bg-secondary); border-radius: 20px; padding: 50px; text-align: center; max-width: 450px; border: 2px solid var(--border-color); box-shadow: 0 20px 60px rgba(0,0,0,0.3); }
+        .acesso-negado-icon { width: 80px; height: 80px; margin: 0 auto 24px; color: #ef4444; }
+        .acesso-negado-title { font-family: 'Oswald', sans-serif; font-size: 1.5rem; color: var(--text-primary); margin-bottom: 12px; }
+        .acesso-negado-msg { font-size: 0.9rem; color: var(--text-secondary); line-height: 1.6; margin-bottom: 30px; }
+        .acesso-negado-btn { display: inline-flex; align-items: center; gap: 8px; padding: 14px 28px; background: var(--accent); color: var(--bg-primary); font-weight: 700; font-size: 0.9rem; border: none; border-radius: 10px; cursor: pointer; text-decoration: none; transition: all 0.3s ease; }
+        .acesso-negado-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(255, 207, 0, 0.4); }
     </style>
 </head>
 <body>
@@ -555,6 +563,22 @@
             </div>
         </div>
     </div>
+    <!-- Tela de Acesso Negado -->
+    <div class="acesso-negado" id="acessoNegado" style="display:none;">
+        <div class="acesso-negado-card">
+            <svg class="acesso-negado-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="3" y="11" width="18" height="11" rx="2"/>
+                <path d="M7 11V7a5 5 0 0110 0v4"/>
+                <circle cx="12" cy="16" r="1"/>
+            </svg>
+            <h2 class="acesso-negado-title">Acesso Negado</h2>
+            <p class="acesso-negado-msg" id="acessoNegadoMsg">Você não tem permissão para acessar o módulo Lusofy. Entre em contato com o administrador ou contrate este módulo.</p>
+            <a href="https://plataforma.upperfy.com.br" class="acesso-negado-btn">
+                <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+                Voltar à Plataforma
+            </a>
+        </div>
+    </div>
     <div class="toast-container" id="toastContainer"></div>
     <script>
         const WEBHOOK_LOAD = 'https://n8n.upperfy.com.br/webhook/0fec17a7-8654-45ff-8ad6-lsfy1';
@@ -586,12 +610,57 @@
         let cameraStream = null;
         let paymentDataCache = {};
 
+        // Função para ler cookie compartilhado
+        function getUpperfyCookie() {
+            const cookies = document.cookie.split(';');
+            for (let cookie of cookies) {
+                const [name, value] = cookie.trim().split('=');
+                if (name === 'upperfy_auth') {
+                    try {
+                        return JSON.parse(decodeURIComponent(value));
+                    } catch (e) {
+                        console.error('Erro ao parsear cookie:', e);
+                        return null;
+                    }
+                }
+            }
+            return null;
+        }
+
+        // Inicializa usuário do cookie se não existir no localStorage
+        function initUserFromCookie() {
+            const stored = getLocalStorage();
+            if (!stored.user) {
+                const cookieData = getUpperfyCookie();
+                if (cookieData && cookieData.autenticado) {
+                    const user = {
+                        id_funcionario: cookieData.id_funcionario,
+                        id_empresa: cookieData.id_empresa,
+                        nome: cookieData.usuario?.nome,
+                        email: cookieData.usuario?.email,
+                        token: cookieData.token
+                    };
+                    updateLocalStorage({ user: user });
+                    return user;
+                }
+                return null;
+            }
+            return stored.user;
+        }
+
         function getLocalStorage() {
             try { const data = localStorage.getItem('lusofy_data'); return data ? JSON.parse(data) : { user: null, lastSync: null, preferences: {} }; }
             catch (e) { return { user: null, lastSync: null, preferences: {} }; }
         }
         function setLocalStorage(data) { try { localStorage.setItem('lusofy_data', JSON.stringify(data)); } catch (e) { console.error('Erro localStorage:', e); } }
         function updateLocalStorage(updates) { const current = getLocalStorage(); setLocalStorage({ ...current, ...updates, lastSync: new Date().toISOString() }); }
+
+        function showAcessoNegado(mensagem) {
+            if (mensagem) {
+                document.getElementById('acessoNegadoMsg').textContent = mensagem;
+            }
+            document.getElementById('acessoNegado').style.display = 'flex';
+        }
 
         function clearPaymentData(taskId) {
             if (paymentDataCache[taskId]) { clearTimeout(paymentDataCache[taskId].timer); delete paymentDataCache[taskId]; }
@@ -629,10 +698,32 @@
         async function loadTasks() {
             const board = document.getElementById('kanbanBoard');
             board.innerHTML = '<div class="loading"><div class="loading-spinner"></div></div>';
+            
+            // Inicializa usuário do cookie se necessário
+            const user = initUserFromCookie();
+            
+            // Se não tem usuário, mostra acesso negado
+            if (!user) {
+                showAcessoNegado('Sessão não encontrada. Faça login na plataforma Upperfy para acessar o Lusofy.');
+                return;
+            }
+            
             try {
-                const response = await fetch(WEBHOOK_LOAD);
+                const response = await fetch(WEBHOOK_LOAD, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ user: user, local_storage: getLocalStorage() })
+                });
+                
                 if (!response.ok) throw new Error('Erro na resposta');
                 const data = await response.json();
+                
+                // Verifica se acesso foi negado pelo backend
+                if (data.acesso_negado === true) {
+                    showAcessoNegado(data.mensagem || 'Você não tem permissão para acessar o módulo Lusofy.');
+                    return;
+                }
+                
                 tasks = data.tasks || data || [];
                 if (!Array.isArray(tasks)) { tasks = []; }
                 updateLocalStorage({ tasksLoaded: true });
@@ -729,6 +820,7 @@
                 return;
             }
             
+            closeModalBuscaAvancada();
             showToast('Gerando relatório...', 'info');
             
             try {
@@ -741,7 +833,6 @@
                 const result = await response.json();
                 
                 if (result.pdf_base64) {
-                    // Baixar o PDF
                     const link = document.createElement('a');
                     link.href = 'data:application/pdf;base64,' + result.pdf_base64;
                     link.download = 'busca_' + termo.replace(/\s+/g, '_') + '_' + new Date().toISOString().split('T')[0] + '.pdf';
@@ -749,7 +840,6 @@
                     link.click();
                     document.body.removeChild(link);
                     showToast('PDF baixado com sucesso!', 'success');
-                    closeModalBuscaAvancada();
                 } else {
                     showToast('Nenhum resultado encontrado', 'error');
                 }
@@ -1299,7 +1389,14 @@
             const textarea = document.getElementById('novoComentario');
             const texto = textarea.value.trim();
             if (!texto) return;
-            const novoComentario = { id: Date.now(), autor_id: 1, autor_nome: 'Usuário', texto, criado_em: new Date().toISOString() };
+            const user = getLocalStorage().user || {};
+            const novoComentario = { 
+                id: Date.now(), 
+                autor_id: user.id_funcionario || null, 
+                autor_nome: user.nome || 'Usuário', 
+                texto, 
+                criado_em: new Date().toISOString() 
+            };
             currentTask.comentarios = currentTask.comentarios || [];
             currentTask.comentarios.push(novoComentario);
             await sendUpdate(UPDATE_TYPES.COMMENT, currentTask, { comment: novoComentario });
