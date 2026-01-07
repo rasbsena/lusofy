@@ -256,6 +256,33 @@
         .productivity-bar-fill { height: 100%; background: linear-gradient(90deg, var(--accent) 0%, #22c55e 100%); border-radius: 4px; transition: width 0.5s ease; }
         @media (max-width: 1200px) { .charts-row { grid-template-columns: 1fr 1fr; } }
         @media (max-width: 768px) { .charts-row { grid-template-columns: 1fr; } }
+        /* Tabela Histórico de Concluídos */
+        .historico-container { margin: 24px; background: var(--bg-column); border-radius: 12px; border: 1px solid var(--border-color); overflow: hidden; }
+        .historico-header { padding: 16px 20px; border-bottom: 1px solid var(--border-color); display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 16px; }
+        .historico-title { display: flex; align-items: center; gap: 10px; }
+        .historico-title svg { color: #22c55e; }
+        .historico-title h3 { font-family: 'Oswald', sans-serif; font-size: 1rem; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; color: var(--text-primary); }
+        .historico-count { background: #22c55e; color: var(--bg-primary); font-size: 0.75rem; padding: 3px 10px; border-radius: 12px; font-weight: 600; }
+        .historico-filters { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+        .historico-filters select, .historico-filters input[type="date"] { padding: 8px 12px; background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 6px; color: var(--text-primary); font-size: 0.8rem; font-family: 'Montserrat', sans-serif; }
+        .historico-filters select:focus, .historico-filters input[type="date"]:focus { outline: none; border-color: var(--accent); }
+        .historico-table-wrapper { overflow-x: auto; }
+        .historico-table { width: 100%; border-collapse: collapse; }
+        .historico-table th, .historico-table td { padding: 12px 16px; text-align: left; border-bottom: 1px solid var(--border-color); }
+        .historico-table th { font-family: 'Oswald', sans-serif; font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-muted); background: var(--bg-card); }
+        .historico-table td { font-size: 0.85rem; color: var(--text-secondary); }
+        .historico-table tr:hover td { background: rgba(255, 207, 0, 0.05); }
+        .historico-table .task-name { font-weight: 600; color: var(--text-primary); cursor: pointer; }
+        .historico-table .task-name:hover { color: var(--accent); }
+        .historico-table .tipo-badge { display: inline-flex; align-items: center; gap: 6px; font-size: 0.75rem; }
+        .historico-table .tipo-badge .dot { width: 8px; height: 8px; border-radius: 50%; }
+        .historico-table .responsavel-cell { display: flex; align-items: center; gap: 8px; }
+        .historico-table .responsavel-cell .avatar { width: 24px; height: 24px; border-radius: 50%; background: var(--accent); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.6rem; color: var(--bg-primary); }
+        .historico-table .btn-ver { padding: 6px 12px; font-size: 0.7rem; }
+        .historico-empty { text-align: center; padding: 40px; color: var(--text-muted); }
+        .historico-empty svg { margin-bottom: 12px; opacity: 0.4; }
+        .historico-empty p { font-size: 0.85rem; }
+        @media (max-width: 768px) { .historico-filters { width: 100%; } .historico-filters select, .historico-filters input[type="date"] { flex: 1; min-width: 120px; } }
     </style>
 </head>
 <body>
@@ -355,6 +382,50 @@
         <div class="kanban-container">
             <div class="kanban-board" id="kanbanBoard">
                 <div class="loading"><div class="loading-spinner"></div></div>
+            </div>
+        </div>
+        <!-- Tabela Histórico de Concluídos -->
+        <div class="historico-container" id="historicoContainer">
+            <div class="historico-header">
+                <div class="historico-title">
+                    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><path d="M22 4L12 14.01l-3-3"/></svg>
+                    <h3>Histórico de Concluídos</h3>
+                    <span class="historico-count" id="historicoCount">0</span>
+                </div>
+                <div class="historico-filters">
+                    <select id="filtroTipo" onchange="renderHistoricoTable()">
+                        <option value="">Todos os tipos</option>
+                        <option value="bloqueio_mapa">Bloqueio de Mapa</option>
+                        <option value="coletar_dados">Coletar Dados</option>
+                        <option value="cobranca_digitada">Cobrança Digitada</option>
+                        <option value="checar_tarifarios">Checar Tarifários</option>
+                    </select>
+                    <select id="filtroResponsavel" onchange="renderHistoricoTable()">
+                        <option value="">Todos os responsáveis</option>
+                    </select>
+                    <input type="date" id="filtroDataDe" onchange="renderHistoricoTable()" placeholder="De">
+                    <input type="date" id="filtroDataAte" onchange="renderHistoricoTable()" placeholder="Até">
+                    <button class="btn-secondary" onclick="limparFiltrosHistorico()" style="padding:8px 12px;">Limpar</button>
+                </div>
+            </div>
+            <div class="historico-table-wrapper">
+                <table class="historico-table" id="historicoTable">
+                    <thead>
+                        <tr>
+                            <th>Tarefa</th>
+                            <th>Tipo</th>
+                            <th>Responsável</th>
+                            <th>Concluído em</th>
+                            <th>Prazo</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody id="historicoBody"></tbody>
+                </table>
+                <div class="historico-empty" id="historicoEmpty" style="display:none;">
+                    <svg viewBox="0 0 24 24" width="40" height="40" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><path d="M22 4L12 14.01l-3-3"/></svg>
+                    <p>Nenhuma tarefa concluída</p>
+                </div>
             </div>
         </div>
     </main>
@@ -526,18 +597,91 @@
                 column.innerHTML = '<div class="column-header"><div class="column-title"><div class="column-tipo-dot" style="background: ' + tipoConfig.color + '"></div><span class="column-name">' + tipoConfig.label + '</span></div><span class="column-count">' + tipoTasks.length + '</span></div><div class="column-cards" data-tipo="' + tipo + '">' + (tipoTasks.length === 0 ? '<div class="empty-column"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 9h6M9 12h6M9 15h4"/></svg><p>Nenhuma tarefa</p></div>' : tipoTasks.map(task => renderCard(task)).join('')) + '</div>';
                 board.appendChild(column);
             });
-            // Coluna Concluídos Recentes
-            const concluidoTasks = filteredTasks.filter(t => t.status === 'concluido').slice(0, 10);
-            const colConcluido = document.createElement('div');
-            colConcluido.className = 'kanban-column concluidos';
-            colConcluido.style.opacity = '0.85';
-            colConcluido.innerHTML = '<div class="column-header"><div class="column-title"><div class="column-tipo-dot" style="background: #22c55e"></div><span class="column-name">Concluídos Recentes</span></div><span class="column-count">' + concluidoTasks.length + '</span></div><div class="column-cards">' + (concluidoTasks.length === 0 ? '<div class="empty-column"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><path d="M22 4L12 14.01l-3-3"/></svg><p>Nenhuma concluída</p></div>' : concluidoTasks.map(task => renderCard(task)).join('')) + '</div>';
-            board.appendChild(colConcluido);
             setupDragAndDrop();
+            renderHistoricoTable();
         }
         
         function handleSearch(value) {
             renderBoard();
+        }
+
+        function renderHistoricoTable() {
+            const tbody = document.getElementById('historicoBody');
+            const emptyState = document.getElementById('historicoEmpty');
+            const countEl = document.getElementById('historicoCount');
+            const filtroTipo = document.getElementById('filtroTipo').value;
+            const filtroResponsavel = document.getElementById('filtroResponsavel').value;
+            const filtroDataDe = document.getElementById('filtroDataDe').value;
+            const filtroDataAte = document.getElementById('filtroDataAte').value;
+            
+            let concluidos = tasks.filter(t => t.status === 'concluido');
+            
+            // Aplicar filtros
+            if (filtroTipo) {
+                concluidos = concluidos.filter(t => t.tipo === filtroTipo);
+            }
+            if (filtroResponsavel) {
+                concluidos = concluidos.filter(t => t.responsavel && t.responsavel.nome === filtroResponsavel);
+            }
+            if (filtroDataDe) {
+                concluidos = concluidos.filter(t => t.concluido_em && t.concluido_em.split('T')[0] >= filtroDataDe);
+            }
+            if (filtroDataAte) {
+                concluidos = concluidos.filter(t => t.concluido_em && t.concluido_em.split('T')[0] <= filtroDataAte);
+            }
+            
+            // Ordenar por data de conclusão (mais recente primeiro)
+            concluidos.sort((a, b) => {
+                const dateA = a.concluido_em ? new Date(a.concluido_em) : new Date(0);
+                const dateB = b.concluido_em ? new Date(b.concluido_em) : new Date(0);
+                return dateB - dateA;
+            });
+            
+            // Atualizar contador
+            countEl.textContent = concluidos.length;
+            
+            // Popular dropdown de responsáveis
+            updateFiltroResponsaveis();
+            
+            if (concluidos.length === 0) {
+                tbody.innerHTML = '';
+                emptyState.style.display = 'block';
+                document.querySelector('.historico-table').style.display = 'none';
+                return;
+            }
+            
+            emptyState.style.display = 'none';
+            document.querySelector('.historico-table').style.display = 'table';
+            
+            tbody.innerHTML = concluidos.map(task => {
+                const tipoConfig = TIPO_CONFIG[task.tipo] || {};
+                const iniciais = getIniciais(task.responsavel?.nome || 'N/A');
+                return '<tr>' +
+                    '<td><span class="task-name" onclick="openModal(' + task.id + ')">' + task.nome + '</span></td>' +
+                    '<td><span class="tipo-badge"><span class="dot" style="background:' + (tipoConfig.color || '#666') + '"></span>' + (tipoConfig.label || task.tipo) + '</span></td>' +
+                    '<td><div class="responsavel-cell"><div class="avatar">' + iniciais + '</div><span>' + (task.responsavel?.nome || 'N/A') + '</span></div></td>' +
+                    '<td>' + formatDate(task.concluido_em) + '</td>' +
+                    '<td>' + formatDate(task.prazo) + '</td>' +
+                    '<td><button class="btn-secondary btn-ver" onclick="openModal(' + task.id + ')">Ver</button></td>' +
+                    '</tr>';
+            }).join('');
+        }
+        
+        function updateFiltroResponsaveis() {
+            const select = document.getElementById('filtroResponsavel');
+            const currentValue = select.value;
+            const responsaveis = [...new Set(tasks.filter(t => t.status === 'concluido' && t.responsavel?.nome).map(t => t.responsavel.nome))].sort();
+            
+            select.innerHTML = '<option value="">Todos os responsáveis</option>' + 
+                responsaveis.map(r => '<option value="' + r + '"' + (r === currentValue ? ' selected' : '') + '>' + r + '</option>').join('');
+        }
+        
+        function limparFiltrosHistorico() {
+            document.getElementById('filtroTipo').value = '';
+            document.getElementById('filtroResponsavel').value = '';
+            document.getElementById('filtroDataDe').value = '';
+            document.getElementById('filtroDataAte').value = '';
+            renderHistoricoTable();
         }
 
         function renderCard(task) {
