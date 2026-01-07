@@ -930,21 +930,49 @@
         }
 
         async function editDate(field) {
+            const container = event.currentTarget;
             const value = currentTask[field] ? currentTask[field].split('T')[0] : '';
+            
+            const wrapper = document.createElement('div');
+            wrapper.style.cssText = 'display:flex;gap:6px;align-items:center;';
+            
             const input = document.createElement('input');
             input.type = 'date'; 
             input.className = 'date-input'; 
             input.value = value;
-            input.onchange = async () => {
-                const oldVal = currentTask[field];
-                currentTask[field] = input.value;
-                await sendUpdate(UPDATE_TYPES.DATA_UPDATE, currentTask, { field, old_value: oldVal, new_value: input.value });
+            input.style.cssText = 'flex:1;';
+            
+            const btnSave = document.createElement('button');
+            btnSave.className = 'btn-primary';
+            btnSave.style.cssText = 'padding:6px 10px;font-size:0.7rem;';
+            btnSave.innerHTML = '✓';
+            btnSave.onclick = async (e) => {
+                e.stopPropagation();
+                if (input.value) {
+                    const oldVal = currentTask[field];
+                    currentTask[field] = input.value;
+                    await sendUpdate(UPDATE_TYPES.DATA_UPDATE, currentTask, { field, old_value: oldVal, new_value: input.value });
+                    renderBoard();
+                    showToast('Data atualizada!', 'success');
+                }
                 renderModalContent();
-                renderBoard();
-                showToast('Data atualizada!', 'success');
             };
-            event.currentTarget.innerHTML = '';
-            event.currentTarget.appendChild(input);
+            
+            const btnCancel = document.createElement('button');
+            btnCancel.className = 'btn-secondary';
+            btnCancel.style.cssText = 'padding:6px 10px;font-size:0.7rem;';
+            btnCancel.innerHTML = '✕';
+            btnCancel.onclick = (e) => {
+                e.stopPropagation();
+                renderModalContent();
+            };
+            
+            wrapper.appendChild(input);
+            wrapper.appendChild(btnSave);
+            wrapper.appendChild(btnCancel);
+            
+            container.innerHTML = '';
+            container.appendChild(wrapper);
             input.focus();
         }
 
