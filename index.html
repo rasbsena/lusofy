@@ -283,6 +283,39 @@
         .historico-empty svg { margin-bottom: 12px; opacity: 0.4; }
         .historico-empty p { font-size: 0.85rem; }
         @media (max-width: 768px) { .historico-filters { width: 100%; } .historico-filters select, .historico-filters input[type="date"] { flex: 1; min-width: 120px; } }
+        /* Autocomplete de Busca */
+        .btn-busca-avancada { position: absolute; right: 0; top: 0; height: 100%; width: 44px; background: var(--accent); border: none; border-radius: 0 8px 8px 0; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s ease; }
+        .btn-busca-avancada:hover { background: var(--accent-hover); }
+        .btn-busca-avancada svg { color: var(--bg-primary); }
+        .search-autocomplete { position: absolute; top: 100%; left: 0; right: 0; background: var(--bg-card); border: 2px solid var(--accent); border-top: none; border-radius: 0 0 8px 8px; max-height: 250px; overflow-y: auto; display: none; z-index: 100; }
+        .search-autocomplete.active { display: block; }
+        .search-autocomplete-item { padding: 12px 16px; cursor: pointer; display: flex; align-items: center; gap: 12px; border-bottom: 1px solid var(--border-color); transition: background 0.2s ease; }
+        .search-autocomplete-item:last-child { border-bottom: none; }
+        .search-autocomplete-item:hover { background: rgba(255, 207, 0, 0.1); }
+        .search-autocomplete-item .tipo-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+        .search-autocomplete-item .item-info { flex: 1; min-width: 0; }
+        .search-autocomplete-item .item-nome { font-size: 0.85rem; font-weight: 600; color: var(--text-primary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .search-autocomplete-item .item-tipo { font-size: 0.7rem; color: var(--text-muted); }
+        .search-autocomplete-empty { padding: 16px; text-align: center; color: var(--text-muted); font-size: 0.85rem; }
+        /* Modal Busca Avançada */
+        .busca-avancada-modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(6px); display: none; align-items: center; justify-content: center; z-index: 5000; padding: 24px; }
+        .busca-avancada-modal-overlay.active { display: flex; }
+        .busca-avancada-modal { background: var(--bg-secondary); border-radius: 16px; border: 2px solid var(--accent); width: 100%; max-width: 480px; overflow: hidden; box-shadow: 0 25px 50px rgba(0,0,0,0.5); }
+        .busca-avancada-modal-header { padding: 16px 20px; border-bottom: 2px solid var(--accent); background: var(--bg-primary); display: flex; align-items: center; gap: 12px; }
+        .busca-avancada-modal-header svg { width: 24px; height: 24px; color: var(--accent); }
+        .busca-avancada-modal-header h3 { font-family: 'Oswald', sans-serif; font-size: 1.1rem; color: var(--accent); text-transform: uppercase; letter-spacing: 1px; }
+        .busca-avancada-modal-body { padding: 20px; }
+        .busca-avancada-info { font-size: 0.85rem; color: var(--text-secondary); line-height: 1.5; margin-bottom: 20px; padding: 12px; background: rgba(255, 207, 0, 0.1); border-radius: 8px; border: 1px solid rgba(255, 207, 0, 0.3); }
+        .busca-avancada-info strong { color: var(--accent); }
+        .busca-avancada-form { display: flex; flex-direction: column; gap: 16px; }
+        .busca-avancada-field { display: flex; flex-direction: column; gap: 6px; }
+        .busca-avancada-field label { font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; font-weight: 600; }
+        .busca-avancada-field input { padding: 10px 14px; background: var(--bg-card); border: 2px solid var(--border-color); border-radius: 8px; color: var(--text-primary); font-size: 0.9rem; font-family: 'Montserrat', sans-serif; }
+        .busca-avancada-field input:focus { outline: none; border-color: var(--accent); }
+        .busca-avancada-field input[readonly] { background: var(--bg-column); }
+        .busca-avancada-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+        .busca-avancada-footer { display: flex; gap: 12px; margin-top: 20px; }
+        .busca-avancada-footer button { flex: 1; }
     </style>
 </head>
 <body>
@@ -308,8 +341,12 @@
             <button class="nav-btn" onclick="showToast('Financeiro em breve','info')">Financeiro</button>
         </nav>
         <div class="search-box" style="flex:1;max-width:400px;position:relative;">
-            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" style="position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--text-muted);"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
-            <input type="text" id="searchInput" placeholder="Buscar tarefas..." oninput="handleSearch(this.value)" style="width:100%;padding:10px 16px 10px 40px;background:var(--bg-card);border:2px solid var(--border-color);border-radius:8px;color:var(--text-primary);font-size:0.85rem;">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" style="position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--text-muted);pointer-events:none;"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+            <input type="text" id="searchInput" placeholder="Buscar tarefas..." oninput="handleSearchAutocomplete(this.value)" style="width:calc(100% - 44px);padding:10px 16px 10px 40px;background:var(--bg-card);border:2px solid var(--border-color);border-radius:8px 0 0 8px;color:var(--text-primary);font-size:0.85rem;">
+            <button class="btn-busca-avancada" onclick="openModalBuscaAvancada()" title="Download de Busca Avançada">
+                <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            </button>
+            <div class="search-autocomplete" id="searchAutocomplete"></div>
         </div>
         <div class="header-profile" style="display:flex;gap:8px;">
             <button class="profile-btn" onclick="toggleDashboard()" style="padding:8px 12px;" id="btnDashboard">
@@ -483,12 +520,48 @@
             </div>
         </div>
     </div>
+    <!-- Modal Busca Avançada -->
+    <div class="busca-avancada-modal-overlay" id="buscaAvancadaModal">
+        <div class="busca-avancada-modal">
+            <div class="busca-avancada-modal-header">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+                <h3>Busca Avançada</h3>
+            </div>
+            <div class="busca-avancada-modal-body">
+                <p class="busca-avancada-info">Você receberá um <strong>PDF</strong> com todas as tarefas que contêm o termo pesquisado no nome, incluindo tarefas concluídas de qualquer período.</p>
+                <div class="busca-avancada-form">
+                    <div class="busca-avancada-field">
+                        <label>Termo de busca</label>
+                        <input type="text" id="buscaAvancadaTermo" placeholder="Digite o termo..." readonly>
+                    </div>
+                    <div class="busca-avancada-row">
+                        <div class="busca-avancada-field">
+                            <label>Data de</label>
+                            <input type="date" id="buscaAvancadaDataDe">
+                        </div>
+                        <div class="busca-avancada-field">
+                            <label>Data até</label>
+                            <input type="date" id="buscaAvancadaDataAte">
+                        </div>
+                    </div>
+                </div>
+                <div class="busca-avancada-footer">
+                    <button class="btn-secondary" onclick="closeModalBuscaAvancada()">Cancelar</button>
+                    <button class="btn-primary" onclick="executarBuscaAvancada()">
+                        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" style="margin-right:6px;vertical-align:middle;"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                        Confirmar Download
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
     <div class="toast-container" id="toastContainer"></div>
     <script>
         const WEBHOOK_LOAD = 'https://n8n.upperfy.com.br/webhook/0fec17a7-8654-45ff-8ad6-lsfy1';
         const WEBHOOK_UPDATE = 'https://n8n.upperfy.com.br/webhook/0fec17a7-8654-45ff-lsfy-draganddrop';
         const WEBHOOK_SECURITY = 'https://n8n.upperfy.com.br/webhook/0fec17a7-8654-45ff-lsfy-scritypht';
         const SEARCH_URL = 'https://n8n.upperfy.com.br/webhook/0fec17a7-8654-45ff-8ad6-lsfysearchpeople';
+        const WEBHOOK_BUSCA_AVANCADA = 'https://n8n.upperfy.com.br/webhook/0fec17a7-8654-45ff-lsfy-ADVCD';
         
         const UPDATE_TYPES = { STATUS_CHANGE: 1, COMMENT: 2, FILE_UPLOAD: 3, DATA_UPDATE: 4, RESPONSAVEL_CHANGE: 5, TIPO_CHANGE: 6, CARTAO_ADD: 7 };
 
@@ -573,23 +646,13 @@
         function renderBoard() {
             const board = document.getElementById('kanbanBoard');
             board.innerHTML = '';
-            const searchTerm = document.getElementById('searchInput')?.value?.toLowerCase()?.trim() || '';
-            let filteredTasks = tasks;
-            if (searchTerm) {
-                filteredTasks = tasks.filter(t => 
-                    (t.nome || '').toLowerCase().includes(searchTerm) ||
-                    (t.descricao || '').toLowerCase().includes(searchTerm) ||
-                    (t.responsavel?.nome || '').toLowerCase().includes(searchTerm) ||
-                    (TIPO_CONFIG[t.tipo]?.label || '').toLowerCase().includes(searchTerm)
-                );
-            }
-            if (filteredTasks.length === 0) {
-                board.innerHTML = '<div class="error-state"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 9h6M9 12h6M9 15h4"/></svg><h3>Nenhuma tarefa encontrada</h3><p>' + (searchTerm ? 'Tente outro termo de busca' : 'Não há tarefas cadastradas') + '</p></div>';
+            if (tasks.length === 0) {
+                board.innerHTML = '<div class="error-state"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 9h6M9 12h6M9 15h4"/></svg><h3>Nenhuma tarefa encontrada</h3><p>Não há tarefas cadastradas</p></div>';
                 return;
             }
             TIPO_ORDER.forEach(tipo => {
                 const tipoConfig = TIPO_CONFIG[tipo];
-                const tipoTasks = filteredTasks.filter(t => t.tipo === tipo && t.status !== 'concluido');
+                const tipoTasks = tasks.filter(t => t.tipo === tipo && t.status !== 'concluido');
                 const column = document.createElement('div');
                 column.className = 'kanban-column';
                 column.dataset.tipo = tipo;
@@ -600,9 +663,114 @@
             renderHistoricoTable();
         }
         
-        function handleSearch(value) {
-            renderBoard();
+        function handleSearchAutocomplete(value) {
+            const autocomplete = document.getElementById('searchAutocomplete');
+            const termo = value.toLowerCase().trim();
+            
+            if (termo.length < 3) {
+                autocomplete.classList.remove('active');
+                autocomplete.innerHTML = '';
+                return;
+            }
+            
+            // Filtra cards pendentes (não concluídos) pelo nome
+            const resultados = tasks
+                .filter(t => t.status !== 'concluido' && (t.nome || '').toLowerCase().includes(termo))
+                .slice(0, 5);
+            
+            if (resultados.length === 0) {
+                autocomplete.innerHTML = '<div class="search-autocomplete-empty">Nenhuma tarefa encontrada</div>';
+                autocomplete.classList.add('active');
+                return;
+            }
+            
+            autocomplete.innerHTML = resultados.map(task => {
+                const tipoConfig = TIPO_CONFIG[task.tipo] || {};
+                return '<div class="search-autocomplete-item" onclick="openModalFromSearch(' + task.id + ')">' +
+                    '<span class="tipo-dot" style="background:' + (tipoConfig.color || '#666') + '"></span>' +
+                    '<div class="item-info">' +
+                    '<div class="item-nome">' + task.nome + '</div>' +
+                    '<div class="item-tipo">' + (tipoConfig.label || task.tipo) + '</div>' +
+                    '</div></div>';
+            }).join('');
+            autocomplete.classList.add('active');
         }
+        
+        function openModalFromSearch(taskId) {
+            document.getElementById('searchAutocomplete').classList.remove('active');
+            document.getElementById('searchInput').value = '';
+            currentTask = tasks.find(t => t.id === taskId);
+            if (!currentTask) return;
+            document.getElementById('modalTitle').textContent = currentTask.nome;
+            renderModalContent();
+            document.getElementById('taskModal').classList.add('active');
+        }
+        
+        function openModalBuscaAvancada() {
+            const termo = document.getElementById('searchInput').value.trim();
+            document.getElementById('buscaAvancadaTermo').value = termo;
+            document.getElementById('buscaAvancadaDataDe').value = '';
+            document.getElementById('buscaAvancadaDataAte').value = '';
+            document.getElementById('buscaAvancadaModal').classList.add('active');
+            document.getElementById('searchAutocomplete').classList.remove('active');
+        }
+        
+        function closeModalBuscaAvancada() {
+            document.getElementById('buscaAvancadaModal').classList.remove('active');
+        }
+        
+        async function executarBuscaAvancada() {
+            const termo = document.getElementById('buscaAvancadaTermo').value.trim();
+            const dataDe = document.getElementById('buscaAvancadaDataDe').value;
+            const dataAte = document.getElementById('buscaAvancadaDataAte').value;
+            
+            if (!termo) {
+                showToast('Digite um termo de busca', 'error');
+                return;
+            }
+            
+            showToast('Gerando relatório...', 'info');
+            
+            try {
+                const response = await fetch(WEBHOOK_BUSCA_AVANCADA, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ termo, data_de: dataDe, data_ate: dataAte })
+                });
+                
+                const result = await response.json();
+                
+                if (result.pdf_base64) {
+                    // Baixar o PDF
+                    const link = document.createElement('a');
+                    link.href = 'data:application/pdf;base64,' + result.pdf_base64;
+                    link.download = 'busca_' + termo.replace(/\s+/g, '_') + '_' + new Date().toISOString().split('T')[0] + '.pdf';
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                    showToast('PDF baixado com sucesso!', 'success');
+                    closeModalBuscaAvancada();
+                } else {
+                    showToast('Nenhum resultado encontrado', 'error');
+                }
+            } catch (error) {
+                console.error('Erro na busca avançada:', error);
+                showToast('Erro ao gerar relatório', 'error');
+            }
+        }
+        
+        // Fechar autocomplete ao clicar fora
+        document.addEventListener('click', function(e) {
+            const searchBox = document.querySelector('.search-box');
+            if (searchBox && !searchBox.contains(e.target)) {
+                document.getElementById('searchAutocomplete').classList.remove('active');
+            }
+        });
+        
+        // Fechar modal busca avançada com Escape ou clique fora
+        document.getElementById('buscaAvancadaModal').addEventListener('click', function(e) {
+            if (e.target.id === 'buscaAvancadaModal') closeModalBuscaAvancada();
+        });
 
         function renderHistoricoTable() {
             const tbody = document.getElementById('historicoBody');
