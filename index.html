@@ -932,9 +932,9 @@
         async function updateStatusDirect(newStatus) {
             const oldStatus = currentTask.status;
             currentTask.status = newStatus;
+            await sendUpdate(UPDATE_TYPES.STATUS_CHANGE, currentTask, { old_status: oldStatus, new_status: newStatus });
             if (newStatus === 'concluido') { clearPaymentData(currentTask.id); renderBoard(); closeModal(); showToast('Tarefa concluída!', 'success'); }
             else { renderBoard(); showToast('Status atualizado!', 'success'); }
-            await sendUpdate(UPDATE_TYPES.STATUS_CHANGE, currentTask, { old_status: oldStatus, new_status: newStatus });
         }
 
         function formatTimer(seconds) { const mins = Math.floor(seconds / 60); const secs = seconds % 60; return mins + ':' + secs.toString().padStart(2, '0'); }
