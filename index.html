@@ -333,7 +333,7 @@
                 <div class="chart-container"><canvas id="chartLine"></canvas></div>
             </div>
             <div class="chart-card">
-                <div class="chart-card-title">Concluídas por Responsável</div>
+                <div class="chart-card-title">Concluídas por Responsável (7 dias)</div>
                 <div class="chart-container"><canvas id="chartPie"></canvas></div>
                 <div class="chart-legend" id="chartPieLegend"></div>
             </div>
@@ -353,7 +353,6 @@
                 <div class="status-row"><span class="status-label"><span class="status-dot" style="background:#6b7280;"></span>Não Iniciado</span><span class="status-count" id="dashNaoIniciado">0</span></div>
                 <div class="status-row"><span class="status-label"><span class="status-dot" style="background:#3b82f6;"></span>Em Andamento</span><span class="status-count" id="dashEmAndamento">0</span></div>
                 <div class="status-row"><span class="status-label"><span class="status-dot" style="background:#ef4444;"></span>Bloqueado</span><span class="status-count" id="dashBloqueado">0</span></div>
-                <div class="status-row"><span class="status-label"><span class="status-dot" style="background:#22c55e;"></span>Concluído</span><span class="status-count" id="dashConcluido">0</span></div>
             </div>
             <div class="dashboard-card">
                 <div class="dashboard-card-title">Concluídas Hoje</div>
@@ -1200,7 +1199,6 @@
             document.getElementById('dashEmAndamento').textContent = tasks.filter(t => t.status === 'em_andamento').length;
             document.getElementById('dashBloqueado').textContent = tasks.filter(t => t.status === 'bloqueado').length;
             const concluido = tasks.filter(t => t.status === 'concluido').length;
-            document.getElementById('dashConcluido').textContent = concluido;
             const hoje = new Date().toDateString();
             document.getElementById('dashConcluidasHoje').textContent = tasks.filter(t => t.status === 'concluido' && t.concluido_em && new Date(t.concluido_em).toDateString() === hoje).length;
             const taxa = tasks.length > 0 ? Math.round((concluido / tasks.length) * 100) : 0;
