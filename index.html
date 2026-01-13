@@ -1,2652 +1,543 @@
 <!DOCTYPE html>
+
 <html lang="pt-BR">
+
 <head>
+
     <meta charset="UTF-8">
+
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <title>Lusofy - Beta 1.5</title>
+
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='70' r='20' stroke='%23ffcf00' stroke-width='3' fill='none'/%3E%3Cline x1='50' y1='45' x2='50' y2='25' stroke='%23ffcf00' stroke-width='3'/%3E%3Cline x1='50' y1='45' x2='30' y2='30' stroke='%23ffcf00' stroke-width='3'/%3E%3Cline x1='50' y1='45' x2='70' y2='30' stroke='%23ffcf00' stroke-width='3'/%3E%3Cline x1='50' y1='45' x2='20' y2='45' stroke='%23ffcf00' stroke-width='3'/%3E%3Cline x1='50' y1='45' x2='80' y2='45' stroke='%23ffcf00' stroke-width='3'/%3E%3Cline x1='50' y1='45' x2='25' y2='55' stroke='%23ffcf00' stroke-width='3'/%3E%3Cline x1='50' y1='45' x2='75' y2='55' stroke='%23ffcf00' stroke-width='3'/%3E%3Cline x1='15' y1='70' x2='85' y2='70' stroke='%23ffcf00' stroke-width='3'/%3E%3C/svg%3E">
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
+
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
     <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@300;400;500;600;700&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
     <style>
+
         * { margin: 0; padding: 0; box-sizing: border-box; }
+
         :root {
+
             --lusotur-blue: #041f43;
+
             --lusotur-yellow: #ffcf00;
+
             --lusotur-white: #ffffff;
+
             --bg-primary: #041f43;
+
             --bg-secondary: #062a5a;
+
             --bg-card: #0a3570;
+
             --bg-column: #031632;
+
             --text-primary: #ffffff;
+
             --text-secondary: #b8c7db;
+
             --text-muted: #7a8fa8;
+
             --border-color: #1a4a7a;
+
             --accent: #ffcf00;
+
             --accent-hover: #ffe14d;
+
             --status-nao-iniciado: #6b7280;
+
             --status-em-andamento: #3b82f6;
+
             --status-concluido: #22c55e;
+
             --status-bloqueado: #ef4444;
+
         }
+
         body { font-family: 'Montserrat', sans-serif; background: linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-secondary) 100%); min-height: 100vh; color: var(--text-primary); }
+
         /* TEMA CLARO - apenas fundo branco, resto igual ao escuro */
+
         body.light-theme { background: linear-gradient(135deg, #f5f5f5 0%, #e8e8e8 100%); }
+
         body.light-theme .dashboard { background: #f5f5f5; }
+
         h1, h2, h3, h4, h5, h6, .title-font { font-family: 'Oswald', sans-serif; }
+
         .header { background: rgba(4, 31, 67, 0.98); backdrop-filter: blur(10px); border-bottom: 3px solid var(--accent); padding: 0 24px; height: 70px; display: flex; align-items: center; justify-content: space-between; position: fixed; top: 0; left: 0; right: 0; z-index: 100; }
+
         .header-logo { display: flex; align-items: center; gap: 12px; }
+
         .header-logo h1 { font-size: 1.8rem; font-weight: 700; color: var(--accent); letter-spacing: 2px; text-transform: uppercase; }
+
         .header-logo .version { font-family: 'Montserrat', sans-serif; font-size: 0.7rem; color: var(--text-muted); background: var(--bg-card); padding: 3px 10px; border-radius: 4px; font-weight: 500; }
+
         .header-nav { display: flex; gap: 8px; }
+
         .nav-btn { font-family: 'Oswald', sans-serif; padding: 10px 20px; border-radius: 6px; font-size: 0.95rem; font-weight: 500; cursor: pointer; transition: all 0.2s ease; border: 2px solid transparent; background: transparent; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 1px; }
+
         .nav-btn:hover { background: rgba(255, 207, 0, 0.1); color: var(--text-primary); border-color: rgba(255, 207, 0, 0.3); }
+
         .nav-btn.active { background: var(--accent); color: var(--bg-primary); border-color: var(--accent); font-weight: 600; }
+
         .header-profile { display: flex; align-items: center; gap: 12px; }
+
         .profile-btn { display: flex; align-items: center; gap: 10px; padding: 8px 16px; border-radius: 8px; background: var(--bg-card); border: 2px solid var(--border-color); color: var(--text-primary); cursor: pointer; transition: all 0.2s ease; font-family: 'Montserrat', sans-serif; font-weight: 500; }
+
         .profile-btn:hover { border-color: var(--accent); background: rgba(255, 207, 0, 0.1); }
+
         .profile-avatar { width: 34px; height: 34px; border-radius: 50%; background: var(--accent); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.9rem; color: var(--bg-primary); }
+
         .main-content { padding-top: 94px; padding-bottom: 24px; min-height: 100vh; }
+
         .kanban-container { padding: 0 24px; overflow-x: auto; }
+
         .kanban-board { display: flex; gap: 16px; min-width: max-content; padding-bottom: 24px; }
+
         .kanban-column { width: 340px; min-width: 340px; background: var(--bg-column); border-radius: 12px; border: 1px solid var(--border-color); display: flex; flex-direction: column; max-height: calc(100vh - 130px); }
+
         .column-header { padding: 16px; border-bottom: 1px solid var(--border-color); display: flex; align-items: center; justify-content: space-between; }
+
         .column-title { display: flex; align-items: center; gap: 10px; }
+
         .column-tipo-dot { width: 12px; height: 12px; border-radius: 50%; }
+
         .column-name { font-family: 'Oswald', sans-serif; font-weight: 600; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 0.5px; }
+
         .column-count { background: var(--bg-card); color: var(--accent); font-size: 0.75rem; padding: 3px 10px; border-radius: 12px; font-weight: 600; }
+
         .column-cards { flex: 1; padding: 12px; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; }
+
         .column-cards::-webkit-scrollbar { width: 6px; }
+
         .column-cards::-webkit-scrollbar-track { background: transparent; }
+
         .column-cards::-webkit-scrollbar-thumb { background: var(--border-color); border-radius: 3px; }
+
         .task-card { background: var(--bg-card); border-radius: 10px; border: 1px solid var(--border-color); padding: 16px; cursor: grab; transition: all 0.2s ease; }
+
         .task-card:hover { border-color: var(--accent); transform: translateY(-2px); box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4); }
+
         .task-card.dragging { opacity: 0.5; cursor: grabbing; }
+
         /* Card Urgente - Destaque especial */
+
         .task-card.card-urgente { border: 2px solid rgba(220, 38, 38, 0.6); background: linear-gradient(135deg, var(--bg-card) 0%, rgba(220, 38, 38, 0.08) 100%); box-shadow: 0 0 15px rgba(220, 38, 38, 0.15); }
+
         .task-card.card-urgente:hover { border-color: #dc2626; box-shadow: 0 8px 30px rgba(220, 38, 38, 0.3); }
+
         .task-card-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 8px; margin-bottom: 10px; }
+
         .task-title { font-weight: 600; font-size: 0.9rem; line-height: 1.4; flex: 1; }
+
         .task-status-badge { font-family: 'Oswald', sans-serif; font-size: 0.6rem; font-weight: 600; padding: 3px 8px; border-radius: 4px; text-transform: uppercase; letter-spacing: 0.5px; white-space: nowrap; }
+
         .status-nao_iniciado { background: rgba(107, 114, 128, 0.25); color: #9ca3af; border: 1px solid rgba(107, 114, 128, 0.4); }
+
         .status-em_andamento { background: rgba(59, 130, 246, 0.25); color: #93c5fd; border: 1px solid rgba(59, 130, 246, 0.4); }
+
         .status-concluido { background: rgba(34, 197, 94, 0.25); color: #86efac; border: 1px solid rgba(34, 197, 94, 0.4); }
+
         .status-bloqueado { background: rgba(239, 68, 68, 0.25); color: #fca5a5; border: 1px solid rgba(239, 68, 68, 0.4); }
+
         .task-priority { font-family: 'Oswald', sans-serif; font-size: 0.6rem; font-weight: 600; padding: 3px 8px; border-radius: 4px; text-transform: uppercase; letter-spacing: 0.5px; white-space: nowrap; margin-left: 4px; }
+
         .priority-urgente { background: rgba(220, 38, 38, 0.25); color: #fca5a5; border: 1px solid rgba(220, 38, 38, 0.4); }
+
         .priority-alta { background: rgba(249, 115, 22, 0.25); color: #fdba74; border: 1px solid rgba(249, 115, 22, 0.4); }
+
         /* Cronômetro de espera para cards não iniciados */
+
         .card-wait-timer { display: flex; align-items: center; gap: 5px; font-size: 0.7rem; color: #fca5a5; background: rgba(220, 38, 38, 0.15); padding: 4px 8px; border-radius: 4px; margin-top: 8px; }
+
         .card-wait-timer svg { width: 12px; height: 12px; }
+
         .card-wait-timer.timer-alta { color: #fdba74; background: rgba(249, 115, 22, 0.15); }
+
         .priority-media { background: rgba(234, 179, 8, 0.25); color: #fde047; border: 1px solid rgba(234, 179, 8, 0.4); }
+
         .priority-baixa { background: rgba(107, 114, 128, 0.25); color: #9ca3af; border: 1px solid rgba(107, 114, 128, 0.4); }
+
         .task-badges { display: flex; flex-wrap: wrap; gap: 4px; margin-bottom: 10px; }
+
         .task-card-info { display: flex; flex-direction: column; gap: 6px; margin-bottom: 10px; }
+
         .task-info-row { display: flex; align-items: center; gap: 8px; font-size: 0.75rem; color: var(--text-secondary); }
+
         .task-info-row svg { width: 12px; height: 12px; color: var(--accent); opacity: 0.8; }
+
         .task-card-footer { display: flex; align-items: center; justify-content: space-between; padding-top: 10px; border-top: 1px solid var(--border-color); }
+
         .task-responsavel { display: flex; align-items: center; gap: 6px; }
+
         .responsavel-avatar { width: 24px; height: 24px; border-radius: 50%; background: linear-gradient(135deg, var(--accent) 0%, #ffe680 100%); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.6rem; color: var(--bg-primary); }
+
         .responsavel-nome { font-size: 0.75rem; color: var(--text-secondary); font-weight: 500; }
+
         .task-comments { display: flex; align-items: center; gap: 4px; font-size: 0.7rem; color: var(--text-muted); }
+
         .task-comments svg { width: 12px; height: 12px; }
+
         .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0, 0, 0, 0.75); backdrop-filter: blur(4px); display: none; align-items: center; justify-content: center; z-index: 1000; padding: 24px; }
+
         .modal-overlay.active { display: flex; }
+
         .modal { background: var(--bg-secondary); border-radius: 16px; border: 2px solid var(--border-color); width: 100%; max-width: 850px; max-height: 90vh; overflow: hidden; display: flex; flex-direction: column; box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5); }
+
         .modal-header { padding: 20px 24px; border-bottom: 2px solid var(--accent); display: flex; align-items: center; justify-content: space-between; background: var(--bg-primary); }
+
         .modal-title { font-family: 'Oswald', sans-serif; font-size: 1.3rem; font-weight: 600; color: var(--accent); text-transform: uppercase; letter-spacing: 1px; }
+
         .modal-close { width: 36px; height: 36px; border-radius: 8px; background: var(--bg-card); border: 1px solid var(--border-color); color: var(--text-secondary); cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s ease; }
+
         .modal-close:hover { background: var(--accent); color: var(--bg-primary); border-color: var(--accent); }
+
         .modal-body { flex: 1; overflow-y: auto; padding: 24px; }
+
         .modal-section { margin-bottom: 20px; }
+
         .modal-section:last-child { margin-bottom: 0; }
+
         .modal-section-title { font-family: 'Oswald', sans-serif; font-size: 0.8rem; font-weight: 600; color: var(--accent); margin-bottom: 10px; text-transform: uppercase; letter-spacing: 1px; display: flex; align-items: center; gap: 8px; }
+
         .modal-section-title svg { width: 16px; height: 16px; }
+
         .modal-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
+
         @media (max-width: 600px) { .modal-grid { grid-template-columns: 1fr; } }
+
         .modal-field { background: var(--bg-card); border-radius: 8px; padding: 12px; border: 1px solid var(--border-color); }
+
         .modal-field-label { font-size: 0.65rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px; font-weight: 600; }
+
         .modal-field-value { font-size: 0.9rem; color: var(--text-primary); font-weight: 500; }
+
         .modal-field-value.editable { cursor: pointer; display: flex; align-items: center; gap: 8px; }
+
         .modal-field-value.editable:hover { color: var(--accent); }
+
         .modal-field-value.editable svg { width: 14px; height: 14px; opacity: 0.5; flex-shrink: 0; }
+
         .status-select-wrapper { width: 100%; }
+
         .status-select-wrapper select { width: 100%; padding: 8px 12px; background: var(--bg-column); border: 2px solid var(--accent); border-radius: 6px; color: var(--text-primary); font-family: 'Montserrat', sans-serif; font-size: 0.85rem; cursor: pointer; appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23ffcf00' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 12px center; padding-right: 36px; }
+
         .status-select-wrapper select:focus { outline: none; }
+
         .cronometro { display: flex; align-items: center; gap: 8px; font-family: 'Oswald', monospace; font-size: 1rem; color: var(--accent); font-weight: 600; }
+
         .cronometro svg { width: 16px; height: 16px; }
+
         .descricao-box { background: var(--bg-card); border-radius: 8px; padding: 14px; border: 1px solid var(--border-color); min-height: 80px; font-size: 0.85rem; line-height: 1.5; color: var(--text-secondary); white-space: pre-wrap; }
+
         .responsavel-search { position: relative; }
+
         .responsavel-input { width: 100%; padding: 10px 14px; background: var(--bg-card); border: 2px solid var(--border-color); border-radius: 8px; color: var(--text-primary); font-size: 0.85rem; font-family: 'Montserrat', sans-serif; transition: all 0.2s ease; }
+
         .responsavel-input:focus { outline: none; border-color: var(--accent); }
+
         .responsavel-dropdown { position: absolute; top: 100%; left: 0; right: 0; background: var(--bg-card); border: 2px solid var(--accent); border-top: none; border-radius: 0 0 8px 8px; max-height: 180px; overflow-y: auto; display: none; z-index: 10; }
+
         .responsavel-dropdown.active { display: block; }
+
         .responsavel-option { padding: 10px 14px; cursor: pointer; display: flex; align-items: center; gap: 10px; transition: background 0.2s ease; border-bottom: 1px solid var(--border-color); }
+
         .responsavel-option:last-child { border-bottom: none; }
+
         .responsavel-option:hover { background: rgba(255, 207, 0, 0.1); }
+
         .responsavel-option-avatar { width: 28px; height: 28px; border-radius: 50%; background: var(--accent); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.7rem; color: var(--bg-primary); }
+
         .responsavel-option-info { flex: 1; }
+
         .responsavel-option-name { font-weight: 600; font-size: 0.85rem; }
+
         .responsavel-option-email { font-size: 0.7rem; color: var(--text-muted); }
+
         .comentarios-list { display: flex; flex-direction: column; gap: 10px; margin-bottom: 12px; max-height: 200px; overflow-y: auto; }
+
         .comentario-item { background: var(--bg-card); border-radius: 8px; padding: 12px; border: 1px solid var(--border-color); }
+
         .comentario-header { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+
         .comentario-avatar { width: 26px; height: 26px; border-radius: 50%; background: var(--accent); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.65rem; color: var(--bg-primary); }
+
         .comentario-autor { font-weight: 600; font-size: 0.8rem; }
+
         .comentario-data { font-size: 0.65rem; color: var(--text-muted); margin-left: auto; }
+
         .comentario-texto { font-size: 0.85rem; line-height: 1.4; color: var(--text-secondary); }
+
         .comentario-form { display: flex; flex-direction: column; gap: 8px; }
+
         .comentario-textarea { width: 100%; min-height: 60px; padding: 12px; background: var(--bg-card); border: 2px solid var(--border-color); border-radius: 8px; color: var(--text-primary); font-size: 0.85rem; font-family: 'Montserrat', sans-serif; resize: vertical; transition: all 0.2s ease; }
+
         .comentario-textarea:focus { outline: none; border-color: var(--accent); }
+
         .btn-primary { padding: 10px 20px; background: var(--accent); border: none; border-radius: 6px; color: var(--bg-primary); font-family: 'Oswald', sans-serif; font-size: 0.85rem; font-weight: 600; cursor: pointer; transition: all 0.2s ease; text-transform: uppercase; letter-spacing: 1px; }
+
         .btn-primary:hover { background: var(--accent-hover); transform: translateY(-1px); }
+
         .btn-secondary { padding: 10px 20px; background: var(--bg-card); border: 2px solid var(--border-color); border-radius: 6px; color: var(--text-primary); font-family: 'Oswald', sans-serif; font-size: 0.85rem; font-weight: 600; cursor: pointer; transition: all 0.2s ease; text-transform: uppercase; letter-spacing: 1px; }
+
         .btn-secondary:hover { border-color: var(--accent); }
+
         .arquivos-section { margin-top: 10px; }
+
         .arquivos-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 10px; margin-bottom: 12px; }
+
         .arquivo-item { background: var(--bg-card); border-radius: 8px; border: 1px solid var(--border-color); overflow: hidden; cursor: pointer; transition: all 0.2s ease; }
+
         .arquivo-item:hover { border-color: var(--accent); transform: translateY(-2px); }
+
         .arquivo-preview { height: 80px; background: var(--bg-column); display: flex; align-items: center; justify-content: center; overflow: hidden; }
+
         .arquivo-preview img { width: 100%; height: 100%; object-fit: cover; }
+
         .arquivo-preview svg { width: 32px; height: 32px; color: var(--accent); }
+
         .arquivo-info { padding: 8px; }
+
         .arquivo-nome { font-size: 0.7rem; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
         .upload-area { border: 2px dashed var(--border-color); border-radius: 8px; padding: 20px; text-align: center; cursor: pointer; transition: all 0.2s ease; background: var(--bg-card); }
+
         .upload-area:hover { border-color: var(--accent); background: rgba(255, 207, 0, 0.05); }
+
         .upload-area svg { width: 32px; height: 32px; color: var(--accent); margin-bottom: 8px; }
+
         .upload-area p { font-size: 0.8rem; color: var(--text-secondary); }
+
         .upload-area small { font-size: 0.7rem; color: var(--text-muted); }
+
         .upload-buttons { display: flex; gap: 10px; margin-top: 10px; }
+
         .upload-buttons button { flex: 1; }
+
         .date-input, .select-input { background: var(--bg-card); border: 2px solid var(--border-color); border-radius: 6px; padding: 8px 12px; color: var(--text-primary); font-family: 'Montserrat', sans-serif; font-size: 0.85rem; cursor: pointer; width: 100%; }
+
         .date-input:focus, .select-input:focus { outline: none; border-color: var(--accent); }
+
         .loading { display: flex; align-items: center; justify-content: center; padding: 60px; }
+
         .loading-spinner { width: 50px; height: 50px; border: 4px solid var(--border-color); border-top-color: var(--accent); border-radius: 50%; animation: spin 1s linear infinite; }
+
         @keyframes spin { to { transform: rotate(360deg); } }
+
         .toast-container { position: fixed; bottom: 24px; right: 24px; z-index: 2000; display: flex; flex-direction: column; gap: 10px; }
+
         .toast { background: var(--bg-card); border: 2px solid var(--accent); border-radius: 10px; padding: 14px 20px; display: flex; align-items: center; gap: 12px; box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4); animation: slideIn 0.3s ease; }
+
         @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+
         .toast-icon { width: 22px; height: 22px; color: var(--accent); }
+
         .toast-message { font-size: 0.9rem; font-weight: 500; }
+
         .toast.success { border-color: #22c55e; }
+
         .toast.success .toast-icon { color: #22c55e; }
+
         .toast.error { border-color: #ef4444; }
+
         .toast.error .toast-icon { color: #ef4444; }
+
         .empty-column { text-align: center; padding: 30px; color: var(--text-muted); }
+
         .empty-column svg { width: 40px; height: 40px; margin-bottom: 10px; opacity: 0.4; }
+
         .empty-column p { font-size: 0.8rem; }
+
         .kanban-column.drag-over .column-cards { background: rgba(255, 207, 0, 0.05); border-radius: 8px; }
+
         .logo-sun { width: 36px; height: 36px; color: var(--accent); }
+
         .dados-pagamento-section { background: var(--bg-card); border-radius: 8px; padding: 16px; border: 2px solid #f59e0b; }
+
         .dados-pagamento-form { display: flex; flex-direction: column; gap: 12px; }
+
         .dados-pagamento-form .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
         .dados-pagamento-form .form-row.full { grid-template-columns: 1fr; }
+
         .dados-pagamento-form label { font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; display: block; margin-bottom: 4px; font-weight: 600; }
+
         .dados-pagamento-form input { width: 100%; padding: 10px 12px; background: var(--bg-column); border: 2px solid var(--border-color); border-radius: 6px; color: var(--text-primary); font-family: 'Montserrat', sans-serif; font-size: 0.9rem; transition: all 0.2s ease; }
+
         .dados-pagamento-form input:focus { outline: none; border-color: var(--accent); }
+
         .dados-pagamento-form input::placeholder { color: var(--text-muted); }
+
         .dados-cobranca-section { background: var(--bg-card); border-radius: 8px; padding: 16px; border: 2px solid #ec4899; }
+
         .dados-censurados { position: relative; }
+
         .dados-censurados .valor-censurado { filter: blur(8px); user-select: none; pointer-events: none; }
+
         .dados-censurados .overlay-censura { position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); display: flex; flex-direction: column; align-items: center; justify-content: center; border-radius: 8px; }
+
         .dados-censurados .overlay-censura svg { width: 40px; height: 40px; color: var(--accent); margin-bottom: 10px; }
+
         .dados-censurados .overlay-censura p { font-size: 0.85rem; color: var(--text-primary); text-align: center; margin-bottom: 12px; }
+
         .dados-revelados .campo-pagamento { margin-bottom: 10px; padding: 10px; background: var(--bg-column); border-radius: 6px; }
+
         .dados-revelados .campo-pagamento label { font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; display: block; margin-bottom: 4px; }
+
         .dados-revelados .campo-pagamento span { font-size: 1rem; font-weight: 600; color: var(--text-primary); font-family: 'Oswald', monospace; letter-spacing: 1px; }
+
         .dados-timer { text-align: center; margin-top: 10px; padding: 8px; background: rgba(236, 72, 153, 0.2); border-radius: 6px; }
+
         .dados-timer span { font-family: 'Oswald', sans-serif; font-size: 0.9rem; color: #ec4899; }
+
         .camera-modal { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.95); z-index: 3000; display: none; flex-direction: column; align-items: center; justify-content: center; }
+
         .camera-modal.active { display: flex; }
+
         .camera-modal video { max-width: 100%; max-height: 70vh; border-radius: 12px; border: 3px solid var(--accent); }
+
         .camera-modal .camera-controls { margin-top: 20px; display: flex; gap: 16px; }
+
         .camera-modal .btn-capture { width: 70px; height: 70px; border-radius: 50%; background: var(--accent); border: 4px solid white; cursor: pointer; transition: all 0.2s ease; }
+
         .camera-modal .btn-capture:hover { transform: scale(1.1); }
+
         .camera-modal .btn-cancel { padding: 12px 24px; }
+
         .error-state { text-align: center; padding: 60px; }
+
         .error-state svg { width: 60px; height: 60px; color: #ef4444; margin-bottom: 16px; }
+
         .error-state h3 { font-family: 'Oswald', sans-serif; font-size: 1.2rem; margin-bottom: 8px; color: var(--text-primary); }
+
         .error-state p { color: var(--text-muted); margin-bottom: 16px; }
+
         @media (max-width: 768px) { .header { padding: 0 16px; } .header-nav { display: none; } .kanban-container { padding: 0 16px; } .kanban-column { width: 300px; min-width: 300px; } }
+
         @media (max-width: 600px) { .dados-pagamento-form .form-row { grid-template-columns: 1fr; } }
+
         .confirm-modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(6px); display: none; align-items: center; justify-content: center; z-index: 4000; padding: 24px; }
+
         .confirm-modal-overlay.active { display: flex; }
+
         .confirm-modal { background: var(--bg-secondary); border-radius: 16px; border: 2px solid var(--accent); width: 100%; max-width: 450px; overflow: hidden; box-shadow: 0 25px 50px rgba(0,0,0,0.5); }
+
         .confirm-modal-header { padding: 16px 20px; border-bottom: 2px solid var(--accent); background: var(--bg-primary); display: flex; align-items: center; gap: 12px; }
+
         .confirm-modal-header svg { width: 24px; height: 24px; color: var(--accent); }
+
         .confirm-modal-header h3 { font-family: 'Oswald', sans-serif; font-size: 1.1rem; color: var(--accent); text-transform: uppercase; letter-spacing: 1px; }
+
         .confirm-modal-body { padding: 20px; }
+
         .confirm-card-preview { background: var(--bg-card); border-radius: 12px; padding: 20px; border: 2px solid var(--border-color); margin-bottom: 16px; }
+
         .confirm-card-preview .card-number { font-family: 'Oswald', monospace; font-size: 1.4rem; letter-spacing: 3px; color: var(--text-primary); margin-bottom: 16px; text-align: center; }
+
         .confirm-card-preview .card-details { display: flex; justify-content: space-between; }
+
         .confirm-card-preview .card-field { }
+
         .confirm-card-preview .card-field label { font-size: 0.6rem; color: var(--text-muted); text-transform: uppercase; display: block; margin-bottom: 2px; }
+
         .confirm-card-preview .card-field span { font-family: 'Oswald', sans-serif; font-size: 0.95rem; color: var(--text-primary); letter-spacing: 1px; }
+
         .confirm-warning { background: rgba(245, 158, 11, 0.15); border: 1px solid rgba(245, 158, 11, 0.4); border-radius: 8px; padding: 12px; margin-bottom: 16px; display: flex; align-items: flex-start; gap: 10px; }
+
         .confirm-warning svg { width: 20px; height: 20px; color: #f59e0b; flex-shrink: 0; margin-top: 2px; }
+
         .confirm-warning p { font-size: 0.8rem; color: var(--text-secondary); line-height: 1.4; }
+
         .confirm-modal-footer { display: flex; gap: 12px; }
+
         .confirm-modal-footer button { flex: 1; }
+
         .dados-pagamento-section.completo { border-color: #22c55e; background: rgba(34, 197, 94, 0.08); }
+
         .dados-pagamento-section.completo .section-status { display: flex; align-items: center; gap: 8px; padding: 10px; background: rgba(34, 197, 94, 0.2); border-radius: 6px; margin-bottom: 12px; }
+
         .dados-pagamento-section.completo .section-status svg { width: 20px; height: 20px; color: #22c55e; }
+
         .dados-pagamento-section.completo .section-status span { font-family: 'Oswald', sans-serif; font-size: 0.85rem; color: #86efac; text-transform: uppercase; letter-spacing: 1px; }
+
         .dados-censurados-coletar { position: relative; }
+
         .dados-censurados-coletar .campo-pagamento { margin-bottom: 8px; padding: 10px; background: var(--bg-column); border-radius: 6px; }
+
         .dados-censurados-coletar .campo-pagamento label { font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; display: block; margin-bottom: 4px; }
+
         .dados-censurados-coletar .campo-pagamento span { font-size: 1rem; font-weight: 600; color: var(--text-primary); font-family: 'Oswald', monospace; letter-spacing: 1px; }
+
         .btn-edit-dados { margin-top: 12px; width: 100%; background: transparent; border: 2px dashed var(--border-color); color: var(--text-muted); }
+
         .btn-edit-dados:hover { border-color: var(--accent); color: var(--text-primary); background: rgba(255, 207, 0, 0.05); }
+
         /* Dashboard */
+
         .dashboard { background: var(--bg-column); border-bottom: 1px solid var(--border-color); padding: 20px 24px; margin-top: 70px; display: none; }
+
         .dashboard.active { display: block; }
+
         .charts-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 16px; }
+
         .chart-card { background: var(--bg-card); border-radius: 12px; padding: 16px; border: 1px solid var(--border-color); }
+
         .chart-card-title { font-family: 'Oswald'; font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 12px; }
+
         .chart-container { height: 150px; }
+
         .chart-legend { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; justify-content: center; }
+
         .chart-legend-item { display: flex; align-items: center; gap: 4px; font-size: 0.65rem; color: var(--text-secondary); }
+
         .chart-legend-color { width: 10px; height: 10px; border-radius: 2px; }
+
         .dashboard-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 16px; }
+
         .dashboard-card { background: var(--bg-card); border-radius: 12px; padding: 16px; border: 1px solid var(--border-color); }
+
         .dashboard-card-title { font-family: 'Oswald'; font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; }
+
         .dashboard-card-value { font-family: 'Oswald'; font-size: 2rem; font-weight: 700; color: var(--accent); }
+
         .dashboard-card-subtitle { font-size: 0.75rem; color: var(--text-secondary); margin-top: 4px; }
+
         .dashboard-card.status-card { display: flex; flex-direction: column; gap: 8px; }
+
         .status-row { display: flex; justify-content: space-between; align-items: center; padding: 6px 0; border-bottom: 1px solid var(--border-color); }
+
         .status-row:last-child { border-bottom: none; }
+
         .status-row .status-label { display: flex; align-items: center; gap: 8px; font-size: 0.8rem; }
+
         .status-row .status-dot { width: 10px; height: 10px; border-radius: 50%; }
+
         .status-row .status-count { font-family: 'Oswald'; font-size: 1.1rem; font-weight: 600; }
+
         .productivity-bar { height: 8px; background: var(--bg-column); border-radius: 4px; overflow: hidden; margin-top: 8px; }
+
         .productivity-bar-fill { height: 100%; background: linear-gradient(90deg, var(--accent) 0%, #22c55e 100%); border-radius: 4px; transition: width 0.5s ease; }
+
         @media (max-width: 1200px) { .charts-row { grid-template-columns: 1fr 1fr; } }
+
         @media (max-width: 768px) { .charts-row { grid-template-columns: 1fr; } }
+
         /* Tabela Histórico de Concluídos */
+
         .historico-container { margin: 24px; background: var(--bg-column); border-radius: 12px; border: 1px solid var(--border-color); overflow: hidden; }
+
         .historico-header { padding: 16px 20px; border-bottom: 1px solid var(--border-color); display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 16px; }
+
         .historico-title { display: flex; align-items: center; gap: 10px; }
+
         .historico-title svg { color: #22c55e; }
+
         .historico-title h3 { font-family: 'Oswald', sans-serif; font-size: 1rem; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; color: var(--text-primary); }
-        .historico-count { background: #22c55e; color: var(--bg-primary); font-size: 0.75rem; padding: 3px 10px; border-radius: 12px; font-weight: 600; }
-        .historico-filters { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
-        .historico-filters select, .historico-filters input[type="date"] { padding: 8px 12px; background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 6px; color: var(--text-primary); font-size: 0.8rem; font-family: 'Montserrat', sans-serif; }
-        .historico-filters select:focus, .historico-filters input[type="date"]:focus { outline: none; border-color: var(--accent); }
-        .historico-table-wrapper { overflow-x: auto; }
-        .historico-table { width: 100%; border-collapse: collapse; }
-        .historico-table th, .historico-table td { padding: 12px 16px; text-align: left; border-bottom: 1px solid var(--border-color); }
-        .historico-table th { font-family: 'Oswald', sans-serif; font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-muted); background: var(--bg-card); }
-        .historico-table td { font-size: 0.85rem; color: var(--text-secondary); }
-        .historico-table tr:hover td { background: rgba(255, 207, 0, 0.05); }
-        .historico-table .task-name { font-weight: 600; color: var(--text-primary); cursor: pointer; }
-        .historico-table .task-name:hover { color: var(--accent); }
-        .historico-table .tipo-badge { display: inline-flex; align-items: center; gap: 6px; font-size: 0.75rem; }
-        .historico-table .tipo-badge .dot { width: 8px; height: 8px; border-radius: 50%; }
-        .historico-table .responsavel-cell { display: flex; align-items: center; gap: 8px; }
-        .historico-table .responsavel-cell .avatar { width: 24px; height: 24px; border-radius: 50%; background: var(--accent); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.6rem; color: var(--bg-primary); }
-        .historico-table .btn-ver { padding: 6px 12px; font-size: 0.7rem; }
-        .historico-empty { text-align: center; padding: 40px; color: var(--text-muted); }
-        .historico-empty svg { margin-bottom: 12px; opacity: 0.4; }
-        .historico-empty p { font-size: 0.85rem; }
-        @media (max-width: 768px) { .historico-filters { width: 100%; } .historico-filters select, .historico-filters input[type="date"] { flex: 1; min-width: 120px; } }
-        /* Autocomplete de Busca */
-        .btn-busca-avancada { position: absolute; right: 0; top: 0; height: 100%; width: 44px; background: var(--accent); border: none; border-radius: 0 8px 8px 0; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s ease; }
-        .btn-busca-avancada:hover { background: var(--accent-hover); }
-        .btn-busca-avancada svg { color: var(--bg-primary); }
-        .search-autocomplete { position: absolute; top: 100%; left: 0; right: 0; background: var(--bg-card); border: 2px solid var(--accent); border-top: none; border-radius: 0 0 8px 8px; max-height: 250px; overflow-y: auto; display: none; z-index: 100; }
-        .search-autocomplete.active { display: block; }
-        .search-autocomplete-item { padding: 12px 16px; cursor: pointer; display: flex; align-items: center; gap: 12px; border-bottom: 1px solid var(--border-color); transition: background 0.2s ease; }
-        .search-autocomplete-item:last-child { border-bottom: none; }
-        .search-autocomplete-item:hover { background: rgba(255, 207, 0, 0.1); }
-        .search-autocomplete-item .tipo-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
-        .search-autocomplete-item .item-info { flex: 1; min-width: 0; }
-        .search-autocomplete-item .item-nome { font-size: 0.85rem; font-weight: 600; color: var(--text-primary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .search-autocomplete-item .item-tipo { font-size: 0.7rem; color: var(--text-muted); }
-        .search-autocomplete-empty { padding: 16px; text-align: center; color: var(--text-muted); font-size: 0.85rem; }
-        /* Modal Busca Avançada */
-        .busca-avancada-modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(6px); display: none; align-items: center; justify-content: center; z-index: 5000; padding: 24px; }
-        .busca-avancada-modal-overlay.active { display: flex; }
-        .busca-avancada-modal { background: var(--bg-secondary); border-radius: 16px; border: 2px solid var(--accent); width: 100%; max-width: 480px; overflow: hidden; box-shadow: 0 25px 50px rgba(0,0,0,0.5); }
-        .busca-avancada-modal-header { padding: 16px 20px; border-bottom: 2px solid var(--accent); background: var(--bg-primary); display: flex; align-items: center; gap: 12px; }
-        .busca-avancada-modal-header svg { width: 24px; height: 24px; color: var(--accent); }
-        .busca-avancada-modal-header h3 { font-family: 'Oswald', sans-serif; font-size: 1.1rem; color: var(--accent); text-transform: uppercase; letter-spacing: 1px; }
-        .busca-avancada-modal-body { padding: 20px; }
-        .busca-avancada-info { font-size: 0.85rem; color: var(--text-secondary); line-height: 1.5; margin-bottom: 20px; padding: 12px; background: rgba(255, 207, 0, 0.1); border-radius: 8px; border: 1px solid rgba(255, 207, 0, 0.3); }
-        .busca-avancada-info strong { color: var(--accent); }
-        .busca-avancada-form { display: flex; flex-direction: column; gap: 16px; }
-        .busca-avancada-field { display: flex; flex-direction: column; gap: 6px; }
-        .busca-avancada-field label { font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; font-weight: 600; }
-        .busca-avancada-field input { padding: 10px 14px; background: var(--bg-card); border: 2px solid var(--border-color); border-radius: 8px; color: var(--text-primary); font-size: 0.9rem; font-family: 'Montserrat', sans-serif; }
-        .busca-avancada-field input:focus { outline: none; border-color: var(--accent); }
-        .busca-avancada-field input[readonly] { background: var(--bg-column); }
-        .busca-avancada-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-        .busca-avancada-footer { display: flex; gap: 12px; margin-top: 20px; }
-        .busca-avancada-footer button { flex: 1; }
-        /* Tela de Acesso Negado */
-        .acesso-negado { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: var(--bg-primary); display: flex; align-items: center; justify-content: center; z-index: 9999; }
-        .acesso-negado-card { background: var(--bg-secondary); border-radius: 20px; padding: 50px; text-align: center; max-width: 450px; border: 2px solid var(--border-color); box-shadow: 0 20px 60px rgba(0,0,0,0.3); }
-        .acesso-negado-icon { width: 80px; height: 80px; margin: 0 auto 24px; color: #ef4444; }
-        .acesso-negado-title { font-family: 'Oswald', sans-serif; font-size: 1.5rem; color: var(--text-primary); margin-bottom: 12px; }
-        .acesso-negado-msg { font-size: 0.9rem; color: var(--text-secondary); line-height: 1.6; margin-bottom: 30px; }
-        .acesso-negado-btn { display: inline-flex; align-items: center; gap: 8px; padding: 14px 28px; background: var(--accent); color: var(--bg-primary); font-weight: 700; font-size: 0.9rem; border: none; border-radius: 10px; cursor: pointer; text-decoration: none; transition: all 0.3s ease; }
-        .acesso-negado-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(255, 207, 0, 0.4); }
-    </style>
-</head>
-<body>
-    <header class="header">
-        <div class="header-logo">
-            <svg class="logo-sun" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <circle cx="50" cy="70" r="20" stroke="currentColor" stroke-width="3" fill="none"/>
-                <line x1="50" y1="45" x2="50" y2="25" stroke="currentColor" stroke-width="3"/>
-                <line x1="50" y1="45" x2="30" y2="30" stroke="currentColor" stroke-width="3"/>
-                <line x1="50" y1="45" x2="70" y2="30" stroke="currentColor" stroke-width="3"/>
-                <line x1="50" y1="45" x2="20" y2="45" stroke="currentColor" stroke-width="3"/>
-                <line x1="50" y1="45" x2="80" y2="45" stroke="currentColor" stroke-width="3"/>
-                <line x1="50" y1="45" x2="25" y2="55" stroke="currentColor" stroke-width="3"/>
-                <line x1="50" y1="45" x2="75" y2="55" stroke="currentColor" stroke-width="3"/>
-                <line x1="15" y1="70" x2="85" y2="70" stroke="currentColor" stroke-width="3"/>
-            </svg>
-            <h1>LUSOFY</h1>
-            <span class="version">Beta 1.5</span>
-        </div>
-        <nav class="header-nav">
-            <button class="nav-btn active">OTA</button>
-            <button class="nav-btn" onclick="showToast('Faturamento em breve','info')">Faturamento</button>
-            <button class="nav-btn" onclick="showToast('Financeiro em breve','info')">Financeiro</button>
-        </nav>
-        <div class="search-box" style="flex:1;max-width:400px;position:relative;">
-            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" style="position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--text-muted);pointer-events:none;"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
-            <input type="text" id="searchInput" placeholder="Buscar tarefas..." oninput="handleSearchAutocomplete(this.value)" style="width:calc(100% - 44px);padding:10px 16px 10px 40px;background:var(--bg-card);border:2px solid var(--border-color);border-radius:8px 0 0 8px;color:var(--text-primary);font-size:0.85rem;">
-            <button class="btn-busca-avancada" onclick="openModalBuscaAvancada()" title="Download de Busca Avançada">
-                <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-            </button>
-            <div class="search-autocomplete" id="searchAutocomplete"></div>
-        </div>
-        <div class="header-profile" style="display:flex;gap:8px;">
-            <button class="profile-btn" onclick="toggleDashboard()" style="padding:8px 12px;" id="btnDashboard">
-                <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
-            </button>
-            <button class="profile-btn" onclick="toggleTheme()" style="padding:8px 12px;">
-                <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
-            </button>
-            <button class="profile-btn" onclick="showToast('Meu Perfil em breve','info')">
-                <div class="profile-avatar">U</div>
-                <span>Meu Perfil</span>
-            </button>
-        </div>
-    </header>
-    
-    <!-- Dashboard -->
-    <div class="dashboard" id="dashboard">
-        <div class="charts-row">
-            <div class="chart-card">
-                <div class="chart-card-title">Conclusões por Dia (7 dias)</div>
-                <div class="chart-container"><canvas id="chartLine"></canvas></div>
-            </div>
-            <div class="chart-card">
-                <div class="chart-card-title">Concluídas por Responsável (7 dias)</div>
-                <div class="chart-container"><canvas id="chartPie"></canvas></div>
-                <div class="chart-legend" id="chartPieLegend"></div>
-            </div>
-            <div class="chart-card">
-                <div class="chart-card-title">Pendentes por Responsável</div>
-                <div class="chart-container"><canvas id="chartBar"></canvas></div>
-            </div>
-        </div>
-        <div class="dashboard-grid">
-            <div class="dashboard-card">
-                <div class="dashboard-card-title">Total Ativas</div>
-                <div class="dashboard-card-value" id="dashTotalTasks">0</div>
-                <div class="dashboard-card-subtitle">pendentes</div>
-            </div>
-            <div class="dashboard-card status-card">
-                <div class="dashboard-card-title">Por Status</div>
-                <div class="status-row"><span class="status-label"><span class="status-dot" style="background:#6b7280;"></span>Não Iniciado</span><span class="status-count" id="dashNaoIniciado">0</span></div>
-                <div class="status-row"><span class="status-label"><span class="status-dot" style="background:#3b82f6;"></span>Em Andamento</span><span class="status-count" id="dashEmAndamento">0</span></div>
-                <div class="status-row"><span class="status-label"><span class="status-dot" style="background:#ef4444;"></span>Bloqueado</span><span class="status-count" id="dashBloqueado">0</span></div>
-            </div>
-            <div class="dashboard-card">
-                <div class="dashboard-card-title">Concluídas Hoje</div>
-                <div class="dashboard-card-value" id="dashConcluidasHoje">0</div>
-                <div class="dashboard-card-subtitle">finalizadas</div>
-            </div>
-            <div class="dashboard-card">
-                <div class="dashboard-card-title">Taxa de Conclusão</div>
-                <div class="dashboard-card-value" id="dashTaxaConclusao">0%</div>
-                <div class="productivity-bar"><div class="productivity-bar-fill" id="dashProgressBar" style="width:0%;"></div></div>
-            </div>
-            <div class="dashboard-card">
-                <div class="dashboard-card-title">Atrasadas</div>
-                <div class="dashboard-card-value" style="color:#ef4444;" id="dashAtrasadas">0</div>
-                <div class="dashboard-card-subtitle">prazo vencido</div>
-            </div>
-            <div class="dashboard-card">
-                <div class="dashboard-card-title">Urgentes</div>
-                <div class="dashboard-card-value" style="color:#f59e0b;" id="dashUrgentes">0</div>
-                <div class="dashboard-card-subtitle">prioridade máxima</div>
-            </div>
-        </div>
-    </div>
-    
-    <main class="main-content" id="mainContent">
-        <div class="kanban-container">
-            <div class="kanban-board" id="kanbanBoard">
-                <div class="loading"><div class="loading-spinner"></div></div>
-            </div>
-        </div>
-        <!-- Tabela Histórico de Concluídos -->
-        <div class="historico-container" id="historicoContainer">
-            <div class="historico-header">
-                <div class="historico-title">
-                    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><path d="M22 4L12 14.01l-3-3"/></svg>
-                    <h3>Histórico de Concluídos</h3>
-                    <span class="historico-count" id="historicoCount">0</span>
-                </div>
-                <div class="historico-filters">
-                    <select id="filtroTipo" onchange="renderHistoricoTable()">
-                        <option value="">Todos os tipos</option>
-                        <option value="bloqueio_mapa">Bloqueio de Mapa</option>
-                        <option value="coletar_dados">Coletar Dados</option>
-                        <option value="cobranca_digitada">Cobrança Digitada</option>
-                        <option value="checar_tarifarios">Checar Tarifários</option>
-                    </select>
-                    <select id="filtroResponsavel" onchange="renderHistoricoTable()">
-                        <option value="">Todos os responsáveis</option>
-                    </select>
-                    <input type="date" id="filtroDataDe" onchange="renderHistoricoTable()" placeholder="De">
-                    <input type="date" id="filtroDataAte" onchange="renderHistoricoTable()" placeholder="Até">
-                    <button class="btn-secondary" onclick="limparFiltrosHistorico()" style="padding:8px 12px;">Limpar</button>
-                </div>
-            </div>
-            <div class="historico-table-wrapper">
-                <table class="historico-table" id="historicoTable">
-                    <thead>
-                        <tr>
-                            <th>Tarefa</th>
-                            <th>Tipo</th>
-                            <th>Responsável</th>
-                            <th>Concluído em</th>
-                            <th>Prazo</th>
-                            <th>Ações</th>
-                        </tr>
-                    </thead>
-                    <tbody id="historicoBody"></tbody>
-                </table>
-                <div class="historico-empty" id="historicoEmpty" style="display:none;">
-                    <svg viewBox="0 0 24 24" width="40" height="40" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><path d="M22 4L12 14.01l-3-3"/></svg>
-                    <p>Nenhuma tarefa concluída</p>
-                </div>
-            </div>
-        </div>
-    </main>
-    <div class="modal-overlay" id="taskModal">
-        <div class="modal">
-            <div class="modal-header">
-                <h2 class="modal-title" id="modalTitle">Detalhes da Tarefa</h2>
-                <button class="modal-close" onclick="closeModal()">
-                    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
-                </button>
-            </div>
-            <div class="modal-body" id="modalBody"></div>
-        </div>
-    </div>
-    <div class="camera-modal" id="cameraModal">
-        <video id="cameraVideo" autoplay playsinline></video>
-        <div class="camera-controls">
-            <button class="btn-secondary btn-cancel" onclick="cancelCamera()">Cancelar</button>
-            <button class="btn-capture" onclick="capturePhoto()"></button>
-        </div>
-        <canvas id="cameraCanvas" style="display:none;"></canvas>
-    </div>
-    <input type="file" id="fileInput" style="display:none;" accept="image/*,application/pdf,.doc,.docx,.xls,.xlsx" multiple>
-    <div class="confirm-modal-overlay" id="confirmModal">
-        <div class="confirm-modal">
-            <div class="confirm-modal-header">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
-                <h3>Confirmar Dados do Cartão</h3>
-            </div>
-            <div class="confirm-modal-body">
-                <div class="confirm-card-preview">
-                    <div class="card-number" id="confirmCardNumber">0000 0000 0000 0000</div>
-                    <div class="card-details">
-                        <div class="card-field">
-                            <label>Nome</label>
-                            <span id="confirmCardName">NOME DO TITULAR</span>
-                        </div>
-                        <div class="card-field">
-                            <label>Validade</label>
-                            <span id="confirmCardExpiry">MM/AA</span>
-                        </div>
-                        <div class="card-field">
-                            <label>CVC</label>
-                            <span id="confirmCardCvc">***</span>
-                        </div>
-                    </div>
-                </div>
-                <div class="confirm-warning">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
-                    <p>Confira os dados antes de salvar. Após salvar, os dados serão criptografados e só poderão ser visualizados na etapa de Cobrança Digitada.</p>
-                </div>
-                <div class="confirm-modal-footer">
-                    <button class="btn-secondary" onclick="closeConfirmModal()">Voltar e Editar</button>
-                    <button class="btn-primary" onclick="confirmarSalvarDados()">Confirmar e Salvar</button>
-                </div>
-            </div>
-        </div>
-    </div>
-    <!-- Modal Busca Avançada -->
-    <div class="busca-avancada-modal-overlay" id="buscaAvancadaModal">
-        <div class="busca-avancada-modal">
-            <div class="busca-avancada-modal-header">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
-                <h3>Busca Avançada</h3>
-            </div>
-            <div class="busca-avancada-modal-body">
-                <p class="busca-avancada-info">Você receberá um <strong>PDF</strong> com todas as tarefas que contêm o termo pesquisado no nome, incluindo tarefas concluídas de qualquer período.</p>
-                <div class="busca-avancada-form">
-                    <div class="busca-avancada-field">
-                        <label>Termo de busca</label>
-                        <input type="text" id="buscaAvancadaTermo" placeholder="Digite o termo..." readonly>
-                    </div>
-                    <div class="busca-avancada-row">
-                        <div class="busca-avancada-field">
-                            <label>Data de</label>
-                            <input type="date" id="buscaAvancadaDataDe">
-                        </div>
-                        <div class="busca-avancada-field">
-                            <label>Data até</label>
-                            <input type="date" id="buscaAvancadaDataAte">
-                        </div>
-                    </div>
-                </div>
-                <div class="busca-avancada-footer">
-                    <button class="btn-secondary" onclick="closeModalBuscaAvancada()">Cancelar</button>
-                    <button class="btn-primary" onclick="executarBuscaAvancada()">
-                        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" style="margin-right:6px;vertical-align:middle;"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-                        Confirmar Download
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
-    <!-- Tela de Acesso Negado -->
-    <div class="acesso-negado" id="acessoNegado" style="display:none;">
-        <div class="acesso-negado-card">
-            <svg class="acesso-negado-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <rect x="3" y="11" width="18" height="11" rx="2"/>
-                <path d="M7 11V7a5 5 0 0110 0v4"/>
-                <circle cx="12" cy="16" r="1"/>
-            </svg>
-            <h2 class="acesso-negado-title">Acesso Negado</h2>
-            <p class="acesso-negado-msg" id="acessoNegadoMsg">Você não tem permissão para acessar o módulo Lusofy. Entre em contato com o administrador ou contrate este módulo.</p>
-            <a href="https://plataforma.upperfy.com.br" class="acesso-negado-btn">
-                <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
-                Voltar à Plataforma
-            </a>
-        </div>
-    </div>
-    <div class="toast-container" id="toastContainer"></div>
-    <script>
-        const WEBHOOK_LOAD = 'https://n8n.upperfy.com.br/webhook/0fec17a7-8654-45ff-8ad6-lsfy1';
-        const WEBHOOK_UPDATE = 'https://n8n.upperfy.com.br/webhook/0fec17a7-8654-45ff-lsfy-draganddrop';
-        const WEBHOOK_SECURITY = 'https://n8n.upperfy.com.br/webhook/0fec17a7-8654-45ff-lsfy-scritypht';
-        const SEARCH_URL = 'https://n8n.upperfy.com.br/webhook/0fec17a7-8654-45ff-8ad6-lsfysearchpeople';
-        const WEBHOOK_BUSCA_AVANCADA = 'https://n8n.upperfy.com.br/webhook/0fec17a7-8654-45ff-lsfy-ADVCD';
-        
-        const UPDATE_TYPES = { STATUS_CHANGE: 1, COMMENT: 2, FILE_UPLOAD: 3, DATA_UPDATE: 4, RESPONSAVEL_CHANGE: 5, TIPO_CHANGE: 6, CARTAO_ADD: 7 };
 
-        const TIPO_CONFIG = {
-            'bloqueio_mapa': { label: 'Bloqueio de Mapa', color: '#8b5cf6' },
-            'coletar_dados': { label: 'Coletar Dados de Pagamento', color: '#f59e0b' },
-            'cobranca_digitada': { label: 'Cobrança Digitada', color: '#ec4899' },
-            'checar_tarifarios': { label: 'Checar Tarifários', color: '#06b6d4' }
-        };
-        const TIPO_ORDER = ['bloqueio_mapa', 'coletar_dados', 'cobranca_digitada', 'checar_tarifarios'];
-
-        const STATUS_CONFIG = {
-            'nao_iniciado': { label: 'Não Iniciado', color: '#6b7280' },
-            'em_andamento': { label: 'Em Andamento', color: '#3b82f6' },
-            'bloqueado': { label: 'Bloqueado', color: '#ef4444' },
-            'concluido': { label: 'Concluído', color: '#22c55e' }
-        };
-        
-        let tasks = [];
-        let currentTask = null;
-        let draggedCard = null;
-        let cameraStream = null;
-        let paymentDataCache = {};
-
-        // Função para ler cookie compartilhado
-        function getUpperfyCookie() {
-            const cookies = document.cookie.split(';');
-            for (let cookie of cookies) {
-                const [name, value] = cookie.trim().split('=');
-                if (name === 'upperfy_auth') {
-                    try {
-                        return JSON.parse(decodeURIComponent(value));
-                    } catch (e) {
-                        console.error('Erro ao parsear cookie:', e);
-                        return null;
-                    }
-                }
-            }
-            return null;
-        }
-
-        // Inicializa usuário do cookie se não existir no localStorage
-        function initUserFromCookie() {
-            const stored = getLocalStorage();
-            if (!stored.user) {
-                const cookieData = getUpperfyCookie();
-                if (cookieData && cookieData.autenticado) {
-                    const user = {
-                        id_funcionario: cookieData.id_funcionario,
-                        id_empresa: cookieData.id_empresa,
-                        nome: cookieData.usuario?.nome,
-                        email: cookieData.usuario?.email,
-                        token: cookieData.token
-                    };
-                    updateLocalStorage({ user: user });
-                    return user;
-                }
-                return null;
-            }
-            return stored.user;
-        }
-
-        function getLocalStorage() {
-            try { const data = localStorage.getItem('lusofy_data'); return data ? JSON.parse(data) : { user: null, lastSync: null, preferences: {} }; }
-            catch (e) { return { user: null, lastSync: null, preferences: {} }; }
-        }
-        function setLocalStorage(data) { try { localStorage.setItem('lusofy_data', JSON.stringify(data)); } catch (e) { console.error('Erro localStorage:', e); } }
-        function updateLocalStorage(updates) { const current = getLocalStorage(); setLocalStorage({ ...current, ...updates, lastSync: new Date().toISOString() }); }
-
-        function showAcessoNegado(mensagem) {
-            if (mensagem) {
-                document.getElementById('acessoNegadoMsg').textContent = mensagem;
-            }
-            document.getElementById('acessoNegado').style.display = 'flex';
-        }
-
-        function clearPaymentData(taskId) {
-            if (paymentDataCache[taskId]) { clearTimeout(paymentDataCache[taskId].timer); delete paymentDataCache[taskId]; }
-            const stored = getLocalStorage();
-            if (stored.paymentData && stored.paymentData[taskId]) { delete stored.paymentData[taskId]; setLocalStorage(stored); }
-            if (currentTask && currentTask.id === taskId) { renderModalContent(); }
-        }
-
-        function storePaymentData(taskId, data, clearAfterSeconds = 180) {
-            if (paymentDataCache[taskId]) { clearTimeout(paymentDataCache[taskId].timer); }
-            const expiresAt = Date.now() + (clearAfterSeconds * 1000);
-            const timer = setTimeout(() => { clearPaymentData(taskId); showToast('Dados de pagamento expirados', 'info'); }, clearAfterSeconds * 1000);
-            paymentDataCache[taskId] = { data: data, timer: timer, expiresAt: expiresAt };
-        }
-
-        function getPaymentDataTimeRemaining(taskId) {
-            if (!paymentDataCache[taskId]) return 0;
-            const remaining = paymentDataCache[taskId].expiresAt - Date.now();
-            return Math.max(0, Math.floor(remaining / 1000));
-        }
-
-        async function sendUpdate(updateType, card, additionalData = {}) {
-            const localData = getLocalStorage();
-            const payload = { update_type: updateType, update_type_name: Object.keys(UPDATE_TYPES).find(key => UPDATE_TYPES[key] === updateType), timestamp: new Date().toISOString(), card: card, local_storage: localData, ...additionalData };
-            try { 
-                const response = await fetch(WEBHOOK_UPDATE, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
-                const result = await response.json();
-                if (result.clear_payment_data) { clearPaymentData(card.id); }
-                return response.ok; 
-            } catch (error) { console.error('Erro ao enviar:', error); return false; }
-        }
-
-        document.addEventListener('DOMContentLoaded', () => { loadTasks(); });
-
-        async function loadTasks() {
-            const board = document.getElementById('kanbanBoard');
-            board.innerHTML = '<div class="loading"><div class="loading-spinner"></div></div>';
-            
-            // Inicializa usuário do cookie se necessário
-            const user = initUserFromCookie();
-            
-            // Se não tem usuário, mostra acesso negado
-            if (!user) {
-                showAcessoNegado('Sessão não encontrada. Faça login na plataforma Upperfy para acessar o Lusofy.');
-                return;
-            }
-            
-            try {
-                const response = await fetch(WEBHOOK_LOAD, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ user: user, local_storage: getLocalStorage() })
-                });
-                
-                if (!response.ok) throw new Error('Erro na resposta');
-                const data = await response.json();
-                
-                // Verifica se acesso foi negado pelo backend
-                if (data.acesso_negado === true) {
-                    showAcessoNegado(data.mensagem || 'Você não tem permissão para acessar o módulo Lusofy.');
-                    return;
-                }
-                
-                tasks = data.tasks || data || [];
-                if (!Array.isArray(tasks)) { tasks = []; }
-                updateLocalStorage({ tasksLoaded: true });
-                renderBoard();
-            } catch (error) {
-                console.error('Erro ao carregar:', error);
-                board.innerHTML = '<div class="error-state"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg><h3>Erro ao carregar tarefas</h3><p>Não foi possível conectar ao servidor</p><button class="btn-primary" onclick="loadTasks()">Tentar novamente</button></div>';
-            }
-        }
-
-        function renderBoard() {
-            const board = document.getElementById('kanbanBoard');
-            board.innerHTML = '';
-            if (tasks.length === 0) {
-                board.innerHTML = '<div class="error-state"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 9h6M9 12h6M9 15h4"/></svg><h3>Nenhuma tarefa encontrada</h3><p>Não há tarefas cadastradas</p></div>';
-                return;
-            }
-            TIPO_ORDER.forEach(tipo => {
-                const tipoConfig = TIPO_CONFIG[tipo];
-                const tipoTasks = tasks.filter(t => t.tipo === tipo && t.status !== 'concluido');
-                const column = document.createElement('div');
-                column.className = 'kanban-column';
-                column.dataset.tipo = tipo;
-                column.innerHTML = '<div class="column-header"><div class="column-title"><div class="column-tipo-dot" style="background: ' + tipoConfig.color + '"></div><span class="column-name">' + tipoConfig.label + '</span></div><span class="column-count">' + tipoTasks.length + '</span></div><div class="column-cards" data-tipo="' + tipo + '">' + (tipoTasks.length === 0 ? '<div class="empty-column"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 9h6M9 12h6M9 15h4"/></svg><p>Nenhuma tarefa</p></div>' : tipoTasks.map(task => renderCard(task)).join('')) + '</div>';
-                board.appendChild(column);
-            });
-            setupDragAndDrop();
-            renderHistoricoTable();
-        }
-        
-        function handleSearchAutocomplete(value) {
-            const autocomplete = document.getElementById('searchAutocomplete');
-            const termo = value.toLowerCase().trim();
-            
-            if (termo.length < 3) {
-                autocomplete.classList.remove('active');
-                autocomplete.innerHTML = '';
-                return;
-            }
-            
-            // Filtra cards pendentes (não concluídos) pelo nome
-            const resultados = tasks
-                .filter(t => t.status !== 'concluido' && (t.nome || '').toLowerCase().includes(termo))
-                .slice(0, 5);
-            
-            if (resultados.length === 0) {
-                autocomplete.innerHTML = '<div class="search-autocomplete-empty">Nenhuma tarefa encontrada</div>';
-                autocomplete.classList.add('active');
-                return;
-            }
-            
-            autocomplete.innerHTML = resultados.map(task => {
-                const tipoConfig = TIPO_CONFIG[task.tipo] || {};
-                return '<div class="search-autocomplete-item" onclick="openModalFromSearch(' + task.id + ')">' +
-                    '<span class="tipo-dot" style="background:' + (tipoConfig.color || '#666') + '"></span>' +
-                    '<div class="item-info">' +
-                    '<div class="item-nome">' + task.nome + '</div>' +
-                    '<div class="item-tipo">' + (tipoConfig.label || task.tipo) + '</div>' +
-                    '</div></div>';
-            }).join('');
-            autocomplete.classList.add('active');
-        }
-        
-        function openModalFromSearch(taskId) {
-            document.getElementById('searchAutocomplete').classList.remove('active');
-            document.getElementById('searchInput').value = '';
-            currentTask = tasks.find(t => t.id === taskId);
-            if (!currentTask) return;
-            document.getElementById('modalTitle').textContent = currentTask.nome;
-            renderModalContent();
-            document.getElementById('taskModal').classList.add('active');
-        }
-        
-        function openModalBuscaAvancada() {
-            const termo = document.getElementById('searchInput').value.trim();
-            document.getElementById('buscaAvancadaTermo').value = termo;
-            document.getElementById('buscaAvancadaDataDe').value = '';
-            document.getElementById('buscaAvancadaDataAte').value = '';
-            document.getElementById('buscaAvancadaModal').classList.add('active');
-            document.getElementById('searchAutocomplete').classList.remove('active');
-        }
-        
-        function closeModalBuscaAvancada() {
-            document.getElementById('buscaAvancadaModal').classList.remove('active');
-        }
-        
-        async function executarBuscaAvancada() {
-            const termo = document.getElementById('buscaAvancadaTermo').value.trim();
-            const dataDe = document.getElementById('buscaAvancadaDataDe').value;
-            const dataAte = document.getElementById('buscaAvancadaDataAte').value;
-            
-            if (!termo) {
-                showToast('Digite um termo de busca', 'error');
-                return;
-            }
-            
-            closeModalBuscaAvancada();
-            showToast('Gerando relatório...', 'info');
-            
-            try {
-                const response = await fetch(WEBHOOK_BUSCA_AVANCADA, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ termo, data_de: dataDe, data_ate: dataAte })
-                });
-                
-                const result = await response.json();
-                
-                if (result.pdf_base64) {
-                    const link = document.createElement('a');
-                    link.href = 'data:application/pdf;base64,' + result.pdf_base64;
-                    link.download = 'busca_' + termo.replace(/\s+/g, '_') + '_' + new Date().toISOString().split('T')[0] + '.pdf';
-                    document.body.appendChild(link);
-                    link.click();
-                    document.body.removeChild(link);
-                    showToast('PDF baixado com sucesso!', 'success');
-                } else {
-                    showToast('Nenhum resultado encontrado', 'error');
-                }
-            } catch (error) {
-                console.error('Erro na busca avançada:', error);
-                showToast('Erro ao gerar relatório', 'error');
-            }
-        }
-        
-        // Fechar autocomplete ao clicar fora
-        document.addEventListener('click', function(e) {
-            const searchBox = document.querySelector('.search-box');
-            if (searchBox && !searchBox.contains(e.target)) {
-                document.getElementById('searchAutocomplete').classList.remove('active');
-            }
-        });
-        
-        // Fechar modal busca avançada com Escape ou clique fora
-        document.getElementById('buscaAvancadaModal').addEventListener('click', function(e) {
-            if (e.target.id === 'buscaAvancadaModal') closeModalBuscaAvancada();
-        });
-
-        function renderHistoricoTable() {
-            const tbody = document.getElementById('historicoBody');
-            const emptyState = document.getElementById('historicoEmpty');
-            const countEl = document.getElementById('historicoCount');
-            const filtroTipo = document.getElementById('filtroTipo').value;
-            const filtroResponsavel = document.getElementById('filtroResponsavel').value;
-            const filtroDataDe = document.getElementById('filtroDataDe').value;
-            const filtroDataAte = document.getElementById('filtroDataAte').value;
-            
-            let concluidos = tasks.filter(t => t.status === 'concluido');
-            
-            // Aplicar filtros
-            if (filtroTipo) {
-                concluidos = concluidos.filter(t => t.tipo === filtroTipo);
-            }
-            if (filtroResponsavel) {
-                concluidos = concluidos.filter(t => t.responsavel && t.responsavel.nome === filtroResponsavel);
-            }
-            if (filtroDataDe) {
-                concluidos = concluidos.filter(t => t.concluido_em && t.concluido_em.split('T')[0] >= filtroDataDe);
-            }
-            if (filtroDataAte) {
-                concluidos = concluidos.filter(t => t.concluido_em && t.concluido_em.split('T')[0] <= filtroDataAte);
-            }
-            
-            // Ordenar por data de conclusão (mais recente primeiro)
-            concluidos.sort((a, b) => {
-                const dateA = a.concluido_em ? new Date(a.concluido_em) : new Date(0);
-                const dateB = b.concluido_em ? new Date(b.concluido_em) : new Date(0);
-                return dateB - dateA;
-            });
-            
-            // Atualizar contador
-            countEl.textContent = concluidos.length;
-            
-            // Popular dropdown de responsáveis
-            updateFiltroResponsaveis();
-            
-            if (concluidos.length === 0) {
-                tbody.innerHTML = '';
-                emptyState.style.display = 'block';
-                document.querySelector('.historico-table').style.display = 'none';
-                return;
-            }
-            
-            emptyState.style.display = 'none';
-            document.querySelector('.historico-table').style.display = 'table';
-            
-            tbody.innerHTML = concluidos.map(task => {
-                const tipoConfig = TIPO_CONFIG[task.tipo] || {};
-                const iniciais = getIniciais(task.responsavel?.nome || 'N/A');
-                return '<tr>' +
-                    '<td><span class="task-name" onclick="openModal(' + task.id + ')">' + task.nome + '</span></td>' +
-                    '<td><span class="tipo-badge"><span class="dot" style="background:' + (tipoConfig.color || '#666') + '"></span>' + (tipoConfig.label || task.tipo) + '</span></td>' +
-                    '<td><div class="responsavel-cell"><div class="avatar">' + iniciais + '</div><span>' + (task.responsavel?.nome || 'N/A') + '</span></div></td>' +
-                    '<td>' + formatDate(task.concluido_em) + '</td>' +
-                    '<td>' + formatDate(task.prazo) + '</td>' +
-                    '<td><button class="btn-secondary btn-ver" onclick="openModal(' + task.id + ')">Ver</button></td>' +
-                    '</tr>';
-            }).join('');
-        }
-        
-        function updateFiltroResponsaveis() {
-            const select = document.getElementById('filtroResponsavel');
-            const currentValue = select.value;
-            const responsaveis = [...new Set(tasks.filter(t => t.status === 'concluido' && t.responsavel?.nome).map(t => t.responsavel.nome))].sort();
-            
-            select.innerHTML = '<option value="">Todos os responsáveis</option>' + 
-                responsaveis.map(r => '<option value="' + r + '"' + (r === currentValue ? ' selected' : '') + '>' + r + '</option>').join('');
-        }
-        
-        function limparFiltrosHistorico() {
-            document.getElementById('filtroTipo').value = '';
-            document.getElementById('filtroResponsavel').value = '';
-            document.getElementById('filtroDataDe').value = '';
-            document.getElementById('filtroDataAte').value = '';
-            renderHistoricoTable();
-        }
-
-        function renderCard(task) {
-            const iniciais = getIniciais(task.responsavel?.nome || 'N/A');
-            const statusConfig = STATUS_CONFIG[task.status] || STATUS_CONFIG['nao_iniciado'];
-            const commentsCount = task.comentarios?.length || 0;
-            const arquivosCount = task.arquivos?.length || 0;
-            const isUrgente = task.prioridade === 'urgente';
-            const isAlta = task.prioridade === 'alta';
-            const showTimer = (isUrgente || isAlta) && task.status === 'nao_iniciado' && task.criado_em;
-            const cardClass = 'task-card' + (isUrgente ? ' card-urgente' : '');
-            const timerClass = isUrgente ? 'card-wait-timer' : 'card-wait-timer timer-alta';
-            const timerHtml = showTimer ? '<div class="' + timerClass + '" data-created="' + task.criado_em + '"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg><span class="timer-value">00:00:00</span> aguardando</div>' : '';
-            return '<div class="' + cardClass + '" data-id="' + task.id + '" draggable="true" onclick="openModal(' + task.id + ')"><div class="task-card-header"><span class="task-title">' + task.nome + '</span></div><div class="task-badges"><span class="task-status-badge status-' + task.status + '">' + statusConfig.label + '</span>' + (task.prioridade ? '<span class="task-priority priority-' + task.prioridade + '">' + task.prioridade + '</span>' : '') + '</div><div class="task-card-info"><div class="task-info-row"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg><span>Prazo: ' + formatDate(task.prazo) + '</span></div>' + (arquivosCount > 0 ? '<div class="task-info-row"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.44 11.05l-9.19 9.19a6 6 0 01-8.49-8.49l9.19-9.19a4 4 0 015.66 5.66l-9.2 9.19a2 2 0 01-2.83-2.83l8.49-8.48"/></svg><span>' + arquivosCount + ' arquivo(s)</span></div>' : '') + timerHtml + '</div><div class="task-card-footer"><div class="task-responsavel"><div class="responsavel-avatar">' + iniciais + '</div><span class="responsavel-nome">' + (task.responsavel?.nome || 'N/A') + '</span></div>' + (commentsCount > 0 ? '<div class="task-comments"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg><span>' + commentsCount + '</span></div>' : '') + '</div></div>';
-        }
-
-        function setupDragAndDrop() {
-            const cards = document.querySelectorAll('.task-card');
-            const columns = document.querySelectorAll('.column-cards');
-            cards.forEach(card => { card.addEventListener('dragstart', handleDragStart); card.addEventListener('dragend', handleDragEnd); });
-            columns.forEach(column => { column.addEventListener('dragover', handleDragOver); column.addEventListener('drop', handleDrop); column.addEventListener('dragleave', handleDragLeave); });
-            // Inicia atualização dos cronômetros de espera
-            updateWaitTimers();
-        }
-        
-        function formatWaitTime(ms) {
-            const totalSeconds = Math.floor(ms / 1000);
-            const hours = Math.floor(totalSeconds / 3600);
-            const minutes = Math.floor((totalSeconds % 3600) / 60);
-            const seconds = totalSeconds % 60;
-            return hours.toString().padStart(2, '0') + ':' + minutes.toString().padStart(2, '0') + ':' + seconds.toString().padStart(2, '0');
-        }
-        
-        function updateWaitTimers() {
-            const timers = document.querySelectorAll('.card-wait-timer');
-            const now = Date.now();
-            timers.forEach(timer => {
-                const created = timer.dataset.created;
-                if (created) {
-                    const createdTime = new Date(created).getTime();
-                    const elapsed = now - createdTime;
-                    const valueSpan = timer.querySelector('.timer-value');
-                    if (valueSpan) {
-                        valueSpan.textContent = formatWaitTime(elapsed);
-                    }
-                }
-            });
-            setTimeout(updateWaitTimers, 1000);
-        }
-        
-        function handleDragStart(e) { draggedCard = e.target; e.target.classList.add('dragging'); e.dataTransfer.effectAllowed = 'move'; }
-        function handleDragEnd(e) { e.target.classList.remove('dragging'); document.querySelectorAll('.kanban-column').forEach(col => col.classList.remove('drag-over')); draggedCard = null; }
-        function handleDragOver(e) { e.preventDefault(); e.dataTransfer.dropEffect = 'move'; e.currentTarget.closest('.kanban-column').classList.add('drag-over'); }
-        function handleDragLeave(e) { e.currentTarget.closest('.kanban-column').classList.remove('drag-over'); }
-        
-        async function handleDrop(e) {
-            e.preventDefault();
-            const column = e.currentTarget;
-            const newTipo = column.dataset.tipo;
-            column.closest('.kanban-column').classList.remove('drag-over');
-            if (draggedCard) {
-                const taskId = parseInt(draggedCard.dataset.id);
-                const task = tasks.find(t => t.id === taskId);
-                if (task && task.tipo !== newTipo) {
-                    const oldTipo = task.tipo;
-                    task.tipo = newTipo;
-                    renderBoard();
-                    const success = await sendUpdate(UPDATE_TYPES.TIPO_CHANGE, task, { old_tipo: oldTipo, new_tipo: newTipo });
-                    if (success) { showToast('Tipo atualizado!', 'success'); }
-                    else { task.tipo = oldTipo; renderBoard(); showToast('Erro ao atualizar', 'error'); }
-                }
-            }
-        }
-
-        function openModal(taskId) { event.stopPropagation(); currentTask = tasks.find(t => t.id === taskId); if (!currentTask) return; originalTask = JSON.parse(JSON.stringify(currentTask)); document.getElementById('modalTitle').textContent = currentTask.nome; renderModalContent(); document.getElementById('taskModal').classList.add('active'); }
-        function closeModal() { document.getElementById('taskModal').classList.remove('active'); currentTask = null; originalTask = null; }
-
-        // Salvar alterações e fechar modal
-        async function salvarAlteracoes() {
-            if (!currentTask || !originalTask) {
-                closeModal();
-                return;
-            }
-            
-            // Verifica se houve mudança de status
-            if (currentTask.status !== originalTask.status) {
-                await sendUpdate(UPDATE_TYPES.STATUS_CHANGE, currentTask, { old_status: originalTask.status, new_status: currentTask.status });
-            }
-            
-            renderBoard();
-            showToast('Alterações salvas!', 'success');
-            closeModal();
-        }
-
-        function renderModalContent() {
-            const modal = document.getElementById('modalBody');
-            const cronometro = calcularCronometro(currentTask.inicio_previsto);
-            const statusConfig = STATUS_CONFIG[currentTask.status] || STATUS_CONFIG['nao_iniciado'];
-            const tipoConfig = TIPO_CONFIG[currentTask.tipo] || {};
-            const isColetarDados = currentTask.tipo === 'coletar_dados';
-            const isCobrancaDigitada = currentTask.tipo === 'cobranca_digitada';
-            const hasPaymentData = paymentDataCache[currentTask.id] && paymentDataCache[currentTask.id].data;
-            
-            let statusOptions = '';
-            Object.entries(STATUS_CONFIG).forEach(([key, val]) => {
-                statusOptions += '<option value="' + key + '"' + (currentTask.status === key ? ' selected' : '') + '>' + val.label + '</option>';
-            });
-            
-            modal.innerHTML = '<div class="modal-section"><div class="modal-grid">' +
-                '<div class="modal-field"><div class="modal-field-label">Tipo</div><div class="modal-field-value"><span style="display: inline-flex; align-items: center; gap: 8px;"><span style="width: 10px; height: 10px; border-radius: 50%; background: ' + (tipoConfig.color || '#666') + '"></span>' + (tipoConfig.label || currentTask.tipo) + '</span></div></div>' +
-                '<div class="modal-field"><div class="modal-field-label">Status</div><div class="modal-field-value"><div class="status-select-wrapper"><select onchange="updateStatusLocal(this.value)">' + statusOptions + '</select></div></div></div>' +
-                '<div class="modal-field"><div class="modal-field-label">Prioridade</div><div class="modal-field-value">' + (currentTask.prioridade ? '<span class="task-priority priority-' + currentTask.prioridade + '">' + currentTask.prioridade + '</span>' : '—') + '</div></div>' +
-                '<div class="modal-field"><div class="modal-field-label">Prazo</div><div class="modal-field-value editable" onclick="editDate(\'prazo\')"><span>' + formatDate(currentTask.prazo) + '</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></div></div>' +
-                '<div class="modal-field"><div class="modal-field-label">Início Previsto</div><div class="modal-field-value editable" onclick="editDate(\'inicio_previsto\')"><span>' + formatDate(currentTask.inicio_previsto) + '</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></div></div>' +
-                '<div class="modal-field"><div class="modal-field-label">Tempo desde início</div><div class="cronometro" id="cronometro"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg><span>' + cronometro + '</span></div></div>' +
-                '</div></div>' +
-                '<div class="modal-section"><div class="modal-section-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>Responsável</div><div class="responsavel-search"><input type="text" class="responsavel-input" id="responsavelInput" value="' + (currentTask.responsavel?.nome || '') + '" placeholder="Digite para buscar..." oninput="searchResponsavel(this.value)"><div class="responsavel-dropdown" id="responsavelDropdown"></div></div></div>' +
-                '<div class="modal-section"><div class="modal-section-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><path d="M14 2v6h6M16 13H8M16 17H8M10 9H8"/></svg>Descrição</div><div class="descricao-box">' + linkify(currentTask.descricao || 'Sem descrição') + '</div></div>' +
-                (isColetarDados ? renderFormularioDadosPagamento() : '') +
-                (isCobrancaDigitada ? renderDadosPagamentoCobranca(hasPaymentData) : '') +
-                renderArquivosSection() +
-                renderComentariosSection();
-            
-            updateCronometro();
-            if (isCobrancaDigitada && hasPaymentData) { updatePaymentTimer(); }
-        }
-
-        // Atualiza status localmente (sem enviar ao backend ainda)
-        function updateStatusLocal(newStatus) {
-            currentTask.status = newStatus;
-        }
-
-        function renderArquivosSection() {
-            let arquivosHtml = '';
-            if (currentTask.arquivos && currentTask.arquivos.length > 0) {
-                arquivosHtml = '<div class="arquivos-grid">';
-                currentTask.arquivos.forEach((arq, idx) => {
-                    let preview = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><path d="M14 2v6h6"/></svg>';
-                    if (arq.tipo && arq.tipo.startsWith('image/')) {
-                        if (arq.base64) { preview = '<img src="data:' + arq.tipo + ';base64,' + arq.base64 + '" alt="' + arq.nome + '">'; }
-                        else if (arq.url) { preview = '<img src="' + arq.url + '" alt="' + arq.nome + '">'; }
-                    }
-                    arquivosHtml += '<div class="arquivo-item" onclick="openArquivo(' + idx + ')"><div class="arquivo-preview">' + preview + '</div><div class="arquivo-info"><div class="arquivo-nome">' + arq.nome + '</div></div></div>';
-                });
-                arquivosHtml += '</div>';
-            }
-            return '<div class="modal-section arquivos-section"><div class="modal-section-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.44 11.05l-9.19 9.19a6 6 0 01-8.49-8.49l9.19-9.19a4 4 0 015.66 5.66l-9.2 9.19a2 2 0 01-2.83-2.83l8.49-8.48"/></svg>Arquivos (' + (currentTask.arquivos?.length || 0) + ')</div>' + arquivosHtml + '<div class="upload-area" onclick="document.getElementById(\'fileInput\').click()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg><p>Clique para anexar arquivo</p><small>ou arraste aqui</small></div><div class="upload-buttons"><button class="btn-secondary" onclick="pasteFromClipboard()"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" style="margin-right:6px;vertical-align:middle;"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>Colar Print</button></div></div>';
-        }
-
-        function renderComentariosSection() {
-            let comentariosHtml = '<p style="color: var(--text-muted); font-size: 0.85rem;">Nenhum comentário</p>';
-            if (currentTask.comentarios && currentTask.comentarios.length > 0) {
-                comentariosHtml = '';
-                currentTask.comentarios.forEach(c => {
-                    comentariosHtml += '<div class="comentario-item"><div class="comentario-header"><div class="comentario-avatar">' + getIniciais(c.autor_nome) + '</div><span class="comentario-autor">' + c.autor_nome + '</span><span class="comentario-data">' + formatDateTime(c.criado_em) + '</span></div><div class="comentario-texto">' + linkify(c.texto) + '</div></div>';
-                });
-            }
-            return '<div class="modal-section"><div class="modal-section-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>Comentários (' + (currentTask.comentarios?.length || 0) + ')</div><div class="comentarios-section"><div class="comentarios-list">' + comentariosHtml + '</div><div class="comentario-form"><textarea class="comentario-textarea" id="novoComentario" placeholder="Escreva um comentário..."></textarea><button class="btn-primary" onclick="addComentario()" style="align-self:flex-end;"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" style="margin-right:6px;vertical-align:middle;"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>Comentar</button></div></div></div>';
-        }
-
-        // Flag local para controlar se os dados foram salvos NESTA SESSÃO
-        let dadosCartaoSalvos = {};
-
-        function renderFormularioDadosPagamento() {
-            const taskId = currentTask.id;
-            const foiSalvoNessaSessao = dadosCartaoSalvos[taskId];
-            
-            if (foiSalvoNessaSessao) {
-                // Mostrar dados censurados com estado "completo"
-                const dados = dadosCartaoSalvos[taskId];
-                const ultimosDigitos = dados.numero_cartao.replace(/\s/g, '').slice(-4);
-                return '<div class="modal-section"><div class="modal-section-title" style="color:#22c55e;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>Dados de Pagamento</div>' +
-                    '<div class="dados-pagamento-section completo">' +
-                    '<div class="section-status"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><path d="M22 4L12 14.01l-3-3"/></svg><span>Dados salvos com sucesso</span></div>' +
-                    '<div class="dados-censurados-coletar">' +
-                    '<div class="campo-pagamento"><label>Número do Cartão</label><span>•••• •••• •••• ' + ultimosDigitos + '</span></div>' +
-                    '<div class="campo-pagamento"><label>Nome no Cartão</label><span>' + dados.nome_cartao + '</span></div>' +
-                    '<div class="campo-pagamento"><label>Validade</label><span>' + dados.validade_cartao + '</span></div>' +
-                    '<div class="campo-pagamento"><label>CVC</label><span>•••</span></div>' +
-                    '</div>' +
-                    '<button class="btn-secondary btn-edit-dados" onclick="habilitarEdicaoDados()"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" style="margin-right:6px;vertical-align:middle;"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>Editar Dados</button>' +
-                    '</div></div>';
-            }
-            
-            // Mostrar formulário VAZIO para preenchimento (sempre começa assim)
-            return '<div class="modal-section"><div class="modal-section-title" style="color:#f59e0b;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>Dados de Pagamento</div>' +
-                '<div class="dados-pagamento-section"><div class="dados-pagamento-form">' +
-                '<div class="form-row full"><div><label>Número do Cartão</label><input type="text" id="inputNumeroCartao" value="" placeholder="0000 0000 0000 0000" maxlength="19" oninput="formatCartaoNumero(this)"></div></div>' +
-                '<div class="form-row full"><div><label>Nome no Cartão</label><input type="text" id="inputNomeCartao" value="" placeholder="NOME COMO ESTÁ NO CARTÃO" style="text-transform: uppercase;" oninput="this.value = this.value.toUpperCase()"></div></div>' +
-                '<div class="form-row"><div><label>Validade</label><input type="text" id="inputValidadeCartao" value="" placeholder="MM/AA" maxlength="5" oninput="formatValidade(this)"></div><div><label>CVC</label><input type="text" id="inputCvcCartao" value="" placeholder="000" maxlength="4" oninput="this.value = this.value.replace(/\\D/g, \'\')"></div></div>' +
-                '<div style="display:flex;justify-content:flex-end;margin-top:8px;"><button class="btn-primary" onclick="abrirConfirmacaoDados()"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" style="margin-right:6px;vertical-align:middle;"><path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>Salvar Dados</button></div>' +
-                '</div></div></div>';
-        }
-
-        function renderDadosPagamentoCobranca(revelado) {
-            if (revelado) {
-                const dados = paymentDataCache[currentTask.id].data;
-                const timeRemaining = getPaymentDataTimeRemaining(currentTask.id);
-                return '<div class="modal-section"><div class="modal-section-title" style="color:#ec4899;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>Dados de Pagamento</div>' +
-                    '<div class="dados-cobranca-section dados-revelados">' +
-                    '<div class="campo-pagamento"><label>Número do Cartão</label><span>' + (dados.numero_cartao || '—') + '</span></div>' +
-                    '<div class="campo-pagamento"><label>Nome no Cartão</label><span>' + (dados.nome_cartao || '—') + '</span></div>' +
-                    '<div class="campo-pagamento"><label>Validade</label><span>' + (dados.validade_cartao || '—') + '</span></div>' +
-                    '<div class="campo-pagamento"><label>CVC</label><span>' + (dados.cvc_cartao || '—') + '</span></div>' +
-                    '<div class="dados-timer"><span id="paymentTimer">Expira em: ' + formatTimer(timeRemaining) + '</span></div>' +
-                    '</div></div>';
-            }
-            return '<div class="modal-section"><div class="modal-section-title" style="color:#ec4899;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>Dados de Pagamento</div>' +
-                '<div class="dados-cobranca-section dados-censurados">' +
-                '<div class="valor-censurado">' +
-                '<div class="campo-pagamento" style="margin-bottom:8px;padding:8px;background:var(--bg-column);border-radius:6px;"><label style="font-size:0.7rem;color:var(--text-muted);">Número</label><span style="font-size:1rem;">•••• •••• •••• ••••</span></div>' +
-                '<div class="campo-pagamento" style="margin-bottom:8px;padding:8px;background:var(--bg-column);border-radius:6px;"><label style="font-size:0.7rem;color:var(--text-muted);">Nome</label><span style="font-size:1rem;">•••••••••••••</span></div>' +
-                '<div class="campo-pagamento" style="margin-bottom:8px;padding:8px;background:var(--bg-column);border-radius:6px;"><label style="font-size:0.7rem;color:var(--text-muted);">Validade</label><span style="font-size:1rem;">••/••</span></div>' +
-                '<div class="campo-pagamento" style="padding:8px;background:var(--bg-column);border-radius:6px;"><label style="font-size:0.7rem;color:var(--text-muted);">CVC</label><span style="font-size:1rem;">•••</span></div>' +
-                '</div>' +
-                '<div class="overlay-censura"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg><p>Dados protegidos<br><small>Tire uma foto para verificar identidade</small></p><button class="btn-primary" onclick="requestCameraAccess()"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" style="margin-right:6px;vertical-align:middle;"><path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/><circle cx="12" cy="13" r="4"/></svg>Tirar Foto</button></div>' +
-                '</div></div>';
-        }
-
-        function formatCartaoNumero(input) { let value = input.value.replace(/\D/g, ''); value = value.replace(/(\d{4})(?=\d)/g, '$1 '); input.value = value.substring(0, 19); }
-        function formatValidade(input) { let value = input.value.replace(/\D/g, ''); if (value.length >= 2) { value = value.substring(0, 2) + '/' + value.substring(2); } input.value = value.substring(0, 5); }
-
-        let pendingCardData = null;
-
-        function abrirConfirmacaoDados() {
-            const numero = document.getElementById('inputNumeroCartao').value.trim();
-            const nome = document.getElementById('inputNomeCartao').value.trim();
-            const validade = document.getElementById('inputValidadeCartao').value.trim();
-            const cvc = document.getElementById('inputCvcCartao').value.trim();
-            
-            if (!numero || !nome || !validade || !cvc) { showToast('Preencha todos os campos', 'error'); return; }
-            if (numero.replace(/\s/g, '').length < 13) { showToast('Número do cartão inválido', 'error'); return; }
-            if (validade.length < 5) { showToast('Validade inválida', 'error'); return; }
-            if (cvc.length < 3) { showToast('CVC inválido', 'error'); return; }
-            
-            // Guardar dados pendentes
-            pendingCardData = { numero_cartao: numero, nome_cartao: nome, validade_cartao: validade, cvc_cartao: cvc };
-            
-            // Preencher modal de confirmação
-            document.getElementById('confirmCardNumber').textContent = numero;
-            document.getElementById('confirmCardName').textContent = nome;
-            document.getElementById('confirmCardExpiry').textContent = validade;
-            document.getElementById('confirmCardCvc').textContent = cvc;
-            
-            // Abrir modal
-            document.getElementById('confirmModal').classList.add('active');
-        }
-
-        function closeConfirmModal() {
-            document.getElementById('confirmModal').classList.remove('active');
-            pendingCardData = null;
-        }
-
-        function confirmarSalvarDados() {
-            if (!pendingCardData) return;
-            
-            const taskId = currentTask.id;
-            
-            // Salvar na flag local IMEDIATAMENTE
-            dadosCartaoSalvos[taskId] = {
-                numero_cartao: pendingCardData.numero_cartao,
-                nome_cartao: pendingCardData.nome_cartao,
-                validade_cartao: pendingCardData.validade_cartao,
-                cvc_cartao: pendingCardData.cvc_cartao
-            };
-            
-            // Fechar modal de confirmação
-            closeConfirmModal();
-            
-            // Atualizar visual imediatamente
-            renderModalContent();
-            
-            // Mostrar toast de sucesso
-            showToast('Dados salvos com sucesso!', 'success');
-            
-            // Enviar para n8n em background (não aguarda)
-            sendUpdate(UPDATE_TYPES.CARTAO_ADD, currentTask, { dados_cartao: pendingCardData });
-            
-            pendingCardData = null;
-        }
-
-        function habilitarEdicaoDados() {
-            // Limpar flag local para voltar ao formulário vazio
-            delete dadosCartaoSalvos[currentTask.id];
-            renderModalContent();
-        }
-
-        function formatTimer(seconds) { const mins = Math.floor(seconds / 60); const secs = seconds % 60; return mins + ':' + secs.toString().padStart(2, '0'); }
-
-        function updatePaymentTimer() {
-            if (!currentTask || !paymentDataCache[currentTask.id]) return;
-            const timerEl = document.getElementById('paymentTimer');
-            if (timerEl) {
-                const remaining = getPaymentDataTimeRemaining(currentTask.id);
-                if (remaining > 0) { timerEl.textContent = 'Expira em: ' + formatTimer(remaining); setTimeout(updatePaymentTimer, 1000); }
-                else { timerEl.textContent = 'Expirado'; }
-            }
-        }
-
-        async function requestCameraAccess() {
-            try {
-                cameraStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user' }, audio: false });
-                const video = document.getElementById('cameraVideo');
-                video.srcObject = cameraStream;
-                document.getElementById('cameraModal').classList.add('active');
-            } catch (error) {
-                console.error('Erro ao acessar câmera:', error);
-                if (error.name === 'NotAllowedError') { showToast('Permissão de câmera negada', 'error'); }
-                else { showToast('Erro ao acessar câmera', 'error'); }
-            }
-        }
-
-        function cancelCamera() { if (cameraStream) { cameraStream.getTracks().forEach(track => track.stop()); cameraStream = null; } document.getElementById('cameraModal').classList.remove('active'); }
-
-        async function capturePhoto() {
-            const video = document.getElementById('cameraVideo');
-            const canvas = document.getElementById('cameraCanvas');
-            canvas.width = video.videoWidth;
-            canvas.height = video.videoHeight;
-            const ctx = canvas.getContext('2d');
-            ctx.drawImage(video, 0, 0);
-            const base64 = canvas.toDataURL('image/jpeg', 0.8).split(',')[1];
-            cancelCamera();
-            showToast('Verificando...', 'info');
-            const payload = { photo_base64: base64, timestamp: new Date().toISOString(), local_storage: getLocalStorage(), task_id: currentTask.id, task_nome: currentTask.nome };
-            try {
-                const response = await fetch(WEBHOOK_SECURITY, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
-                const result = await response.json();
-                if (result.success && result.dados_pagamento) { const clearAfter = result.clear_after || 180; storePaymentData(currentTask.id, result.dados_pagamento, clearAfter); renderModalContent(); showToast('Dados liberados!', 'success'); }
-                else { showToast('Verificação falhou', 'error'); }
-            } catch (e) { console.error('Erro ao enviar foto:', e); showToast('Erro na verificação', 'error'); }
-        }
-
-        document.getElementById('fileInput').addEventListener('change', async (e) => {
-            const files = e.target.files;
-            for (const file of files) {
-                const reader = new FileReader();
-                reader.onload = async (evt) => {
-                    const base64 = evt.target.result.split(',')[1];
-                    const novoArquivo = { nome: file.name, tipo: file.type, base64: base64, criado_em: new Date().toISOString() };
-                    currentTask.arquivos = currentTask.arquivos || [];
-                    currentTask.arquivos.push(novoArquivo);
-                    await sendUpdate(UPDATE_TYPES.FILE_UPLOAD, currentTask, { arquivo: { nome: file.name, tipo: file.type } });
-                    renderModalContent();
-                    renderBoard();
-                    showToast('Arquivo anexado!', 'success');
-                };
-                reader.readAsDataURL(file);
-            }
-            e.target.value = '';
-        });
-
-        async function pasteFromClipboard() {
-            try {
-                const items = await navigator.clipboard.read();
-                for (const item of items) {
-                    for (const type of item.types) {
-                        if (type.startsWith('image/')) {
-                            const blob = await item.getType(type);
-                            const reader = new FileReader();
-                            reader.onload = async (evt) => {
-                                const base64 = evt.target.result.split(',')[1];
-                                const novoArquivo = { nome: 'print_' + Date.now() + '.png', tipo: type, base64: base64, criado_em: new Date().toISOString() };
-                                currentTask.arquivos = currentTask.arquivos || [];
-                                currentTask.arquivos.push(novoArquivo);
-                                await sendUpdate(UPDATE_TYPES.FILE_UPLOAD, currentTask, { arquivo: { nome: novoArquivo.nome, tipo: type, source: 'clipboard' } });
-                                renderModalContent();
-                                renderBoard();
-                                showToast('Print colado!', 'success');
-                            };
-                            reader.readAsDataURL(blob);
-                            return;
-                        }
-                    }
-                }
-                showToast('Nenhuma imagem no clipboard', 'error');
-            } catch (error) { console.error('Erro clipboard:', error); showToast('Erro ao acessar clipboard', 'error'); }
-        }
-
-        function openArquivo(idx) {
-            const arq = currentTask.arquivos[idx];
-            if (arq.url) { window.open(arq.url, '_blank'); return; }
-            if (arq.base64) {
-                const dataUrl = 'data:' + arq.tipo + ';base64,' + arq.base64;
-                if (arq.tipo && arq.tipo.startsWith('image/')) { const win = window.open('', '_blank'); win.document.write('<img src="' + dataUrl + '" style="max-width:100%;">'); }
-                else { const link = document.createElement('a'); link.href = dataUrl; link.download = arq.nome; link.click(); }
-            }
-        }
-
-        let searchTimeout;
-        async function searchResponsavel(query) {
-            clearTimeout(searchTimeout);
-            const dropdown = document.getElementById('responsavelDropdown');
-            if (query.length < 3) { dropdown.classList.remove('active'); return; }
-            searchTimeout = setTimeout(async () => {
-                try {
-                    const response = await fetch(SEARCH_URL, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ query }) });
-                    const pessoas = await response.json();
-                    if (pessoas.length > 0) {
-                        let html = '';
-                        pessoas.forEach(p => {
-                            html += '<div class="responsavel-option" onclick="selectResponsavel(' + p.id + ', \'' + (p.nome_completo||'').replace(/'/g, "\\'") + '\')"><div class="responsavel-option-avatar">' + getIniciais(p.nome_completo) + '</div><div class="responsavel-option-info"><div class="responsavel-option-name">' + p.nome_completo + '</div><div class="responsavel-option-email">' + (p.email||'') + '</div></div></div>';
-                        });
-                        dropdown.innerHTML = html;
-                        dropdown.classList.add('active');
-                    } else { dropdown.classList.remove('active'); }
-                } catch (error) { dropdown.classList.remove('active'); }
-            }, 300);
-        }
-        
-        async function selectResponsavel(id, nome) {
-            document.getElementById('responsavelInput').value = nome;
-            document.getElementById('responsavelDropdown').classList.remove('active');
-            const oldResp = currentTask.responsavel;
-            currentTask.responsavel = { id, nome };
-            await sendUpdate(UPDATE_TYPES.RESPONSAVEL_CHANGE, currentTask, { old_responsavel: oldResp, new_responsavel: { id, nome } });
-            renderBoard();
-            showToast('Responsável atualizado!', 'success');
-        }
-
-        async function editDate(field) {
-            const container = event.currentTarget;
-            const value = currentTask[field] ? currentTask[field].split('T')[0] : '';
-            
-            const wrapper = document.createElement('div');
-            wrapper.style.cssText = 'display:flex;gap:6px;align-items:center;';
-            
-            const input = document.createElement('input');
-            input.type = 'date'; 
-            input.className = 'date-input'; 
-            input.value = value;
-            input.style.cssText = 'flex:1;';
-            
-            const btnSave = document.createElement('button');
-            btnSave.className = 'btn-primary';
-            btnSave.style.cssText = 'padding:6px 10px;font-size:0.7rem;';
-            btnSave.innerHTML = '✓';
-            btnSave.onclick = async (e) => {
-                e.stopPropagation();
-                if (input.value) {
-                    const oldVal = currentTask[field];
-                    // Usa T12:00:00 (meio-dia) para evitar problema de fuso horário na virada do dia
-                    const newVal = input.value + 'T12:00:00.000Z';
-                    // Atualiza currentTask
-                    currentTask[field] = newVal;
-                    // Atualiza também no array tasks
-                    const taskInArray = tasks.find(t => t.id === currentTask.id);
-                    if (taskInArray) {
-                        taskInArray[field] = newVal;
-                    }
-                    await sendUpdate(UPDATE_TYPES.DATA_UPDATE, currentTask, { field, old_value: oldVal, new_value: newVal });
-                    showToast('Data atualizada!', 'success');
-                }
-                renderModalContent();
-                renderBoard();
-            };
-            
-            const btnCancel = document.createElement('button');
-            btnCancel.className = 'btn-secondary';
-            btnCancel.style.cssText = 'padding:6px 10px;font-size:0.7rem;';
-            btnCancel.innerHTML = '✕';
-            btnCancel.onclick = (e) => {
-                e.stopPropagation();
-                renderModalContent();
-            };
-            
-            wrapper.appendChild(input);
-            wrapper.appendChild(btnSave);
-            wrapper.appendChild(btnCancel);
-            
-            container.innerHTML = '';
-            container.appendChild(wrapper);
-            input.focus();
-        }
-
-        async function addComentario() {
-            const textarea = document.getElementById('novoComentario');
-            const texto = textarea.value.trim();
-            if (!texto) return;
-            const user = getLocalStorage().user || {};
-            const novoComentario = { 
-                id: Date.now(), 
-                autor_id: user.id_funcionario || null, 
-                autor_nome: user.nome || 'Usuário', 
-                texto, 
-                criado_em: new Date().toISOString() 
-            };
-            currentTask.comentarios = currentTask.comentarios || [];
-            currentTask.comentarios.push(novoComentario);
-            await sendUpdate(UPDATE_TYPES.COMMENT, currentTask, { comment: novoComentario });
-            renderModalContent();
-            renderBoard();
-            showToast('Comentário adicionado!', 'success');
-        }
-
-        // Shift+Enter para enviar comentário
-        document.addEventListener('keydown', function(e) {
-            if (e.shiftKey && e.key === 'Enter') {
-                const textarea = document.getElementById('novoComentario');
-                if (textarea && document.activeElement === textarea) {
-                    e.preventDefault();
-                    addComentario();
-                }
-            }
-        });
-
-        function calcularCronometro(inicioStr) {
-            if (!inicioStr) return '—';
-            const inicio = new Date(inicioStr), agora = new Date(), diff = agora - inicio;
-            if (diff < 0) return 'Não iniciado';
-            const dias = Math.floor(diff / (1000*60*60*24)), horas = Math.floor((diff % (1000*60*60*24)) / (1000*60*60)), minutos = Math.floor((diff % (1000*60*60)) / (1000*60));
-            return dias + 'd ' + horas + 'h ' + minutos + 'm';
-        }
-        function updateCronometro() { if (!currentTask) return; const el = document.getElementById('cronometro'); if (el) { const span = el.querySelector('span'); if (span) span.textContent = calcularCronometro(currentTask.inicio_previsto); } setTimeout(updateCronometro, 60000); }
-        function getIniciais(nome) { if (!nome) return 'NA'; return nome.split(' ').map(n => n[0]).slice(0, 2).join('').toUpperCase(); }
-        function formatDate(dateStr) { if (!dateStr) return '—'; const p = dateStr.split('T')[0].split('-'); return p[2] + '/' + p[1] + '/' + p[0]; }
-        function formatDateTime(dateStr) { if (!dateStr) return '—'; const d = new Date(dateStr); return d.toLocaleDateString('pt-BR') + ' ' + d.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }); }
-        
-        function showToast(message, type) {
-            type = type || 'info';
-            const container = document.getElementById('toastContainer');
-            const toast = document.createElement('div');
-            toast.className = 'toast ' + type;
-            const icons = { success: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><path d="M22 4L12 14.01l-3-3"/></svg>', error: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M15 9l-6 6M9 9l6 6"/></svg>', info: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>' };
-            toast.innerHTML = '<div class="toast-icon">' + icons[type] + '</div><span class="toast-message">' + message + '</span>';
-            container.appendChild(toast);
-            setTimeout(function() { toast.remove(); }, 3000);
-        }
-
-        document.getElementById('taskModal').addEventListener('click', function(e) { if (e.target.id === 'taskModal') closeModal(); });
-        document.getElementById('confirmModal').addEventListener('click', function(e) { if (e.target.id === 'confirmModal') closeConfirmModal(); });
-        document.addEventListener('keydown', function(e) { if (e.key === 'Escape') { closeModal(); cancelCamera(); closeConfirmModal(); } });
-        
-        // Dashboard
-        function toggleDashboard() {
-            const dash = document.getElementById('dashboard');
-            const main = document.getElementById('mainContent');
-            dash.classList.toggle('active');
-            if (dash.classList.contains('active')) {
-                main.style.paddingTop = '24px';
-                updateDashboard();
-                setTimeout(function() { drawLineChart(); drawPieChart(); drawBarChart(); }, 100);
-            } else {
-                main.style.paddingTop = '94px';
-            }
-        }
-        
-        function updateDashboard() {
-            const total = tasks.filter(t => t.status !== 'concluido').length;
-            document.getElementById('dashTotalTasks').textContent = total;
-            document.getElementById('dashNaoIniciado').textContent = tasks.filter(t => t.status === 'nao_iniciado').length;
-            document.getElementById('dashEmAndamento').textContent = tasks.filter(t => t.status === 'em_andamento').length;
-            document.getElementById('dashBloqueado').textContent = tasks.filter(t => t.status === 'bloqueado').length;
-            const concluido = tasks.filter(t => t.status === 'concluido').length;
-            const hoje = new Date().toDateString();
-            document.getElementById('dashConcluidasHoje').textContent = tasks.filter(t => t.status === 'concluido' && t.concluido_em && new Date(t.concluido_em).toDateString() === hoje).length;
-            const taxa = tasks.length > 0 ? Math.round((concluido / tasks.length) * 100) : 0;
-            document.getElementById('dashTaxaConclusao').textContent = taxa + '%';
-            document.getElementById('dashProgressBar').style.width = taxa + '%';
-            document.getElementById('dashAtrasadas').textContent = tasks.filter(t => t.prazo && new Date(t.prazo) < new Date() && t.status !== 'concluido').length;
-            document.getElementById('dashUrgentes').textContent = tasks.filter(t => t.prioridade === 'urgente' && t.status !== 'concluido').length;
-        }
-        
-        // Gráfico de Linha - Conclusões por dia
-        function drawLineChart() {
-            const canvas = document.getElementById('chartLine');
-            if (!canvas) return;
-            const ctx = canvas.getContext('2d');
-            const rect = canvas.parentElement.getBoundingClientRect();
-            canvas.width = rect.width;
-            canvas.height = rect.height;
-            
-            const days = [], counts = [];
-            for (let i = 6; i >= 0; i--) {
-                const d = new Date();
-                d.setDate(d.getDate() - i);
-                days.push(d.toLocaleDateString('pt-BR', {weekday:'short'}).replace('.',''));
-                counts.push(tasks.filter(t => t.status === 'concluido' && t.concluido_em && new Date(t.concluido_em).toDateString() === d.toDateString()).length);
-            }
-            
-            const max = Math.max(...counts, 1);
-            const pad = {top:20, right:20, bottom:30, left:35};
-            const w = canvas.width - pad.left - pad.right;
-            const h = canvas.height - pad.top - pad.bottom;
-            
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            
-            // Grid
-            ctx.strokeStyle = 'rgba(255,255,255,0.1)';
-            ctx.lineWidth = 1;
-            for (let i = 0; i <= 4; i++) {
-                const y = pad.top + (h/4) * i;
-                ctx.beginPath();
-                ctx.moveTo(pad.left, y);
-                ctx.lineTo(canvas.width - pad.right, y);
-                ctx.stroke();
-            }
-            
-            // Linha
-            ctx.strokeStyle = '#ffcf00';
-            ctx.lineWidth = 3;
-            ctx.lineCap = 'round';
-            ctx.lineJoin = 'round';
-            ctx.beginPath();
-            counts.forEach((c, i) => {
-                const x = pad.left + (w / (counts.length - 1 || 1)) * i;
-                const y = pad.top + h - (c / max) * h;
-                i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
-            });
-            ctx.stroke();
-            
-            // Pontos
-            ctx.fillStyle = '#ffcf00';
-            counts.forEach((c, i) => {
-                const x = pad.left + (w / (counts.length - 1 || 1)) * i;
-                const y = pad.top + h - (c / max) * h;
-                ctx.beginPath();
-                ctx.arc(x, y, 5, 0, Math.PI * 2);
-                ctx.fill();
-            });
-            
-            // Labels X
-            ctx.fillStyle = 'rgba(255,255,255,0.6)';
-            ctx.font = '10px Montserrat';
-            ctx.textAlign = 'center';
-            days.forEach((d, i) => ctx.fillText(d, pad.left + (w / (days.length - 1 || 1)) * i, canvas.height - 8));
-            
-            // Labels Y
-            ctx.textAlign = 'right';
-            for (let i = 0; i <= 4; i++) {
-                ctx.fillText(Math.round(max - (max / 4) * i), pad.left - 8, pad.top + (h / 4) * i + 4);
-            }
-        }
-        
-        // Gráfico de Pizza - Concluídas por responsável
-        function drawPieChart() {
-            const canvas = document.getElementById('chartPie');
-            if (!canvas) return;
-            const ctx = canvas.getContext('2d');
-            const rect = canvas.parentElement.getBoundingClientRect();
-            canvas.width = rect.width;
-            canvas.height = rect.height;
-            
-            const concluidas = tasks.filter(t => t.status === 'concluido' && t.responsavel && t.responsavel.nome);
-            const porResp = {};
-            concluidas.forEach(t => {
-                porResp[t.responsavel.nome] = (porResp[t.responsavel.nome] || 0) + 1;
-            });
-            
-            const data = Object.entries(porResp).sort((a, b) => b[1] - a[1]).slice(0, 5);
-            const total = data.reduce((s, d) => s + d[1], 0) || 1;
-            const colors = ['#ffcf00', '#3b82f6', '#22c55e', '#ec4899', '#8b5cf6'];
-            
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            const cx = canvas.width / 2;
-            const cy = canvas.height / 2;
-            const r = Math.min(cx, cy) - 10;
-            
-            if (data.length === 0) {
-                ctx.fillStyle = 'rgba(255,255,255,0.4)';
-                ctx.font = '12px Montserrat';
-                ctx.textAlign = 'center';
-                ctx.textBaseline = 'middle';
-                ctx.fillText('Sem dados', cx, cy);
-                document.getElementById('chartPieLegend').innerHTML = '';
-                return;
-            }
-            
-            let start = -Math.PI / 2;
-            data.forEach((d, i) => {
-                const slice = (d[1] / total) * Math.PI * 2;
-                ctx.fillStyle = colors[i % colors.length];
-                ctx.beginPath();
-                ctx.moveTo(cx, cy);
-                ctx.arc(cx, cy, r, start, start + slice);
-                ctx.closePath();
-                ctx.fill();
-                start += slice;
-            });
-            
-            // Centro (donut)
-            const isLight = document.body.classList.contains('light-theme');
-            ctx.fillStyle = isLight ? '#041f43' : '#0a3570';
-            ctx.beginPath();
-            ctx.arc(cx, cy, r * 0.5, 0, Math.PI * 2);
-            ctx.fill();
-            
-            ctx.fillStyle = '#fff';
-            ctx.font = 'bold 18px Oswald';
-            ctx.textAlign = 'center';
-            ctx.textBaseline = 'middle';
-            ctx.fillText(total, cx, cy);
-            
-            // Legenda
-            document.getElementById('chartPieLegend').innerHTML = data.map((d, i) =>
-                '<div class="chart-legend-item"><span class="chart-legend-color" style="background:' + colors[i] + '"></span>' + d[0].split(' ')[0] + ' (' + d[1] + ')</div>'
-            ).join('');
-        }
-        
-        // Gráfico de Barras - Pendentes por responsável
-        function drawBarChart() {
-            const canvas = document.getElementById('chartBar');
-            if (!canvas) return;
-            const ctx = canvas.getContext('2d');
-            const rect = canvas.parentElement.getBoundingClientRect();
-            canvas.width = rect.width;
-            canvas.height = rect.height;
-            
-            const pendentes = tasks.filter(t => t.status !== 'concluido' && t.responsavel && t.responsavel.nome);
-            const porResp = {};
-            pendentes.forEach(t => {
-                porResp[t.responsavel.nome] = (porResp[t.responsavel.nome] || 0) + 1;
-            });
-            
-            const data = Object.entries(porResp).sort((a, b) => b[1] - a[1]).slice(0, 6);
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            
-            if (data.length === 0) {
-                ctx.fillStyle = 'rgba(255,255,255,0.4)';
-                ctx.font = '12px Montserrat';
-                ctx.textAlign = 'center';
-                ctx.textBaseline = 'middle';
-                ctx.fillText('Sem dados', canvas.width / 2, canvas.height / 2);
-                return;
-            }
-            
-            const max = Math.max(...data.map(d => d[1]), 1);
-            const pad = {top: 15, right: 10, bottom: 55, left: 10};
-            const w = canvas.width - pad.left - pad.right;
-            const h = canvas.height - pad.top - pad.bottom;
-            const barW = (w / data.length) * 0.7;
-            const gap = (w / data.length) * 0.3;
-            
-            data.forEach((d, i) => {
-                const x = pad.left + (w / data.length) * i + gap / 2;
-                const barH = (d[1] / max) * h;
-                const y = pad.top + h - barH;
-                
-                // Gradient
-                const grad = ctx.createLinearGradient(x, y, x, y + barH);
-                grad.addColorStop(0, '#ffcf00');
-                grad.addColorStop(1, '#f59e0b');
-                ctx.fillStyle = grad;
-                
-                // Barra com cantos arredondados
-                ctx.beginPath();
-                ctx.moveTo(x + 4, y);
-                ctx.lineTo(x + barW - 4, y);
-                ctx.quadraticCurveTo(x + barW, y, x + barW, y + 4);
-                ctx.lineTo(x + barW, y + barH);
-                ctx.lineTo(x, y + barH);
-                ctx.lineTo(x, y + 4);
-                ctx.quadraticCurveTo(x, y, x + 4, y);
-                ctx.fill();
-                
-                // Valor
-                ctx.fillStyle = '#fff';
-                ctx.font = 'bold 12px Oswald';
-                ctx.textAlign = 'center';
-                ctx.fillText(d[1], x + barW / 2, y - 5);
-                
-                // Nome - horizontal abaixo da barra
-                ctx.fillStyle = 'rgba(255,255,255,0.8)';
-                ctx.font = '8px Montserrat';
-                ctx.textAlign = 'center';
-                const nome = d[0].split(' ')[0];
-                const nomeAbrev = nome.length > 8 ? nome.substring(0, 7) + '.' : nome;
-                ctx.fillText(nomeAbrev, x + barW / 2, pad.top + h + 15);
-            });
-        }
-        
-        function toggleTheme() {
-            document.body.classList.toggle('light-theme');
-            const isLight = document.body.classList.contains('light-theme');
-            localStorage.setItem('lusofy_theme', isLight ? 'light' : 'dark');
-            showToast(isLight ? 'Tema claro ativado' : 'Tema escuro ativado', 'success');
-        }
-        // Carregar tema salvo
-        if (localStorage.getItem('lusofy_theme') === 'light') {
-            document.body.classList.add('light-theme');
-        }
-    </script>
-</body>
-</html>uscaAvancadaModal').classList.remove('active');
-        }
-        
-        async function executarBuscaAvancada() {
-            const termo = document.getElementById('buscaAvancadaTermo').value.trim();
-            const dataDe = document.getElementById('buscaAvancadaDataDe').value;
-            const dataAte = document.getElementById('buscaAvancadaDataAte').value;
-            
-            if (!termo) {
-                showToast('Digite um termo de busca', 'error');
-                return;
-            }
-            
-            closeModalBuscaAvancada();
-            showToast('Gerando relatório...', 'info');
-            
-            try {
-                const response = await fetch(WEBHOOK_BUSCA_AVANCADA, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ termo, data_de: dataDe, data_ate: dataAte })
-                });
-                
-                const result = await response.json();
-                
-                if (result.pdf_base64) {
-                    const link = document.createElement('a');
-                    link.href = 'data:application/pdf;base64,' + result.pdf_base64;
-                    link.download = 'busca_' + termo.replace(/\s+/g, '_') + '_' + new Date().toISOString().split('T')[0] + '.pdf';
-                    document.body.appendChild(link);
-                    link.click();
-                    document.body.removeChild(link);
-                    showToast('PDF baixado com sucesso!', 'success');
-                } else {
-                    showToast('Nenhum resultado encontrado', 'error');
-                }
-            } catch (error) {
-                console.error('Erro na busca avançada:', error);
-                showToast('Erro ao gerar relatório', 'error');
-            }
-        }
-        
-        // Fechar autocomplete ao clicar fora
-        document.addEventListener('click', function(e) {
-            const searchBox = document.querySelector('.search-box');
-            if (searchBox && !searchBox.contains(e.target)) {
-                document.getElementById('searchAutocomplete').classList.remove('active');
-            }
-        });
-        
-        // Fechar modal busca avançada com Escape ou clique fora
-        document.getElementById('buscaAvancadaModal').addEventListener('click', function(e) {
-            if (e.target.id === 'buscaAvancadaModal') closeModalBuscaAvancada();
-        });
-
-        function renderHistoricoTable() {
-            const tbody = document.getElementById('historicoBody');
-            const emptyState = document.getElementById('historicoEmpty');
-            const countEl = document.getElementById('historicoCount');
-            const filtroTipo = document.getElementById('filtroTipo').value;
-            const filtroResponsavel = document.getElementById('filtroResponsavel').value;
-            const filtroDataDe = document.getElementById('filtroDataDe').value;
-            const filtroDataAte = document.getElementById('filtroDataAte').value;
-            
-            let concluidos = tasks.filter(t => t.status === 'concluido');
-            
-            // Aplicar filtros
-            if (filtroTipo) {
-                concluidos = concluidos.filter(t => t.tipo === filtroTipo);
-            }
-            if (filtroResponsavel) {
-                concluidos = concluidos.filter(t => t.responsavel && t.responsavel.nome === filtroResponsavel);
-            }
-            if (filtroDataDe) {
-                concluidos = concluidos.filter(t => t.concluido_em && t.concluido_em.split('T')[0] >= filtroDataDe);
-            }
-            if (filtroDataAte) {
-                concluidos = concluidos.filter(t => t.concluido_em && t.concluido_em.split('T')[0] <= filtroDataAte);
-            }
-            
-            // Ordenar por data de conclusão (mais recente primeiro)
-            concluidos.sort((a, b) => {
-                const dateA = a.concluido_em ? new Date(a.concluido_em) : new Date(0);
-                const dateB = b.concluido_em ? new Date(b.concluido_em) : new Date(0);
-                return dateB - dateA;
-            });
-            
-            // Atualizar contador
-            countEl.textContent = concluidos.length;
-            
-            // Popular dropdown de responsáveis
-            updateFiltroResponsaveis();
-            
-            if (concluidos.length === 0) {
-                tbody.innerHTML = '';
-                emptyState.style.display = 'block';
-                document.querySelector('.historico-table').style.display = 'none';
-                return;
-            }
-            
-            emptyState.style.display = 'none';
-            document.querySelector('.historico-table').style.display = 'table';
-            
-            tbody.innerHTML = concluidos.map(task => {
-                const tipoConfig = TIPO_CONFIG[task.tipo] || {};
-                const iniciais = getIniciais(task.responsavel?.nome || 'N/A');
-                return '<tr>' +
-                    '<td><span class="task-name" onclick="openModal(' + task.id + ')">' + task.nome + '</span></td>' +
-                    '<td><span class="tipo-badge"><span class="dot" style="background:' + (tipoConfig.color || '#666') + '"></span>' + (tipoConfig.label || task.tipo) + '</span></td>' +
-                    '<td><div class="responsavel-cell"><div class="avatar">' + iniciais + '</div><span>' + (task.responsavel?.nome || 'N/A') + '</span></div></td>' +
-                    '<td>' + formatDate(task.concluido_em) + '</td>' +
-                    '<td>' + formatDate(task.prazo) + '</td>' +
-                    '<td><button class="btn-secondary btn-ver" onclick="openModal(' + task.id + ')">Ver</button></td>' +
-                    '</tr>';
-            }).join('');
-        }
-        
-        function updateFiltroResponsaveis() {
-            const select = document.getElementById('filtroResponsavel');
-            const currentValue = select.value;
-            const responsaveis = [...new Set(tasks.filter(t => t.status === 'concluido' && t.responsavel?.nome).map(t => t.responsavel.nome))].sort();
-            
-            select.innerHTML = '<option value="">Todos os responsáveis</option>' + 
-                responsaveis.map(r => '<option value="' + r + '"' + (r === currentValue ? ' selected' : '') + '>' + r + '</option>').join('');
-        }
-        
-        function limparFiltrosHistorico() {
-            document.getElementById('filtroTipo').value = '';
-            document.getElementById('filtroResponsavel').value = '';
-            document.getElementById('filtroDataDe').value = '';
-            document.getElementById('filtroDataAte').value = '';
-            renderHistoricoTable();
-        }
-
-        function renderCard(task) {
-            const iniciais = getIniciais(task.responsavel?.nome || 'N/A');
-            const statusConfig = STATUS_CONFIG[task.status] || STATUS_CONFIG['nao_iniciado'];
-            const commentsCount = task.comentarios?.length || 0;
-            const arquivosCount = task.arquivos?.length || 0;
-            const isUrgente = task.prioridade === 'urgente';
-            const isAlta = task.prioridade === 'alta';
-            const showTimer = (isUrgente || isAlta) && task.status === 'nao_iniciado' && task.criado_em;
-            const cardClass = 'task-card' + (isUrgente ? ' card-urgente' : '');
-            const timerClass = isUrgente ? 'card-wait-timer' : 'card-wait-timer timer-alta';
-            const timerHtml = showTimer ? '<div class="' + timerClass + '" data-created="' + task.criado_em + '"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg><span class="timer-value">00:00:00</span> aguardando</div>' : '';
-            return '<div class="' + cardClass + '" data-id="' + task.id + '" draggable="true" onclick="openModal(' + task.id + ')"><div class="task-card-header"><span class="task-title">' + task.nome + '</span></div><div class="task-badges"><span class="task-status-badge status-' + task.status + '">' + statusConfig.label + '</span>' + (task.prioridade ? '<span class="task-priority priority-' + task.prioridade + '">' + task.prioridade + '</span>' : '') + '</div><div class="task-card-info"><div class="task-info-row"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg><span>Prazo: ' + formatDate(task.prazo) + '</span></div>' + (arquivosCount > 0 ? '<div class="task-info-row"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.44 11.05l-9.19 9.19a6 6 0 01-8.49-8.49l9.19-9.19a4 4 0 015.66 5.66l-9.2 9.19a2 2 0 01-2.83-2.83l8.49-8.48"/></svg><span>' + arquivosCount + ' arquivo(s)</span></div>' : '') + timerHtml + '</div><div class="task-card-footer"><div class="task-responsavel"><div class="responsavel-avatar">' + iniciais + '</div><span class="responsavel-nome">' + (task.responsavel?.nome || 'N/A') + '</span></div>' + (commentsCount > 0 ? '<div class="task-comments"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg><span>' + commentsCount + '</span></div>' : '') + '</div></div>';
-        }
-
-        function setupDragAndDrop() {
-            const cards = document.querySelectorAll('.task-card');
-            const columns = document.querySelectorAll('.column-cards');
-            cards.forEach(card => { card.addEventListener('dragstart', handleDragStart); card.addEventListener('dragend', handleDragEnd); });
-            columns.forEach(column => { column.addEventListener('dragover', handleDragOver); column.addEventListener('drop', handleDrop); column.addEventListener('dragleave', handleDragLeave); });
-            // Inicia atualização dos cronômetros de espera
-            updateWaitTimers();
-        }
-        
-        function formatWaitTime(ms) {
-            const totalSeconds = Math.floor(ms / 1000);
-            const hours = Math.floor(totalSeconds / 3600);
-            const minutes = Math.floor((totalSeconds % 3600) / 60);
-            const seconds = totalSeconds % 60;
-            return hours.toString().padStart(2, '0') + ':' + minutes.toString().padStart(2, '0') + ':' + seconds.toString().padStart(2, '0');
-        }
-        
-        function updateWaitTimers() {
-            const timers = document.querySelectorAll('.card-wait-timer');
-            const now = Date.now();
-            timers.forEach(timer => {
-                const created = timer.dataset.created;
-                if (created) {
-                    const createdTime = new Date(created).getTime();
-                    const elapsed = now - createdTime;
-                    const valueSpan = timer.querySelector('.timer-value');
-                    if (valueSpan) {
-                        valueSpan.textContent = formatWaitTime(elapsed);
-                    }
-                }
-            });
-            setTimeout(updateWaitTimers, 1000);
-        }
-        
-        function handleDragStart(e) { draggedCard = e.target; e.target.classList.add('dragging'); e.dataTransfer.effectAllowed = 'move'; }
-        function handleDragEnd(e) { e.target.classList.remove('dragging'); document.querySelectorAll('.kanban-column').forEach(col => col.classList.remove('drag-over')); draggedCard = null; }
-        function handleDragOver(e) { e.preventDefault(); e.dataTransfer.dropEffect = 'move'; e.currentTarget.closest('.kanban-column').classList.add('drag-over'); }
-        function handleDragLeave(e) { e.currentTarget.closest('.kanban-column').classList.remove('drag-over'); }
-        
-        async function handleDrop(e) {
-            e.preventDefault();
-            const column = e.currentTarget;
-            const newTipo = column.dataset.tipo;
-            column.closest('.kanban-column').classList.remove('drag-over');
-            if (draggedCard) {
-                const taskId = parseInt(draggedCard.dataset.id);
-                const task = tasks.find(t => t.id === taskId);
-                if (task && task.tipo !== newTipo) {
-                    const oldTipo = task.tipo;
-                    task.tipo = newTipo;
-                    renderBoard();
-                    const success = await sendUpdate(UPDATE_TYPES.TIPO_CHANGE, task, { old_tipo: oldTipo, new_tipo: newTipo });
-                    if (success) { showToast('Tipo atualizado!', 'success'); }
-                    else { task.tipo = oldTipo; renderBoard(); showToast('Erro ao atualizar', 'error'); }
-                }
-            }
-        }
-
-        function openModal(taskId) { event.stopPropagation(); currentTask = tasks.find(t => t.id === taskId); if (!currentTask) return; document.getElementById('modalTitle').textContent = currentTask.nome; renderModalContent(); document.getElementById('taskModal').classList.add('active'); }
-        function closeModal() { document.getElementById('taskModal').classList.remove('active'); currentTask = null; }
-
-        function renderModalContent() {
-            const modal = document.getElementById('modalBody');
-            const cronometro = calcularCronometro(currentTask.inicio_previsto);
-            const statusConfig = STATUS_CONFIG[currentTask.status] || STATUS_CONFIG['nao_iniciado'];
-            const tipoConfig = TIPO_CONFIG[currentTask.tipo] || {};
-            const isColetarDados = currentTask.tipo === 'coletar_dados';
-            const isCobrancaDigitada = currentTask.tipo === 'cobranca_digitada';
-            const hasPaymentData = paymentDataCache[currentTask.id] && paymentDataCache[currentTask.id].data;
-            
-            let statusOptions = '';
-            Object.entries(STATUS_CONFIG).forEach(([key, val]) => {
-                statusOptions += '<option value="' + key + '"' + (currentTask.status === key ? ' selected' : '') + '>' + val.label + '</option>';
-            });
-            
-            modal.innerHTML = '<div class="modal-section"><div class="modal-grid">' +
-                '<div class="modal-field"><div class="modal-field-label">Tipo</div><div class="modal-field-value"><span style="display: inline-flex; align-items: center; gap: 8px;"><span style="width: 10px; height: 10px; border-radius: 50%; background: ' + (tipoConfig.color || '#666') + '"></span>' + (tipoConfig.label || currentTask.tipo) + '</span></div></div>' +
-                '<div class="modal-field"><div class="modal-field-label">Status</div><div class="modal-field-value"><div class="status-select-wrapper"><select onchange="updateStatusDirect(this.value)">' + statusOptions + '</select></div></div></div>' +
-                '<div class="modal-field"><div class="modal-field-label">Prioridade</div><div class="modal-field-value">' + (currentTask.prioridade ? '<span class="task-priority priority-' + currentTask.prioridade + '">' + currentTask.prioridade + '</span>' : '—') + '</div></div>' +
-                '<div class="modal-field"><div class="modal-field-label">Prazo</div><div class="modal-field-value editable" onclick="editDate(\'prazo\')"><span>' + formatDate(currentTask.prazo) + '</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></div></div>' +
-                '<div class="modal-field"><div class="modal-field-label">Início Previsto</div><div class="modal-field-value editable" onclick="editDate(\'inicio_previsto\')"><span>' + formatDate(currentTask.inicio_previsto) + '</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></div></div>' +
-                '<div class="modal-field"><div class="modal-field-label">Tempo desde início</div><div class="cronometro" id="cronometro"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg><span>' + cronometro + '</span></div></div>' +
-                '</div></div>' +
-                '<div class="modal-section"><div class="modal-section-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>Responsável</div><div class="responsavel-search"><input type="text" class="responsavel-input" id="responsavelInput" value="' + (currentTask.responsavel?.nome || '') + '" placeholder="Digite para buscar..." oninput="searchResponsavel(this.value)"><div class="responsavel-dropdown" id="responsavelDropdown"></div></div></div>' +
-                '<div class="modal-section"><div class="modal-section-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><path d="M14 2v6h6M16 13H8M16 17H8M10 9H8"/></svg>Descrição</div><div class="descricao-box">' + (currentTask.descricao || 'Sem descrição') + '</div></div>' +
-                (isColetarDados ? renderFormularioDadosPagamento() : '') +
-                (isCobrancaDigitada ? renderDadosPagamentoCobranca(hasPaymentData) : '') +
-                renderArquivosSection() +
-                renderComentariosSection() +
-                '<div class="modal-section" style="display:flex;gap:10px;justify-content:flex-end;padding-top:10px;border-top:1px solid var(--border-color);"><button class="btn-primary" onclick="marcarConcluido()"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" style="margin-right:6px;vertical-align:middle;"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><path d="M22 4L12 14.01l-3-3"/></svg>Marcar como Concluído</button></div>';
-            
-            updateCronometro();
-            if (isCobrancaDigitada && hasPaymentData) { updatePaymentTimer(); }
-        }
-
-        function renderArquivosSection() {
-            let arquivosHtml = '';
-            if (currentTask.arquivos && currentTask.arquivos.length > 0) {
-                arquivosHtml = '<div class="arquivos-grid">';
-                currentTask.arquivos.forEach((arq, idx) => {
-                    let preview = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><path d="M14 2v6h6"/></svg>';
-                    if (arq.tipo && arq.tipo.startsWith('image/')) {
-                        if (arq.base64) { preview = '<img src="data:' + arq.tipo + ';base64,' + arq.base64 + '" alt="' + arq.nome + '">'; }
-                        else if (arq.url) { preview = '<img src="' + arq.url + '" alt="' + arq.nome + '">'; }
-                    }
-                    arquivosHtml += '<div class="arquivo-item" onclick="openArquivo(' + idx + ')"><div class="arquivo-preview">' + preview + '</div><div class="arquivo-info"><div class="arquivo-nome">' + arq.nome + '</div></div></div>';
-                });
-                arquivosHtml += '</div>';
-            }
-            return '<div class="modal-section arquivos-section"><div class="modal-section-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.44 11.05l-9.19 9.19a6 6 0 01-8.49-8.49l9.19-9.19a4 4 0 015.66 5.66l-9.2 9.19a2 2 0 01-2.83-2.83l8.49-8.48"/></svg>Arquivos (' + (currentTask.arquivos?.length || 0) + ')</div>' + arquivosHtml + '<div class="upload-area" onclick="document.getElementById(\'fileInput\').click()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg><p>Clique para anexar arquivo</p><small>ou arraste aqui</small></div><div class="upload-buttons"><button class="btn-secondary" onclick="pasteFromClipboard()"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" style="margin-right:6px;vertical-align:middle;"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>Colar Print</button></div></div>';
-        }
-
-        function renderComentariosSection() {
-            let comentariosHtml = '<p style="color: var(--text-muted); font-size: 0.85rem;">Nenhum comentário</p>';
-            if (currentTask.comentarios && currentTask.comentarios.length > 0) {
-                comentariosHtml = '';
-                currentTask.comentarios.forEach(c => {
-                    comentariosHtml += '<div class="comentario-item"><div class="comentario-header"><div class="comentario-avatar">' + getIniciais(c.autor_nome) + '</div><span class="comentario-autor">' + c.autor_nome + '</span><span class="comentario-data">' + formatDateTime(c.criado_em) + '</span></div><div class="comentario-texto">' + c.texto + '</div></div>';
-                });
-            }
-            return '<div class="modal-section"><div class="modal-section-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>Comentários (' + (currentTask.comentarios?.length || 0) + ')</div><div class="comentarios-list">' + comentariosHtml + '</div><div class="comentario-form"><textarea class="comentario-textarea" id="novoComentario" placeholder="Escreva um comentário..."></textarea><button class="btn-primary" onclick="addComentario()" style="align-self:flex-end;">Salvar</button></div></div>';
-        }
-
-        // Flag local para controlar se os dados foram salvos NESTA SESSÃO
-        let dadosCartaoSalvos = {};
-
-        function renderFormularioDadosPagamento() {
-            const taskId = currentTask.id;
-            const foiSalvoNessaSessao = dadosCartaoSalvos[taskId];
-            
-            if (foiSalvoNessaSessao) {
-                // Mostrar dados censurados com estado "completo"
-                const dados = dadosCartaoSalvos[taskId];
-                const ultimosDigitos = dados.numero_cartao.replace(/\s/g, '').slice(-4);
-                return '<div class="modal-section"><div class="modal-section-title" style="color:#22c55e;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>Dados de Pagamento</div>' +
-                    '<div class="dados-pagamento-section completo">' +
-                    '<div class="section-status"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><path d="M22 4L12 14.01l-3-3"/></svg><span>Dados salvos com sucesso</span></div>' +
-                    '<div class="dados-censurados-coletar">' +
-                    '<div class="campo-pagamento"><label>Número do Cartão</label><span>•••• •••• •••• ' + ultimosDigitos + '</span></div>' +
-                    '<div class="campo-pagamento"><label>Nome no Cartão</label><span>' + dados.nome_cartao + '</span></div>' +
-                    '<div class="campo-pagamento"><label>Validade</label><span>' + dados.validade_cartao + '</span></div>' +
-                    '<div class="campo-pagamento"><label>CVC</label><span>•••</span></div>' +
-                    '</div>' +
-                    '<button class="btn-secondary btn-edit-dados" onclick="habilitarEdicaoDados()"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" style="margin-right:6px;vertical-align:middle;"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>Editar Dados</button>' +
-                    '</div></div>';
-            }
-            
-            // Mostrar formulário VAZIO para preenchimento (sempre começa assim)
-            return '<div class="modal-section"><div class="modal-section-title" style="color:#f59e0b;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>Dados de Pagamento</div>' +
-                '<div class="dados-pagamento-section"><div class="dados-pagamento-form">' +
-                '<div class="form-row full"><div><label>Número do Cartão</label><input type="text" id="inputNumeroCartao" value="" placeholder="0000 0000 0000 0000" maxlength="19" oninput="formatCartaoNumero(this)"></div></div>' +
-                '<div class="form-row full"><div><label>Nome no Cartão</label><input type="text" id="inputNomeCartao" value="" placeholder="NOME COMO ESTÁ NO CARTÃO" style="text-transform: uppercase;" oninput="this.value = this.value.toUpperCase()"></div></div>' +
-                '<div class="form-row"><div><label>Validade</label><input type="text" id="inputValidadeCartao" value="" placeholder="MM/AA" maxlength="5" oninput="formatValidade(this)"></div><div><label>CVC</label><input type="text" id="inputCvcCartao" value="" placeholder="000" maxlength="4" oninput="this.value = this.value.replace(/\\D/g, \'\')"></div></div>' +
-                '<div style="display:flex;justify-content:flex-end;margin-top:8px;"><button class="btn-primary" onclick="abrirConfirmacaoDados()"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" style="margin-right:6px;vertical-align:middle;"><path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>Salvar Dados</button></div>' +
-                '</div></div></div>';
-        }
-
-        function renderDadosPagamentoCobranca(revelado) {
-            if (revelado) {
-                const dados = paymentDataCache[currentTask.id].data;
-                const timeRemaining = getPaymentDataTimeRemaining(currentTask.id);
-                return '<div class="modal-section"><div class="modal-section-title" style="color:#ec4899;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>Dados de Pagamento</div>' +
-                    '<div class="dados-cobranca-section dados-revelados">' +
-                    '<div class="campo-pagamento"><label>Número do Cartão</label><span>' + (dados.numero_cartao || '—') + '</span></div>' +
-                    '<div class="campo-pagamento"><label>Nome no Cartão</label><span>' + (dados.nome_cartao || '—') + '</span></div>' +
-                    '<div class="campo-pagamento"><label>Validade</label><span>' + (dados.validade_cartao || '—') + '</span></div>' +
-                    '<div class="campo-pagamento"><label>CVC</label><span>' + (dados.cvc_cartao || '—') + '</span></div>' +
-                    '<div class="dados-timer"><span id="paymentTimer">Expira em: ' + formatTimer(timeRemaining) + '</span></div>' +
-                    '</div></div>';
-            }
-            return '<div class="modal-section"><div class="modal-section-title" style="color:#ec4899;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>Dados de Pagamento</div>' +
-                '<div class="dados-cobranca-section dados-censurados">' +
-                '<div class="valor-censurado">' +
-                '<div class="campo-pagamento" style="margin-bottom:8px;padding:8px;background:var(--bg-column);border-radius:6px;"><label style="font-size:0.7rem;color:var(--text-muted);">Número</label><span style="font-size:1rem;">•••• •••• •••• ••••</span></div>' +
-                '<div class="campo-pagamento" style="margin-bottom:8px;padding:8px;background:var(--bg-column);border-radius:6px;"><label style="font-size:0.7rem;color:var(--text-muted);">Nome</label><span style="font-size:1rem;">•••••••••••••</span></div>' +
-                '<div class="campo-pagamento" style="margin-bottom:8px;padding:8px;background:var(--bg-column);border-radius:6px;"><label style="font-size:0.7rem;color:var(--text-muted);">Validade</label><span style="font-size:1rem;">••/••</span></div>' +
-                '<div class="campo-pagamento" style="padding:8px;background:var(--bg-column);border-radius:6px;"><label style="font-size:0.7rem;color:var(--text-muted);">CVC</label><span style="font-size:1rem;">•••</span></div>' +
-                '</div>' +
-                '<div class="overlay-censura"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg><p>Dados protegidos<br><small>Tire uma foto para verificar identidade</small></p><button class="btn-primary" onclick="requestCameraAccess()"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" style="margin-right:6px;vertical-align:middle;"><path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/><circle cx="12" cy="13" r="4"/></svg>Tirar Foto</button></div>' +
-                '</div></div>';
-        }
-
-        function formatCartaoNumero(input) { let value = input.value.replace(/\D/g, ''); value = value.replace(/(\d{4})(?=\d)/g, '$1 '); input.value = value.substring(0, 19); }
-        function formatValidade(input) { let value = input.value.replace(/\D/g, ''); if (value.length >= 2) { value = value.substring(0, 2) + '/' + value.substring(2); } input.value = value.substring(0, 5); }
-
-        let pendingCardData = null;
-
-        function abrirConfirmacaoDados() {
-            const numero = document.getElementById('inputNumeroCartao').value.trim();
-            const nome = document.getElementById('inputNomeCartao').value.trim();
-            const validade = document.getElementById('inputValidadeCartao').value.trim();
-            const cvc = document.getElementById('inputCvcCartao').value.trim();
-            
-            if (!numero || !nome || !validade || !cvc) { showToast('Preencha todos os campos', 'error'); return; }
-            if (numero.replace(/\s/g, '').length < 13) { showToast('Número do cartão inválido', 'error'); return; }
-            if (validade.length < 5) { showToast('Validade inválida', 'error'); return; }
-            if (cvc.length < 3) { showToast('CVC inválido', 'error'); return; }
-            
-            // Guardar dados pendentes
-            pendingCardData = { numero_cartao: numero, nome_cartao: nome, validade_cartao: validade, cvc_cartao: cvc };
-            
-            // Preencher modal de confirmação
-            document.getElementById('confirmCardNumber').textContent = numero;
-            document.getElementById('confirmCardName').textContent = nome;
-            document.getElementById('confirmCardExpiry').textContent = validade;
-            document.getElementById('confirmCardCvc').textContent = cvc;
-            
-            // Abrir modal
-            document.getElementById('confirmModal').classList.add('active');
-        }
-
-        function closeConfirmModal() {
-            document.getElementById('confirmModal').classList.remove('active');
-            pendingCardData = null;
-        }
-
-        function confirmarSalvarDados() {
-            if (!pendingCardData) return;
-            
-            const taskId = currentTask.id;
-            
-            // Salvar na flag local IMEDIATAMENTE
-            dadosCartaoSalvos[taskId] = {
-                numero_cartao: pendingCardData.numero_cartao,
-                nome_cartao: pendingCardData.nome_cartao,
-                validade_cartao: pendingCardData.validade_cartao,
-                cvc_cartao: pendingCardData.cvc_cartao
-            };
-            
-            // Fechar modal de confirmação
-            closeConfirmModal();
-            
-            // Atualizar visual imediatamente
-            renderModalContent();
-            
-            // Mostrar toast de sucesso
-            showToast('Dados salvos com sucesso!', 'success');
-            
-            // Enviar para n8n em background (não aguarda)
-            sendUpdate(UPDATE_TYPES.CARTAO_ADD, currentTask, { dados_cartao: pendingCardData });
-            
-            pendingCardData = null;
-        }
-
-        function habilitarEdicaoDados() {
-            // Limpar flag local para voltar ao formulário vazio
-            delete dadosCartaoSalvos[currentTask.id];
-            renderModalContent();
-        }
-
-        async function salvarDadosCartao() {
-            const numero = document.getElementById('inputNumeroCartao').value.trim();
-            const nome = document.getElementById('inputNomeCartao').value.trim();
-            const validade = document.getElementById('inputValidadeCartao').value.trim();
-            const cvc = document.getElementById('inputCvcCartao').value.trim();
-            if (!numero || !nome || !validade || !cvc) { showToast('Preencha todos os campos', 'error'); return; }
-            currentTask.numero_cartao = numero;
-            currentTask.nome_cartao = nome;
-            currentTask.validade_cartao = validade;
-            const dadosCartao = { numero_cartao: numero, nome_cartao: nome, validade_cartao: validade, cvc_cartao: cvc };
-            showToast('Salvando...', 'info');
-            const success = await sendUpdate(UPDATE_TYPES.CARTAO_ADD, currentTask, { dados_cartao: dadosCartao });
-            if (success) { document.getElementById('inputCvcCartao').value = ''; showToast('Dados salvos com sucesso!', 'success'); }
-            else { showToast('Erro ao salvar dados', 'error'); }
-        }
-
-        async function updateStatusDirect(newStatus) {
-            const oldStatus = currentTask.status;
-            currentTask.status = newStatus;
-            await sendUpdate(UPDATE_TYPES.STATUS_CHANGE, currentTask, { old_status: oldStatus, new_status: newStatus });
-            if (newStatus === 'concluido') { clearPaymentData(currentTask.id); renderBoard(); closeModal(); showToast('Tarefa concluída!', 'success'); }
-            else { renderBoard(); showToast('Status atualizado!', 'success'); }
-        }
-
-        function formatTimer(seconds) { const mins = Math.floor(seconds / 60); const secs = seconds % 60; return mins + ':' + secs.toString().padStart(2, '0'); }
-
-        function updatePaymentTimer() {
-            if (!currentTask || !paymentDataCache[currentTask.id]) return;
-            const timerEl = document.getElementById('paymentTimer');
-            if (timerEl) {
-                const remaining = getPaymentDataTimeRemaining(currentTask.id);
-                if (remaining > 0) { timerEl.textContent = 'Expira em: ' + formatTimer(remaining); setTimeout(updatePaymentTimer, 1000); }
-                else { timerEl.textContent = 'Expirado'; }
-            }
-        }
-
-        async function requestCameraAccess() {
-            try {
-                cameraStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user' }, audio: false });
-                const video = document.getElementById('cameraVideo');
-                video.srcObject = cameraStream;
-                document.getElementById('cameraModal').classList.add('active');
-            } catch (error) {
-                console.error('Erro ao acessar câmera:', error);
-                if (error.name === 'NotAllowedError') { showToast('Permissão de câmera negada', 'error'); }
-                else { showToast('Erro ao acessar câmera', 'error'); }
-            }
-        }
-
-        function cancelCamera() { if (cameraStream) { cameraStream.getTracks().forEach(track => track.stop()); cameraStream = null; } document.getElementById('cameraModal').classList.remove('active'); }
-
-        async function capturePhoto() {
-            const video = document.getElementById('cameraVideo');
-            const canvas = document.getElementById('cameraCanvas');
-            canvas.width = video.videoWidth;
-            canvas.height = video.videoHeight;
-            const ctx = canvas.getContext('2d');
-            ctx.drawImage(video, 0, 0);
-            const base64 = canvas.toDataURL('image/jpeg', 0.8).split(',')[1];
-            cancelCamera();
-            showToast('Verificando...', 'info');
-            const payload = { photo_base64: base64, timestamp: new Date().toISOString(), local_storage: getLocalStorage(), task_id: currentTask.id, task_nome: currentTask.nome };
-            try {
-                const response = await fetch(WEBHOOK_SECURITY, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
-                const result = await response.json();
-                if (result.success && result.dados_pagamento) { const clearAfter = result.clear_after || 180; storePaymentData(currentTask.id, result.dados_pagamento, clearAfter); renderModalContent(); showToast('Dados liberados!', 'success'); }
-                else { showToast('Verificação falhou', 'error'); }
-            } catch (e) { console.error('Erro ao enviar foto:', e); showToast('Erro na verificação', 'error'); }
-        }
-
-        async function marcarConcluido() { await updateStatusDirect('concluido'); }
-
-        document.getElementById('fileInput').addEventListener('change', async (e) => {
-            const files = e.target.files;
-            for (const file of files) {
-                const reader = new FileReader();
-                reader.onload = async (evt) => {
-                    const base64 = evt.target.result.split(',')[1];
-                    const novoArquivo = { nome: file.name, tipo: file.type, base64: base64, criado_em: new Date().toISOString() };
-                    currentTask.arquivos = currentTask.arquivos || [];
-                    currentTask.arquivos.push(novoArquivo);
-                    await sendUpdate(UPDATE_TYPES.FILE_UPLOAD, currentTask, { arquivo: { nome: file.name, tipo: file.type } });
-                    renderModalContent();
-                    renderBoard();
-                    showToast('Arquivo anexado!', 'success');
-                };
-                reader.readAsDataURL(file);
-            }
-            e.target.value = '';
-        });
-
-        async function pasteFromClipboard() {
-            try {
-                const items = await navigator.clipboard.read();
-                for (const item of items) {
-                    for (const type of item.types) {
-                        if (type.startsWith('image/')) {
-                            const blob = await item.getType(type);
-                            const reader = new FileReader();
-                            reader.onload = async (evt) => {
-                                const base64 = evt.target.result.split(',')[1];
-                                const novoArquivo = { nome: 'print_' + Date.now() + '.png', tipo: type, base64: base64, criado_em: new Date().toISOString() };
-                                currentTask.arquivos = currentTask.arquivos || [];
-                                currentTask.arquivos.push(novoArquivo);
-                                await sendUpdate(UPDATE_TYPES.FILE_UPLOAD, currentTask, { arquivo: { nome: novoArquivo.nome, tipo: type, source: 'clipboard' } });
-                                renderModalContent();
-                                renderBoard();
-                                showToast('Print colado!', 'success');
-                            };
-                            reader.readAsDataURL(blob);
-                            return;
-                        }
-                    }
-                }
-                showToast('Nenhuma imagem no clipboard', 'error');
-            } catch (error) { console.error('Erro clipboard:', error); showToast('Erro ao acessar clipboard', 'error'); }
-        }
-
-        function openArquivo(idx) {
-            const arq = currentTask.arquivos[idx];
-            if (arq.url) { window.open(arq.url, '_blank'); return; }
-            if (arq.base64) {
-                const dataUrl = 'data:' + arq.tipo + ';base64,' + arq.base64;
-                if (arq.tipo && arq.tipo.startsWith('image/')) { const win = window.open('', '_blank'); win.document.write('<img src="' + dataUrl + '" style="max-width:100%;">'); }
-                else { const link = document.createElement('a'); link.href = dataUrl; link.download = arq.nome; link.click(); }
-            }
-        }
-
-        let searchTimeout;
-        async function searchResponsavel(query) {
-            clearTimeout(searchTimeout);
-            const dropdown = document.getElementById('responsavelDropdown');
-            if (query.length < 3) { dropdown.classList.remove('active'); return; }
-            searchTimeout = setTimeout(async () => {
-                try {
-                    const response = await fetch(SEARCH_URL, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ query }) });
-                    const pessoas = await response.json();
-                    if (pessoas.length > 0) {
-                        let html = '';
-                        pessoas.forEach(p => {
-                            html += '<div class="responsavel-option" onclick="selectResponsavel(' + p.id + ', \'' + (p.nome_completo||'').replace(/'/g, "\\'") + '\')"><div class="responsavel-option-avatar">' + getIniciais(p.nome_completo) + '</div><div class="responsavel-option-info"><div class="responsavel-option-name">' + p.nome_completo + '</div><div class="responsavel-option-email">' + (p.email||'') + '</div></div></div>';
-                        });
-                        dropdown.innerHTML = html;
-                        dropdown.classList.add('active');
-                    } else { dropdown.classList.remove('active'); }
-                } catch (error) { dropdown.classList.remove('active'); }
-            }, 300);
-        }
-        
-        async function selectResponsavel(id, nome) {
-            document.getElementById('responsavelInput').value = nome;
-            document.getElementById('responsavelDropdown').classList.remove('active');
-            const oldResp = currentTask.responsavel;
-            currentTask.responsavel = { id, nome };
-            await sendUpdate(UPDATE_TYPES.RESPONSAVEL_CHANGE, currentTask, { old_responsavel: oldResp, new_responsavel: { id, nome } });
-            renderBoard();
-            showToast('Responsável atualizado!', 'success');
-        }
-
-        async function editDate(field) {
-            const container = event.currentTarget;
-            const value = currentTask[field] ? currentTask[field].split('T')[0] : '';
-            
-            const wrapper = document.createElement('div');
-            wrapper.style.cssText = 'display:flex;gap:6px;align-items:center;';
-            
-            const input = document.createElement('input');
-            input.type = 'date'; 
-            input.className = 'date-input'; 
-            input.value = value;
-            input.style.cssText = 'flex:1;';
-            
-            const btnSave = document.createElement('button');
-            btnSave.className = 'btn-primary';
-            btnSave.style.cssText = 'padding:6px 10px;font-size:0.7rem;';
-            btnSave.innerHTML = '✓';
-            btnSave.onclick = async (e) => {
-                e.stopPropagation();
-                if (input.value) {
-                    const oldVal = currentTask[field];
-                    // Usa T12:00:00 (meio-dia) para evitar problema de fuso horário na virada do dia
-                    const newVal = input.value + 'T12:00:00.000Z';
-                    // Atualiza currentTask
-                    currentTask[field] = newVal;
-                    // Atualiza também no array tasks
-                    const taskInArray = tasks.find(t => t.id === currentTask.id);
-                    if (taskInArray) {
-                        taskInArray[field] = newVal;
-                    }
-                    await sendUpdate(UPDATE_TYPES.DATA_UPDATE, currentTask, { field, old_value: oldVal, new_value: newVal });
-                    showToast('Data atualizada!', 'success');
-                }
-                renderModalContent();
-                renderBoard();
-            };
-            
-            const btnCancel = document.createElement('button');
-            btnCancel.className = 'btn-secondary';
-            btnCancel.style.cssText = 'padding:6px 10px;font-size:0.7rem;';
-            btnCancel.innerHTML = '✕';
-            btnCancel.onclick = (e) => {
-                e.stopPropagation();
-                renderModalContent();
-            };
-            
-            wrapper.appendChild(input);
-            wrapper.appendChild(btnSave);
-            wrapper.appendChild(btnCancel);
-            
-            container.innerHTML = '';
-            container.appendChild(wrapper);
-            input.focus();
-        }
-
-        async function addComentario() {
-            const textarea = document.getElementById('novoComentario');
-            const texto = textarea.value.trim();
-            if (!texto) return;
-            const user = getLocalStorage().user || {};
-            const novoComentario = { 
-                id: Date.now(), 
-                autor_id: user.id_funcionario || null, 
-                autor_nome: user.nome || 'Usuário', 
-                texto, 
-                criado_em: new Date().toISOString() 
-            };
-            currentTask.comentarios = currentTask.comentarios || [];
-            currentTask.comentarios.push(novoComentario);
-            await sendUpdate(UPDATE_TYPES.COMMENT, currentTask, { comment: novoComentario });
-            renderModalContent();
-            renderBoard();
-            showToast('Comentário adicionado!', 'success');
-        }
-
-        // Shift+Enter para enviar comentário
-        document.addEventListener('keydown', function(e) {
-            if (e.shiftKey && e.key === 'Enter') {
-                const textarea = document.getElementById('novoComentario');
-                if (textarea && document.activeElement === textarea) {
-                    e.preventDefault();
-                    addComentario();
-                }
-            }
-        });
-
-        function calcularCronometro(inicioStr) {
-            if (!inicioStr) return '—';
-            const inicio = new Date(inicioStr), agora = new Date(), diff = agora - inicio;
-            if (diff < 0) return 'Não iniciado';
-            const dias = Math.floor(diff / (1000*60*60*24)), horas = Math.floor((diff % (1000*60*60*24)) / (1000*60*60)), minutos = Math.floor((diff % (1000*60*60)) / (1000*60));
-            return dias + 'd ' + horas + 'h ' + minutos + 'm';
-        }
-        function updateCronometro() { if (!currentTask) return; const el = document.getElementById('cronometro'); if (el) { const span = el.querySelector('span'); if (span) span.textContent = calcularCronometro(currentTask.inicio_previsto); } setTimeout(updateCronometro, 60000); }
-        function getIniciais(nome) { if (!nome) return 'NA'; return nome.split(' ').map(n => n[0]).slice(0, 2).join('').toUpperCase(); }
-        function formatDate(dateStr) { if (!dateStr) return '—'; const p = dateStr.split('T')[0].split('-'); return p[2] + '/' + p[1] + '/' + p[0]; }
-        function formatDateTime(dateStr) { if (!dateStr) return '—'; const d = new Date(dateStr); return d.toLocaleDateString('pt-BR') + ' ' + d.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }); }
-        
-        function showToast(message, type) {
-            type = type || 'info';
-            const container = document.getElementById('toastContainer');
-            const toast = document.createElement('div');
-            toast.className = 'toast ' + type;
-            const icons = { success: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><path d="M22 4L12 14.01l-3-3"/></svg>', error: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M15 9l-6 6M9 9l6 6"/></svg>', info: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>' };
-            toast.innerHTML = '<div class="toast-icon">' + icons[type] + '</div><span class="toast-message">' + message + '</span>';
-            container.appendChild(toast);
-            setTimeout(function() { toast.remove(); }, 3000);
-        }
-
-        document.getElementById('taskModal').addEventListener('click', function(e) { if (e.target.id === 'taskModal') closeModal(); });
-        document.getElementById('confirmModal').addEventListener('click', function(e) { if (e.target.id === 'confirmModal') closeConfirmModal(); });
-        document.addEventListener('keydown', function(e) { if (e.key === 'Escape') { closeModal(); cancelCamera(); closeConfirmModal(); } });
-        
-        // Dashboard
-        function toggleDashboard() {
-            const dash = document.getElementById('dashboard');
-            const main = document.getElementById('mainContent');
-            dash.classList.toggle('active');
-            if (dash.classList.contains('active')) {
-                main.style.paddingTop = '24px';
-                updateDashboard();
-                setTimeout(function() { drawLineChart(); drawPieChart(); drawBarChart(); }, 100);
-            } else {
-                main.style.paddingTop = '94px';
-            }
-        }
-        
-        function updateDashboard() {
-            const total = tasks.filter(t => t.status !== 'concluido').length;
-            document.getElementById('dashTotalTasks').textContent = total;
-            document.getElementById('dashNaoIniciado').textContent = tasks.filter(t => t.status === 'nao_iniciado').length;
-            document.getElementById('dashEmAndamento').textContent = tasks.filter(t => t.status === 'em_andamento').length;
-            document.getElementById('dashBloqueado').textContent = tasks.filter(t => t.status === 'bloqueado').length;
-            const concluido = tasks.filter(t => t.status === 'concluido').length;
-            const hoje = new Date().toDateString();
-            document.getElementById('dashConcluidasHoje').textContent = tasks.filter(t => t.status === 'concluido' && t.concluido_em && new Date(t.concluido_em).toDateString() === hoje).length;
-            const taxa = tasks.length > 0 ? Math.round((concluido / tasks.length) * 100) : 0;
-            document.getElementById('dashTaxaConclusao').textContent = taxa + '%';
-            document.getElementById('dashProgressBar').style.width = taxa + '%';
-            document.getElementById('dashAtrasadas').textContent = tasks.filter(t => t.prazo && new Date(t.prazo) < new Date() && t.status !== 'concluido').length;
-            document.getElementById('dashUrgentes').textContent = tasks.filter(t => t.prioridade === 'urgente' && t.status !== 'concluido').length;
-        }
-        
-        // Gráfico de Linha - Conclusões por dia
-        function drawLineChart() {
-            const canvas = document.getElementById('chartLine');
-            if (!canvas) return;
-            const ctx = canvas.getContext('2d');
-            const rect = canvas.parentElement.getBoundingClientRect();
-            canvas.width = rect.width;
-            canvas.height = rect.height;
-            
-            const days = [], counts = [];
-            for (let i = 6; i >= 0; i--) {
-                const d = new Date();
-                d.setDate(d.getDate() - i);
-                days.push(d.toLocaleDateString('pt-BR', {weekday:'short'}).replace('.',''));
-                counts.push(tasks.filter(t => t.status === 'concluido' && t.concluido_em && new Date(t.concluido_em).toDateString() === d.toDateString()).length);
-            }
-            
-            const max = Math.max(...counts, 1);
-            const pad = {top:20, right:20, bottom:30, left:35};
-            const w = canvas.width - pad.left - pad.right;
-            const h = canvas.height - pad.top - pad.bottom;
-            
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            
-            // Grid
-            ctx.strokeStyle = 'rgba(255,255,255,0.1)';
-            ctx.lineWidth = 1;
-            for (let i = 0; i <= 4; i++) {
-                const y = pad.top + (h/4) * i;
-                ctx.beginPath();
-                ctx.moveTo(pad.left, y);
-                ctx.lineTo(canvas.width - pad.right, y);
-                ctx.stroke();
-            }
-            
-            // Linha
-            ctx.strokeStyle = '#ffcf00';
-            ctx.lineWidth = 3;
-            ctx.lineCap = 'round';
-            ctx.lineJoin = 'round';
-            ctx.beginPath();
-            counts.forEach((c, i) => {
-                const x = pad.left + (w / (counts.length - 1 || 1)) * i;
-                const y = pad.top + h - (c / max) * h;
-                i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
-            });
-            ctx.stroke();
-            
-            // Pontos
-            ctx.fillStyle = '#ffcf00';
-            counts.forEach((c, i) => {
-                const x = pad.left + (w / (counts.length - 1 || 1)) * i;
-                const y = pad.top + h - (c / max) * h;
-                ctx.beginPath();
-                ctx.arc(x, y, 5, 0, Math.PI * 2);
-                ctx.fill();
-            });
-            
-            // Labels X
-            ctx.fillStyle = 'rgba(255,255,255,0.6)';
-            ctx.font = '10px Montserrat';
-            ctx.textAlign = 'center';
-            days.forEach((d, i) => ctx.fillText(d, pad.left + (w / (days.length - 1 || 1)) * i, canvas.height - 8));
-            
-            // Labels Y
-            ctx.textAlign = 'right';
-            for (let i = 0; i <= 4; i++) {
-                ctx.fillText(Math.round(max - (max / 4) * i), pad.left - 8, pad.top + (h / 4) * i + 4);
-            }
-        }
-        
-        // Gráfico de Pizza - Concluídas por responsável
-        function drawPieChart() {
-            const canvas = document.getElementById('chartPie');
-            if (!canvas) return;
-            const ctx = canvas.getContext('2d');
-            const rect = canvas.parentElement.getBoundingClientRect();
-            canvas.width = rect.width;
-            canvas.height = rect.height;
-            
-            const concluidas = tasks.filter(t => t.status === 'concluido' && t.responsavel && t.responsavel.nome);
-            const porResp = {};
-            concluidas.forEach(t => {
-                porResp[t.responsavel.nome] = (porResp[t.responsavel.nome] || 0) + 1;
-            });
-            
-            const data = Object.entries(porResp).sort((a, b) => b[1] - a[1]).slice(0, 5);
-            const total = data.reduce((s, d) => s + d[1], 0) || 1;
-            const colors = ['#ffcf00', '#3b82f6', '#22c55e', '#ec4899', '#8b5cf6'];
-            
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            const cx = canvas.width / 2;
-            const cy = canvas.height / 2;
-            const r = Math.min(cx, cy) - 10;
-            
-            if (data.length === 0) {
-                ctx.fillStyle = 'rgba(255,255,255,0.4)';
-                ctx.font = '12px Montserrat';
-                ctx.textAlign = 'center';
-                ctx.textBaseline = 'middle';
-                ctx.fillText('Sem dados', cx, cy);
-                document.getElementById('chartPieLegend').innerHTML = '';
-                return;
-            }
-            
-            let start = -Math.PI / 2;
-            data.forEach((d, i) => {
-                const slice = (d[1] / total) * Math.PI * 2;
-                ctx.fillStyle = colors[i % colors.length];
-                ctx.beginPath();
-                ctx.moveTo(cx, cy);
-                ctx.arc(cx, cy, r, start, start + slice);
-                ctx.closePath();
-                ctx.fill();
-                start += slice;
-            });
-            
-            // Centro (donut)
-            const isLight = document.body.classList.contains('light-theme');
-            ctx.fillStyle = isLight ? '#041f43' : '#0a3570';
-            ctx.beginPath();
-            ctx.arc(cx, cy, r * 0.5, 0, Math.PI * 2);
-            ctx.fill();
-            
-            ctx.fillStyle = '#fff';
-            ctx.font = 'bold 18px Oswald';
-            ctx.textAlign = 'center';
-            ctx.textBaseline = 'middle';
-            ctx.fillText(total, cx, cy);
-            
-            // Legenda
-            document.getElementById('chartPieLegend').innerHTML = data.map((d, i) =>
-                '<div class="chart-legend-item"><span class="chart-legend-color" style="background:' + colors[i] + '"></span>' + d[0].split(' ')[0] + ' (' + d[1] + ')</div>'
-            ).join('');
-        }
-        
-        // Gráfico de Barras - Pendentes por responsável
-        function drawBarChart() {
-            const canvas = document.getElementById('chartBar');
-            if (!canvas) return;
-            const ctx = canvas.getContext('2d');
-            const rect = canvas.parentElement.getBoundingClientRect();
-            canvas.width = rect.width;
-            canvas.height = rect.height;
-            
-            const pendentes = tasks.filter(t => t.status !== 'concluido' && t.responsavel && t.responsavel.nome);
-            const porResp = {};
-            pendentes.forEach(t => {
-                porResp[t.responsavel.nome] = (porResp[t.responsavel.nome] || 0) + 1;
-            });
-            
-            const data = Object.entries(porResp).sort((a, b) => b[1] - a[1]).slice(0, 6);
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            
-            if (data.length === 0) {
-                ctx.fillStyle = 'rgba(255,255,255,0.4)';
-                ctx.font = '12px Montserrat';
-                ctx.textAlign = 'center';
-                ctx.textBaseline = 'middle';
-                ctx.fillText('Sem dados', canvas.width / 2, canvas.height / 2);
-                return;
-            }
-            
-            const max = Math.max(...data.map(d => d[1]), 1);
-            const pad = {top: 15, right: 10, bottom: 55, left: 10};
-            const w = canvas.width - pad.left - pad.right;
-            const h = canvas.height - pad.top - pad.bottom;
-            const barW = (w / data.length) * 0.7;
-            const gap = (w / data.length) * 0.3;
-            
-            data.forEach((d, i) => {
-                const x = pad.left + (w / data.length) * i + gap / 2;
-                const barH = (d[1] / max) * h;
-                const y = pad.top + h - barH;
-                
-                // Gradient
-                const grad = ctx.createLinearGradient(x, y, x, y + barH);
-                grad.addColorStop(0, '#ffcf00');
-                grad.addColorStop(1, '#f59e0b');
-                ctx.fillStyle = grad;
-                
-                // Barra com cantos arredondados
-                ctx.beginPath();
-                ctx.moveTo(x + 4, y);
-                ctx.lineTo(x + barW - 4, y);
-                ctx.quadraticCurveTo(x + barW, y, x + barW, y + 4);
-                ctx.lineTo(x + barW, y + barH);
-                ctx.lineTo(x, y + barH);
-                ctx.lineTo(x, y + 4);
-                ctx.quadraticCurveTo(x, y, x + 4, y);
-                ctx.fill();
-                
-                // Valor
-                ctx.fillStyle = '#fff';
-                ctx.font = 'bold 12px Oswald';
-                ctx.textAlign = 'center';
-                ctx.fillText(d[1], x + barW / 2, y - 5);
-                
-                // Nome - horizontal abaixo da barra
-                ctx.fillStyle = 'rgba(255,255,255,0.8)';
-                ctx.font = '8px Montserrat';
-                ctx.textAlign = 'center';
-                const nome = d[0].split(' ')[0];
-                const nomeAbrev = nome.length > 8 ? nome.substring(0, 7) + '.' : nome;
-                ctx.fillText(nomeAbrev, x + barW / 2, pad.top + h + 15);
-            });
-        }
-        
-        function toggleTheme() {
-            document.body.classList.toggle('light-theme');
-            const isLight = document.body.classList.contains('light-theme');
-            localStorage.setItem('lusofy_theme', isLight ? 'light' : 'dark');
-            showToast(isLight ? 'Tema claro ativado' : 'Tema escuro ativado', 'success');
-        }
-        // Carregar tema salvo
-        if (localStorage.getItem('lusofy_theme') === 'light') {
-            document.body.classList.add('light-theme');
-        }
-    </script>
-</body>
-</html>
+        .historico-count { background: #22c55e; color: var(--bg-primary); font-size: 0.75rem; padding: 3px 10px; border-radius:
