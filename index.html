@@ -1051,6 +1051,26 @@
                 return;
             }
             
+            // Validações para coluna "Coletar Dados"
+            if (currentTask.tipo === 'coletar_dados') {
+                // Verifica obrigatoriedade de dados de pagamento
+                if (currentTask.obg_pay === true) {
+                    const taskId = currentTask.id;
+                    if (!dadosCartaoSalvos[taskId] && !currentTask.numero_cartao) {
+                        showToast('Dados de pagamento são obrigatórios para esta tarefa!', 'error');
+                        return;
+                    }
+                }
+                
+                // Verifica obrigatoriedade de dados do hóspede
+                if (currentTask.obg_hospede === true) {
+                    if (!currentTask.nome_hospede || !currentTask.telefone_hospede) {
+                        showToast('Dados do hóspede são obrigatórios para esta tarefa!', 'error');
+                        return;
+                    }
+                }
+            }
+            
             // Verifica se houve mudança de status
             if (currentTask.status !== originalTask.status) {
                 await sendUpdate(UPDATE_TYPES.STATUS_CHANGE, currentTask, { old_status: originalTask.status, new_status: currentTask.status });
