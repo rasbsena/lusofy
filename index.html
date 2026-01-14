@@ -1171,19 +1171,31 @@
                     '</div></div>';
             }
             
-            // Mostrar formulário VAZIO para preenchimento (sempre começa assim)
-return '<div class="modal-section"><div class="modal-section-title" style="color:#06b6d4;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>Dados do Hóspede' + (currentTask.obg_hospede ? ' <span style="color:#ef4444;font-size:0.7rem;">(OBRIGATÓRIO)</span>' : '') + '</div>' +
-                '<div class="dados-pagamento-section" style="border-color:#06b6d4;"><div class="dados-pagamento-form">' +
-                '<div class="form-row"><div><label>Nome do Hóspede' + (currentTask.obg_hospede ? ' <span style="color:#ef4444;">*</span>' : '') + '</label><input type="text" id="inputNomeHospede" value="' + (currentTask.nome_hospede || '') + '" placeholder="Nome completo do hóspede"></div><div><label>Telefone do Hóspede' + (currentTask.obg_hospede ? ' <span style="color:#ef4444;">*</span>' : '') + '</label><input type="text" id="inputTelefoneHospede" value="' + (currentTask.telefone_hospede || '') + '" placeholder="(00) 00000-0000" oninput="formatTelefone(this)"></div></div>' +
-                '<div style="display:flex;justify-content:flex-end;margin-top:8px;"><button class="btn-primary" style="background:#06b6d4;" onclick="salvarDadosHospede()"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" style="margin-right:6px;vertical-align:middle;"><path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>Salvar Hóspede</button></div>' +
-                '</div></div></div>' +
-                '<div class="modal-section"><div class="modal-section-title" style="color:#f59e0b;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>Dados de Pagamento' + (currentTask.obg_pay ? ' <span style="color:#ef4444;font-size:0.7rem;">(OBRIGATÓRIO)</span>' : '') + '</div>' +
-                '<div class="dados-pagamento-section"><div class="dados-pagamento-form">' +
-                '<div class="form-row full"><div><label>Número do Cartão</label><input type="text" id="inputNumeroCartao" value="" placeholder="0000 0000 0000 0000" maxlength="19" oninput="formatCartaoNumero(this)"></div></div>' +
-                '<div class="form-row full"><div><label>Nome no Cartão</label><input type="text" id="inputNomeCartao" value="" placeholder="NOME COMO ESTÁ NO CARTÃO" style="text-transform: uppercase;" oninput="this.value = this.value.toUpperCase()"></div></div>' +
-                '<div class="form-row"><div><label>Validade</label><input type="text" id="inputValidadeCartao" value="" placeholder="MM/AA" maxlength="5" oninput="formatValidade(this)"></div><div><label>CVC</label><input type="text" id="inputCvcCartao" value="" placeholder="000" maxlength="4" oninput="this.value = this.value.replace(/\\D/g, \'\')"></div></div>' +
-                '<div style="display:flex;justify-content:flex-end;margin-top:8px;"><button class="btn-primary" onclick="abrirConfirmacaoDados()"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" style="margin-right:6px;vertical-align:middle;"><path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>Salvar Dados</button></div>' +
-                '</div></div></div>';
+           // Mostrar formulário VAZIO para preenchimento (sempre começa assim)
+            var htmlHospede = '';
+            var htmlPagamento = '';
+            
+            // Bloco Dados do Hóspede - só mostra se obg_hospede NÃO for true
+            if (currentTask.obg_hospede !== true) {
+                htmlHospede = '<div class="modal-section"><div class="modal-section-title" style="color:#06b6d4;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>Dados do Hóspede</div>' +
+                    '<div class="dados-pagamento-section" style="border-color:#06b6d4;"><div class="dados-pagamento-form">' +
+                    '<div class="form-row"><div><label>Nome do Hóspede</label><input type="text" id="inputNomeHospede" value="' + (currentTask.nome_hospede || '') + '" placeholder="Nome completo do hóspede"></div><div><label>Telefone do Hóspede</label><input type="text" id="inputTelefoneHospede" value="' + (currentTask.telefone_hospede || '') + '" placeholder="(00) 00000-0000" oninput="formatTelefone(this)"></div></div>' +
+                    '<div style="display:flex;justify-content:flex-end;margin-top:8px;"><button class="btn-primary" style="background:#06b6d4;" onclick="salvarDadosHospede()"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" style="margin-right:6px;vertical-align:middle;"><path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>Salvar Hóspede</button></div>' +
+                    '</div></div></div>';
+            }
+            
+            // Bloco Dados de Pagamento - só mostra se obg_pay NÃO for true
+            if (currentTask.obg_pay !== true) {
+                htmlPagamento = '<div class="modal-section"><div class="modal-section-title" style="color:#f59e0b;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>Dados de Pagamento</div>' +
+                    '<div class="dados-pagamento-section"><div class="dados-pagamento-form">' +
+                    '<div class="form-row full"><div><label>Número do Cartão</label><input type="text" id="inputNumeroCartao" value="" placeholder="0000 0000 0000 0000" maxlength="19" oninput="formatCartaoNumero(this)"></div></div>' +
+                    '<div class="form-row full"><div><label>Nome no Cartão</label><input type="text" id="inputNomeCartao" value="" placeholder="NOME COMO ESTÁ NO CARTÃO" style="text-transform: uppercase;" oninput="this.value = this.value.toUpperCase()"></div></div>' +
+                    '<div class="form-row"><div><label>Validade</label><input type="text" id="inputValidadeCartao" value="" placeholder="MM/AA" maxlength="5" oninput="formatValidade(this)"></div><div><label>CVC</label><input type="text" id="inputCvcCartao" value="" placeholder="000" maxlength="4" oninput="this.value = this.value.replace(/\\D/g, \'\')"></div></div>' +
+                    '<div style="display:flex;justify-content:flex-end;margin-top:8px;"><button class="btn-primary" onclick="abrirConfirmacaoDados()"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" style="margin-right:6px;vertical-align:middle;"><path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>Salvar Dados</button></div>' +
+                    '</div></div></div>';
+            }
+            
+            return htmlHospede + htmlPagamento;
         }
 
         function renderDadosPagamentoCobranca(revelado) {
