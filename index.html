@@ -1263,18 +1263,21 @@ async function salvarDadosHospede() {
             pendingCardData = null;
         }
 
-        function confirmarSalvarDados() {
+function confirmarSalvarDados() {
             if (!pendingCardData) return;
             
             const taskId = currentTask.id;
             
-            // Salvar na flag local IMEDIATAMENTE
-            dadosCartaoSalvos[taskId] = {
+            // Guardar dados antes de limpar
+            const dadosParaEnviar = {
                 numero_cartao: pendingCardData.numero_cartao,
                 nome_cartao: pendingCardData.nome_cartao,
                 validade_cartao: pendingCardData.validade_cartao,
                 cvc_cartao: pendingCardData.cvc_cartao
             };
+            
+            // Salvar na flag local IMEDIATAMENTE
+            dadosCartaoSalvos[taskId] = dadosParaEnviar;
             
             // Fechar modal de confirmação
             closeConfirmModal();
@@ -1286,7 +1289,7 @@ async function salvarDadosHospede() {
             showToast('Dados salvos com sucesso!', 'success');
             
             // Enviar para n8n em background (não aguarda)
-            sendUpdate(UPDATE_TYPES.CARTAO_ADD, currentTask, { dados_cartao: pendingCardData });
+            sendUpdate(UPDATE_TYPES.CARTAO_ADD, currentTask, { dados_cartao: dadosParaEnviar });
             
             pendingCardData = null;
         }
