@@ -1092,6 +1092,7 @@
                 ((currentTask.tipo === 'bloqueio_mapa' || currentTask.tipo === 'cancelamento') && currentTask.informacaopms ? '<div class="modal-section"><div class="modal-section-title" style="color:#8b5cf6;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>Informação PMS</div><div class="descricao-box">' + linkify(currentTask.informacaopms) + '</div></div>' : '') +
                 (isColetarDados ? renderFormularioDadosPagamento() : '') +
                 (isCobrancaDigitada ? renderDadosPagamentoCobranca(hasPaymentData) : '') +
+                (currentTask.tipo === 'cobranca_link' ? renderCobrancaViaLink() : '') +
                 renderArquivosSection() +
                 renderComentariosSection();
             
