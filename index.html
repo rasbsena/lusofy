@@ -1182,7 +1182,91 @@
             
             return htmlHospede + htmlPagamento;
         }
+        function renderCobrancaViaLink() {
+            var valorFormatado = currentTask.valor ? 'R$ ' + parseFloat(currentTask.valor).toFixed(2).replace('.', ',') : 'Não informado';
+            var linkSalvo = currentTask.link_pgto || '';
+            
+            if (linkSalvo) {
+                return '<div class="modal-section"><div class="modal-section-title" style="color:#a855f7;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71"/></svg>Cobrança Via Link</div>' +
+                    '<div class="dados-pagamento-section" style="border-color:#a855f7;">' +
+                    '<div class="section-status" style="background:rgba(34,197,94,0.2);"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" style="color:#22c55e;"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><path d="M22 4L12 14.01l-3-3"/></svg><span style="color:#86efac;">Link enviado com sucesso</span></div>' +
+                    '<div class="campo-pagamento"><label>Valor da Cobrança</label><span style="font-size:1.2rem;color:#a855f7;">' + valorFormatado + '</span></div>' +
+                    '<div class="campo-pagamento"><label>Link de Pagamento</label><span><a href="' + linkSalvo + '" target="_blank" style="color:#a855f7;">' + linkSalvo + '</a></span></div>' +
+                    '</div></div>';
+            }
+            
+            return '<div class="modal-section"><div class="modal-section-title" style="color:#a855f7;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71"/></svg>Cobrança Via Link</div>' +
+                '<div class="dados-pagamento-section" style="border-color:#a855f7;"><div class="dados-pagamento-form">' +
+                '<div class="campo-pagamento" style="margin-bottom:12px;padding:12px;background:var(--bg-column);border-radius:6px;"><label>Valor da Cobrança</label><span style="font-size:1.4rem;font-weight:700;color:#a855f7;font-family:Oswald,sans-serif;">' + valorFormatado + '</span></div>' +
+                '<div class="form-row full"><div><label>Link de Pagamento</label><input type="text" id="inputLinkPgto" value="" placeholder="https://..." style="font-size:0.85rem;"></div></div>' +
+                '<div style="display:flex;justify-content:flex-end;margin-top:8px;"><button class="btn-primary" style="background:#a855f7;" onclick="abrirConfirmacaoLink()"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" style="margin-right:6px;vertical-align:middle;"><path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71"/></svg>Enviar Link</button></div>' +
+                '</div></div></div>';
+        }
 
+        function abrirConfirmacaoLink() {
+            var link = document.getElementById('inputLinkPgto').value.trim();
+            
+            if (!link) {
+                showToast('Preencha o link de pagamento', 'error');
+                return;
+            }
+            
+            if (!link.startsWith('http://') && !link.startsWith('https://')) {
+                showToast('Link deve começar com http:// ou https://', 'error');
+                return;
+            }
+            
+            var valorFormatado = currentTask.valor ? 'R$ ' + parseFloat(currentTask.valor).toFixed(2).replace('.', ',') : 'Não informado';
+            
+            document.getElementById('confirmLinkValor').textContent = valorFormatado;
+            document.getElementById('confirmLinkUrl').textContent = link;
+            document.getElementById('confirmLinkUrl').href = link;
+            document.getElementById('confirmLinkModal').classList.add('active');
+        }
+
+        function closeConfirmLinkModal() {
+            document.getElementById('confirmLinkModal').classList.remove('active');
+        }
+
+        async function confirmarEnviarLink() {
+            var link = document.getElementById('inputLinkPgto').value.trim();
+            
+            var oldLink = currentTask.link_pgto;
+            currentTask.link_pgto = link;
+            
+            var taskInArray = tasks.find(function(t) { return t.id === currentTask.id; });
+            if (taskInArray) {
+                taskInArray.link_pgto = link;
+            }
+            
+            closeConfirmLinkModal();
+            
+            await sendUpdate(UPDATE_TYPES.DATA_UPDATE, currentTask, {
+                field: 'link_pgto',
+                old_value: oldLink,
+                new_value: link
+            });
+            
+            // Muda status para concluído
+            var oldStatus = currentTask.status;
+            currentTask.status = 'concluido';
+            currentTask.concluido_em = new Date().toISOString();
+            
+            if (taskInArray) {
+                taskInArray.status = 'concluido';
+                taskInArray.concluido_em = currentTask.concluido_em;
+            }
+            
+            await sendUpdate(UPDATE_TYPES.STATUS_CHANGE, currentTask, {
+                old_status: oldStatus,
+                new_status: 'concluido'
+            });
+            
+            showToast('Link enviado e tarefa concluída!', 'success');
+            renderModalContent();
+            renderBoard();
+            closeModal();
+        }
         function renderDadosPagamentoCobranca(revelado) {
             if (revelado) {
                 const dados = paymentDataCache[currentTask.id].data;
