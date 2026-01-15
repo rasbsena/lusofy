@@ -599,6 +599,35 @@
             </a>
         </div>
     </div>
+    <!-- Modal Confirmação Link -->
+    <div class="confirm-modal-overlay" id="confirmLinkModal">
+        <div class="confirm-modal">
+            <div class="confirm-modal-header">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71"/></svg>
+                <h3>Confirmar Envio do Link</h3>
+            </div>
+            <div class="confirm-modal-body">
+                <div class="confirm-card-preview">
+                    <div class="card-field" style="text-align:center;margin-bottom:16px;">
+                        <label>Valor da Cobrança</label>
+                        <span id="confirmLinkValor" style="font-size:1.8rem;color:#a855f7;font-family:Oswald,sans-serif;">R$ 0,00</span>
+                    </div>
+                    <div class="card-field">
+                        <label>Link de Pagamento</label>
+                        <a id="confirmLinkUrl" href="#" target="_blank" style="color:#a855f7;word-break:break-all;font-size:0.9rem;">https://...</a>
+                    </div>
+                </div>
+                <div class="confirm-warning">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+                    <p>Ao confirmar, o link será salvo e a tarefa será marcada como <strong>concluída</strong> automaticamente.</p>
+                </div>
+                <div class="confirm-modal-footer">
+                    <button class="btn-secondary" onclick="closeConfirmLinkModal()">Voltar e Editar</button>
+                    <button class="btn-primary" style="background:#a855f7;" onclick="confirmarEnviarLink()">Confirmar e Concluir</button>
+                </div>
+            </div>
+        </div>
+    </div>
     <div class="toast-container" id="toastContainer"></div>
     <script>
         const WEBHOOK_LOAD = 'https://n8n.upperfy.com.br/webhook/0fec17a7-8654-45ff-8ad6-lsfy1';
