@@ -1265,15 +1265,6 @@
                 showToast('Erro ao enviar ação', 'error');
             }
         }
-```
-
----
-
-## ALTERAÇÃO 2 - Chamar a função no modal (entre dados de pagamento e arquivos)
-
-### Localizar:
-Busque por:
-```
 (currentTask.tipo === 'cobranca_link' ? renderCobrancaViaLink() : '') +
         function renderCobrancaViaLink() {
             var valorFormatado = currentTask.valor ? 'R$ ' + parseFloat(currentTask.valor).toFixed(2).replace('.', ',') : 'Não informado';
