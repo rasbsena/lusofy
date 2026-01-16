@@ -1266,7 +1266,7 @@
             }
         }
 (currentTask.tipo === 'cobranca_link' ? renderCobrancaViaLink() : '') +
-        function renderCobrancaViaLink() {
+                (currentTask.tipo === 'cobranca_digitada' ? renderBotoesCobrancaDigitada() : '') +        function renderCobrancaViaLink() {
             var valorFormatado = currentTask.valor ? 'R$ ' + parseFloat(currentTask.valor).toFixed(2).replace('.', ',') : 'Não informado';
             var linkSalvo = currentTask.link_pgto || '';
             
