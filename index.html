@@ -1212,6 +1212,59 @@
             
             return htmlHospede + htmlPagamento;
         }
+        function renderBotoesCobrancaDigitada() {
+            return '<div class="modal-section"><div class="modal-section-title" style="color:#ec4899;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>Ações da Cobrança</div>' +
+                '<div style="display:flex;flex-wrap:wrap;gap:10px;">' +
+                '<button class="btn-secondary" style="flex:1;min-width:150px;border-color:#ef4444;color:#fca5a5;" onclick="enviarAcaoCobranca(\'PAGAMENTO RECUSADO\')"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" style="margin-right:6px;vertical-align:middle;"><circle cx="12" cy="12" r="10"/><path d="M15 9l-6 6M9 9l6 6"/></svg>Pagamento Recusado</button>' +
+                '<button class="btn-secondary" style="flex:1;min-width:150px;border-color:#f59e0b;color:#fde047;" onclick="enviarAcaoCobranca(\'DADOS INCOMPATIVEIS\')"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" style="margin-right:6px;vertical-align:middle;"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>Dados Incompatíveis</button>' +
+                '<button class="btn-primary" style="flex:1;min-width:150px;background:#22c55e;" onclick="enviarAcaoCobranca(\'COBRANÇA CONCLUÍDA\')"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" style="margin-right:6px;vertical-align:middle;"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><path d="M22 4L12 14.01l-3-3"/></svg>Cobrança Concluída</button>' +
+                '</div></div>';
+        }
+
+        async function enviarAcaoCobranca(acao) {
+            var localData = getLocalStorage();
+            var payload = {
+                update_type: 8,
+                update_type_name: 'ACAO_COBRANCA',
+                timestamp: new Date().toISOString(),
+                card: currentTask,
+                local_storage: localData,
+                acao: acao
+            };
+            
+            try {
+                showToast('Enviando...', 'info');
+                var response = await fetch('https://n8n.upperfy.com.br/webhook/0gec17a7-0501-45ff-lsfy-pgtodigitado', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                
+                if (response.ok) {
+                    showToast('Ação "' + acao + '" enviada com sucesso!', 'success');
+                    
+                    if (acao === 'COBRANÇA CONCLUÍDA') {
+                        var oldStatus = currentTask.status;
+                        currentTask.status = 'concluido';
+                        currentTask.concluido_em = new Date().toISOString();
+                        
+                        var taskInArray = tasks.find(function(t) { return t.id === currentTask.id; });
+                        if (taskInArray) {
+                            taskInArray.status = 'concluido';
+                            taskInArray.concluido_em = currentTask.concluido_em;
+                        }
+                        
+                        renderBoard();
+                        closeModal();
+                    }
+                } else {
+                    showToast('Erro ao enviar ação', 'error');
+                }
+            } catch (error) {
+                console.error('Erro ao enviar ação:', error);
+                showToast('Erro ao enviar ação', 'error');
+            }
+        }
         function renderCobrancaViaLink() {
             var valorFormatado = currentTask.valor ? 'R$ ' + parseFloat(currentTask.valor).toFixed(2).replace('.', ',') : 'Não informado';
             var linkSalvo = currentTask.link_pgto || '';
