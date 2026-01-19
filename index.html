@@ -827,7 +827,73 @@
                 board.innerHTML = '<div class="error-state"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg><h3>Erro ao carregar tarefas</h3><p>Não foi possível conectar ao servidor</p><button class="btn-primary" onclick="loadTasks()">Tentar novamente</button></div>';
             }
         }
-
+        // Filtros e Ordenação do Kanban
+        var filtrosAtivos = { prioridade: '', responsavel: '', ordenar: '' };
+        
+        function popularFiltroResponsaveis() {
+            var select = document.getElementById('filtroResponsavel');
+            if (!select) return;
+            var responsaveis = [...new Set(tasks.filter(t => t.responsavel && t.responsavel.nome).map(t => t.responsavel.nome))].sort();
+            var currentValue = select.value;
+            select.innerHTML = '<option value="">Todos Responsáveis</option>' + responsaveis.map(r => '<option value="' + r + '"' + (r === currentValue ? ' selected' : '') + '>' + r + '</option>').join('');
+        }
+        
+        function aplicarFiltros() {
+            filtrosAtivos.prioridade = document.getElementById('filtroPrioridade').value;
+            filtrosAtivos.responsavel = document.getElementById('filtroResponsavel').value;
+            filtrosAtivos.ordenar = document.getElementById('ordenarPor').value;
+            renderBoard();
+        }
+        
+        function limparFiltrosKanban() {
+            document.getElementById('filtroPrioridade').value = '';
+            document.getElementById('filtroResponsavel').value = '';
+            document.getElementById('ordenarPor').value = '';
+            filtrosAtivos = { prioridade: '', responsavel: '', ordenar: '' };
+            renderBoard();
+            showToast('Filtros limpos!', 'success');
+        }
+        
+        function filtrarEOrdenarTasks(tasksList) {
+            var resultado = [...tasksList];
+            
+            // Filtrar por prioridade
+            if (filtrosAtivos.prioridade) {
+                resultado = resultado.filter(t => t.prioridade === filtrosAtivos.prioridade);
+            }
+            
+            // Filtrar por responsável
+            if (filtrosAtivos.responsavel) {
+                resultado = resultado.filter(t => t.responsavel && t.responsavel.nome === filtrosAtivos.responsavel);
+            }
+            
+            // Ordenar
+            if (filtrosAtivos.ordenar) {
+                resultado.sort((a, b) => {
+                    switch (filtrosAtivos.ordenar) {
+                        case 'prioridade':
+                            var prioridadeOrdem = { urgente: 0, alta: 1, media: 2, baixa: 3 };
+                            return (prioridadeOrdem[a.prioridade] || 4) - (prioridadeOrdem[b.prioridade] || 4);
+                        case 'prazo':
+                            var prazoA = a.prazo ? new Date(a.prazo).getTime() : Infinity;
+                            var prazoB = b.prazo ? new Date(b.prazo).getTime() : Infinity;
+                            return prazoA - prazoB;
+                        case 'criado_em':
+                            var criadoA = a.criado_em ? new Date(a.criado_em).getTime() : 0;
+                            var criadoB = b.criado_em ? new Date(b.criado_em).getTime() : 0;
+                            return criadoB - criadoA;
+                        case 'responsavel':
+                            var nomeA = a.responsavel?.nome || 'ZZZ';
+                            var nomeB = b.responsavel?.nome || 'ZZZ';
+                            return nomeA.localeCompare(nomeB);
+                        default:
+                            return 0;
+                    }
+                });
+            }
+            
+            return resultado;
+        }
         function renderBoard() {
             const board = document.getElementById('kanbanBoard');
             board.innerHTML = '';
