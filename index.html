@@ -1900,7 +1900,78 @@ function confirmarSalvarDados() {
                 '<div class="chart-legend-item"><span class="chart-legend-color" style="background:' + colors[i] + '"></span>' + d[0].split(' ')[0] + ' (' + d[1] + ')</div>'
             ).join('');
         }
-        
+                // Gráfico de Pizza - Tarefas por Tipo
+        function drawTipoChart() {
+            const canvas = document.getElementById('chartTipo');
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+            const rect = canvas.parentElement.getBoundingClientRect();
+            canvas.width = rect.width;
+            canvas.height = rect.height;
+            
+            const pendentes = tasks.filter(t => t.status !== 'concluido');
+            const porTipo = {};
+            pendentes.forEach(t => {
+                const tipoLabel = TIPO_CONFIG[t.tipo] ? TIPO_CONFIG[t.tipo].label : t.tipo;
+                porTipo[tipoLabel] = (porTipo[tipoLabel] || 0) + 1;
+            });
+            
+            const data = Object.entries(porTipo).sort((a, b) => b[1] - a[1]);
+            const total = data.reduce((s, d) => s + d[1], 0) || 1;
+            const tipoColors = {
+                'Bloqueio de Mapa': '#8b5cf6',
+                'Cancelamentos': '#ef4444',
+                'Coletar Dados': '#f59e0b',
+                'Cobrança Digitada': '#ec4899',
+                'Cobrança Via Link': '#a855f7',
+                'Checar Tarifários': '#06b6d4'
+            };
+            
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            const cx = canvas.width / 2;
+            const cy = canvas.height / 2;
+            const r = Math.min(cx, cy) - 10;
+            
+            if (data.length === 0) {
+                ctx.fillStyle = 'rgba(255,255,255,0.4)';
+                ctx.font = '12px Montserrat';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText('Sem dados', cx, cy);
+                document.getElementById('chartTipoLegend').innerHTML = '';
+                return;
+            }
+            
+            let start = -Math.PI / 2;
+            data.forEach((d, i) => {
+                const slice = (d[1] / total) * Math.PI * 2;
+                ctx.fillStyle = tipoColors[d[0]] || '#666';
+                ctx.beginPath();
+                ctx.moveTo(cx, cy);
+                ctx.arc(cx, cy, r, start, start + slice);
+                ctx.closePath();
+                ctx.fill();
+                start += slice;
+            });
+            
+            // Centro (donut)
+            const isLight = document.body.classList.contains('light-theme');
+            ctx.fillStyle = isLight ? '#041f43' : '#0a3570';
+            ctx.beginPath();
+            ctx.arc(cx, cy, r * 0.5, 0, Math.PI * 2);
+            ctx.fill();
+            
+            ctx.fillStyle = '#fff';
+            ctx.font = 'bold 18px Oswald';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText(total, cx, cy);
+            
+            // Legenda
+            document.getElementById('chartTipoLegend').innerHTML = data.map(d =>
+                '<div class="chart-legend-item"><span class="chart-legend-color" style="background:' + (tipoColors[d[0]] || '#666') + '"></span>' + d[0] + ' (' + d[1] + ')</div>'
+            ).join('');
+        }
         // Gráfico de Barras - Pendentes por responsável
         function drawBarChart() {
             const canvas = document.getElementById('chartBar');
