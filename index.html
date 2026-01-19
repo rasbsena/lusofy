@@ -1751,7 +1751,6 @@ function confirmarSalvarDados() {
         
         function updateDashboard() {
             const total = tasks.filter(t => t.status !== 'concluido').length;
-            document.getElementById('dashTotalTasks').textContent = total;
             document.getElementById('dashNaoIniciado').textContent = tasks.filter(t => t.status === 'nao_iniciado').length;
             document.getElementById('dashEmAndamento').textContent = tasks.filter(t => t.status === 'em_andamento').length;
             document.getElementById('dashBloqueado').textContent = tasks.filter(t => t.status === 'bloqueado').length;
