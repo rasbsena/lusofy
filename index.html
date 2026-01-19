@@ -831,7 +831,7 @@
         var filtrosAtivos = { prioridade: '', responsavel: '', ordenar: '' };
         
         function popularFiltroResponsaveis() {
-            var select = document.getElementById('filtroResponsavel');
+            var select = document.getElementById('filtroResponsavelKanban');
             if (!select) return;
             var responsaveis = [...new Set(tasks.filter(t => t.responsavel && t.responsavel.nome).map(t => t.responsavel.nome))].sort();
             var currentValue = select.value;
@@ -840,7 +840,7 @@
         
         function aplicarFiltros() {
             filtrosAtivos.prioridade = document.getElementById('filtroPrioridade').value;
-            filtrosAtivos.responsavel = document.getElementById('filtroResponsavel').value;
+            filtrosAtivos.responsavel = document.getElementById('filtroResponsavelKanban').value;
             filtrosAtivos.ordenar = document.getElementById('ordenarPor').value;
             renderBoard();
         }
