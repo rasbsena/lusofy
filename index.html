@@ -438,6 +438,32 @@
     
     <main class="main-content" id="mainContent">
         <div class="kanban-container">
+                        <div class="filters-bar">
+                <div class="filters-group">
+                    <label>Filtrar:</label>
+                    <select id="filtroPrioridade" onchange="aplicarFiltros()">
+                        <option value="">Todas Prioridades</option>
+                        <option value="urgente">Urgente</option>
+                        <option value="alta">Alta</option>
+                        <option value="media">Média</option>
+                        <option value="baixa">Baixa</option>
+                    </select>
+                    <select id="filtroResponsavel" onchange="aplicarFiltros()">
+                        <option value="">Todos Responsáveis</option>
+                    </select>
+                </div>
+                <div class="filters-group">
+                    <label>Ordenar:</label>
+                    <select id="ordenarPor" onchange="aplicarFiltros()">
+                        <option value="">Padrão</option>
+                        <option value="prioridade">Prioridade</option>
+                        <option value="prazo">Prazo</option>
+                        <option value="criado_em">Criado Em</option>
+                        <option value="responsavel">Responsável</option>
+                    </select>
+                    <button class="btn-limpar-filtros" onclick="limparFiltrosKanban()">Limpar</button>
+                </div>
+            </div>
             <div class="kanban-board" id="kanbanBoard">
                 <div class="loading"><div class="loading-spinner"></div></div>
             </div>
