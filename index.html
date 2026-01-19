@@ -245,6 +245,15 @@
         .dados-censurados-coletar .campo-pagamento span { font-size: 1rem; font-weight: 600; color: var(--text-primary); font-family: 'Oswald', monospace; letter-spacing: 1px; }
         .btn-edit-dados { margin-top: 12px; width: 100%; background: transparent; border: 2px dashed var(--border-color); color: var(--text-muted); }
         .btn-edit-dados:hover { border-color: var(--accent); color: var(--text-primary); background: rgba(255, 207, 0, 0.05); }
+                /* Barra de Filtros */
+        .filters-bar { display: flex; justify-content: space-between; align-items: center; padding: 12px 24px; background: var(--bg-column); border-radius: 8px; margin: 0 24px 16px 24px; gap: 16px; flex-wrap: wrap; }
+        .filters-group { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+        .filters-group label { font-family: 'Oswald', sans-serif; font-size: 0.8rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; }
+        .filters-bar select { background: var(--bg-card); border: 1px solid var(--border-color); color: var(--text-primary); padding: 8px 12px; border-radius: 6px; font-family: 'Montserrat', sans-serif; font-size: 0.8rem; cursor: pointer; min-width: 140px; }
+        .filters-bar select:hover { border-color: var(--accent); }
+        .filters-bar select:focus { outline: none; border-color: var(--accent); }
+        .btn-limpar-filtros { background: transparent; border: 1px solid var(--border-color); color: var(--text-secondary); padding: 8px 16px; border-radius: 6px; font-family: 'Oswald', sans-serif; font-size: 0.75rem; cursor: pointer; text-transform: uppercase; letter-spacing: 1px; transition: all 0.2s ease; }
+        .btn-limpar-filtros:hover { border-color: var(--accent); color: var(--accent); }
         /* Dashboard */
         .dashboard { background: var(--bg-column); border-bottom: 1px solid var(--border-color); padding: 20px 24px; margin-top: 70px; display: none; }
         .dashboard.active { display: block; }
