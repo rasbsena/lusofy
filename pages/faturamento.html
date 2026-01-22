@@ -1029,7 +1029,7 @@ const TIPO_CONFIG = {
             const filtroDataDe = document.getElementById('filtroDataDe').value;
             const filtroDataAte = document.getElementById('filtroDataAte').value;
             
-            let concluidos = tasks.filter(t => t.status === 'concluido');
+            let concluidos = tasks.filter(t => t.status === 'concluido' && t.setor === 'faturamento');
             
             // Aplicar filtros
             if (filtroTipo) {
