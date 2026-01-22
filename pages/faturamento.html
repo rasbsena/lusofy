@@ -899,7 +899,7 @@ const TIPO_CONFIG = {
             }
             TIPO_ORDER.forEach(tipo => {
                 const tipoConfig = TIPO_CONFIG[tipo];
-                const tipoTasksRaw = tasks.filter(t => t.tipo === tipo && t.status !== 'concluido');
+                const tipoTasksRaw = tasks.filter(t => t.tipo === tipo && t.status !== 'concluido' && t.setor === 'faturamento');
                 const tipoTasks = filtrarEOrdenarTasks(tipoTasksRaw);
                 const column = document.createElement('div');
                 column.className = 'kanban-column';
