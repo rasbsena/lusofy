@@ -2007,7 +2007,7 @@ function confirmarSalvarDados() {
             canvas.width = rect.width;
             canvas.height = rect.height;
             
-            const pendentes = tasks.filter(t => t.status !== 'concluido');
+            const pendentes = tasks.filter(t => t.status !== 'concluido' && t.setor === 'faturamento');
             const porTipo = {};
             pendentes.forEach(t => {
                 const tipoLabel = TIPO_CONFIG[t.tipo] ? TIPO_CONFIG[t.tipo].label : t.tipo;
