@@ -1943,7 +1943,7 @@ function confirmarSalvarDados() {
             canvas.width = rect.width;
             canvas.height = rect.height;
             
-            const concluidas = tasks.filter(t => t.status === 'concluido' && t.responsavel && t.responsavel.nome);
+            const concluidas = tasks.filter(t => t.status === 'concluido' && t.setor === 'faturamento' && t.responsavel && t.responsavel.nome);
             const porResp = {};
             concluidas.forEach(t => {
                 porResp[t.responsavel.nome] = (porResp[t.responsavel.nome] || 0) + 1;
