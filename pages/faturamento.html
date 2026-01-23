@@ -1861,13 +1861,13 @@ function confirmarSalvarDados() {
         function updateDashboard() {
             const tarefasSetor = tasks.filter(t => t.setor === 'faturamento');
             const total = tarefasSetor.filter(t => t.status !== 'concluido').length;
-            document.getElementById('dashNaoIniciado').textContent = tasks.filter(t => t.status === 'nao_iniciado').length;
-            document.getElementById('dashEmAndamento').textContent = tasks.filter(t => t.status === 'em_andamento').length;
-            document.getElementById('dashBloqueado').textContent = tasks.filter(t => t.status === 'bloqueado').length;
-            const concluido = tasks.filter(t => t.status === 'concluido').length;
+document.getElementById('dashNaoIniciado').textContent = tarefasSetor.filter(t => t.status === 'nao_iniciado').length;
+            document.getElementById('dashEmAndamento').textContent = tarefasSetor.filter(t => t.status === 'em_andamento').length;
+            document.getElementById('dashBloqueado').textContent = tarefasSetor.filter(t => t.status === 'bloqueado').length;
+            const concluido = tarefasSetor.filter(t => t.status === 'concluido').length;
             const hoje = new Date().toDateString();
-            document.getElementById('dashConcluidasHoje').textContent = tasks.filter(t => t.status === 'concluido' && t.concluido_em && new Date(t.concluido_em).toDateString() === hoje).length;
-            const taxa = tasks.length > 0 ? Math.round((concluido / tasks.length) * 100) : 0;
+            document.getElementById('dashConcluidasHoje').textContent = tarefasSetor.filter(t => t.status === 'concluido' && t.concluido_em && new Date(t.concluido_em).toDateString() === hoje).length;
+            const taxa = tarefasSetor.length > 0 ? Math.round((concluido / tarefasSetor.length) * 100) : 0;
             document.getElementById('dashTaxaConclusao').textContent = taxa + '%';
             document.getElementById('dashProgressBar').style.width = taxa + '%';
             document.getElementById('dashAtrasadas').textContent = tasks.filter(t => t.prazo && new Date(t.prazo) < new Date() && t.status !== 'concluido').length;
