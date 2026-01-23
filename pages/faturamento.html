@@ -665,11 +665,12 @@
     </div>
     <div class="toast-container" id="toastContainer"></div>
     <script>
-        const WEBHOOK_LOAD = 'https://n8n.upperfy.com.br/webhook/0fec17a7-8654-45ff-8ad6-lsfy1';
+const WEBHOOK_LOAD = 'https://n8n.upperfy.com.br/webhook/0fec17a7-8654-45ff-8ad6-lsfy1';
         const WEBHOOK_UPDATE = 'https://n8n.upperfy.com.br/webhook/0fec17a7-8654-45ff-lsfy-draganddrop';
         const WEBHOOK_SECURITY = 'https://n8n.upperfy.com.br/webhook/0fec17a7-8654-45ff-lsfy-scritypht';
         const SEARCH_URL = 'https://n8n.upperfy.com.br/webhook/0fec17a7-8654-45ff-8ad6-lsfysearchpeople';
         const WEBHOOK_BUSCA_AVANCADA = 'https://n8n.upperfy.com.br/webhook/0fec17a7-8654-45ff-lsfy-ADVCD';
+        const MODULO = 'faturamento';
         
         const UPDATE_TYPES = { STATUS_CHANGE: 1, COMMENT: 2, FILE_UPLOAD: 3, DATA_UPDATE: 4, RESPONSAVEL_CHANGE: 5, TIPO_CHANGE: 6, CARTAO_ADD: 7 };
 
@@ -774,7 +775,7 @@ const TIPO_CONFIG = {
 
         async function sendUpdate(updateType, card, additionalData = {}) {
             const localData = getLocalStorage();
-            const payload = { update_type: updateType, update_type_name: Object.keys(UPDATE_TYPES).find(key => UPDATE_TYPES[key] === updateType), timestamp: new Date().toISOString(), card: card, local_storage: localData, ...additionalData };
+            const payload = { update_type: updateType, update_type_name: Object.keys(UPDATE_TYPES).find(key => UPDATE_TYPES[key] === updateType), timestamp: new Date().toISOString(), card: card, local_storage: localData, modulo: MODULO, ...additionalData };
             try { 
                 const response = await fetch(WEBHOOK_UPDATE, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
                 const result = await response.json();
@@ -802,7 +803,7 @@ const TIPO_CONFIG = {
                 const response = await fetch(WEBHOOK_LOAD, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ user: user, local_storage: getLocalStorage() })
+                    body: JSON.stringify({ user: user, local_storage: getLocalStorage(), modulo: MODULO })
                 });
                 
                 if (!response.ok) throw new Error('Erro na resposta');
