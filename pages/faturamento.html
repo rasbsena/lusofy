@@ -1882,12 +1882,13 @@ document.getElementById('dashNaoIniciado').textContent = tarefasSetor.filter(t =
             canvas.width = rect.width;
             canvas.height = rect.height;
             
+            const tarefasSetor = tasks.filter(t => t.setor === 'faturamento');
             const days = [], counts = [];
             for (let i = 6; i >= 0; i--) {
                 const d = new Date();
                 d.setDate(d.getDate() - i);
                 days.push(d.toLocaleDateString('pt-BR', {weekday:'short'}).replace('.',''));
-                counts.push(tasks.filter(t => t.status === 'concluido' && t.concluido_em && new Date(t.concluido_em).toDateString() === d.toDateString()).length);
+                counts.push(tarefasSetor.filter(t => t.status === 'concluido' && t.concluido_em && new Date(t.concluido_em).toDateString() === d.toDateString()).length);
             }
             
             const max = Math.max(...counts, 1);
