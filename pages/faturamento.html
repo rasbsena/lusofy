@@ -1873,6 +1873,7 @@ document.getElementById('dashNaoIniciado').textContent = tarefasSetor.filter(t =
             document.getElementById('dashProgressBar').style.width = taxa + '%';
             document.getElementById('dashAtrasadas').textContent = tarefasSetor.filter(t => t.prazo && new Date(t.prazo) < new Date() && t.status !== 'concluido').length;
             document.getElementById('dashUrgentes').textContent = tarefasSetor.filter(t => t.prioridade === 'urgente' && t.status !== 'concluido').length;
+        }
         
         // Gráfico de Linha - Conclusões por dia
         function drawLineChart() {
