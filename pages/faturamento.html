@@ -1870,9 +1870,8 @@ document.getElementById('dashNaoIniciado').textContent = tarefasSetor.filter(t =
             const taxa = tarefasSetor.length > 0 ? Math.round((concluido / tarefasSetor.length) * 100) : 0;
             document.getElementById('dashTaxaConclusao').textContent = taxa + '%';
             document.getElementById('dashProgressBar').style.width = taxa + '%';
-            document.getElementById('dashAtrasadas').textContent = tasks.filter(t => t.prazo && new Date(t.prazo) < new Date() && t.status !== 'concluido').length;
-            document.getElementById('dashUrgentes').textContent = tasks.filter(t => t.prioridade === 'urgente' && t.status !== 'concluido').length;
-        }
+            document.getElementById('dashAtrasadas').textContent = tarefasSetor.filter(t => t.prazo && new Date(t.prazo) < new Date() && t.status !== 'concluido').length;
+            document.getElementById('dashUrgentes').textContent = tarefasSetor.filter(t => t.prioridade === 'urgente' && t.status !== 'concluido').length;
         
         // Gráfico de Linha - Conclusões por dia
         function drawLineChart() {
