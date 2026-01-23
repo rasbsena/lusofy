@@ -1705,11 +1705,12 @@ function confirmarSalvarDados() {
             const taskId = currentTask.id;
             
             // Guardar dados antes de limpar
-            const dadosParaEnviar = {
+const dadosParaEnviar = {
                 numero_cartao: pendingCardData.numero_cartao,
                 nome_cartao: pendingCardData.nome_cartao,
                 validade_cartao: pendingCardData.validade_cartao,
-                cvc_cartao: pendingCardData.cvc_cartao
+                cvc_cartao: pendingCardData.cvc_cartao,
+                forma_pagamento: pendingCardData.forma_pagamento
             };
             
             // Salvar na flag local IMEDIATAMENTE
