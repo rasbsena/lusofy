@@ -1677,7 +1677,7 @@ async function salvarDadosHospede() {
             if (cvc.length < 3) { showToast('CVC inválido', 'error'); return; }
             
             // Guardar dados pendentes
-            pendingCardData = { numero_cartao: numero, nome_cartao: nome, validade_cartao: validade, cvc_cartao: cvc };
+            const formaPagamento = document.getElementById('inputFormaPagamento').value.trim();             pendingCardData = { numero_cartao: numero, nome_cartao: nome, validade_cartao: validade, cvc_cartao: cvc, forma_pagamento: formaPagamento };
             
             // Preencher modal de confirmação
             document.getElementById('confirmCardNumber').textContent = numero;
