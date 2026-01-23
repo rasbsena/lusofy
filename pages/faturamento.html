@@ -1946,7 +1946,7 @@ document.getElementById('dashNaoIniciado').textContent = tarefasSetor.filter(t =
         }
         
         // Gráfico de Pizza - Concluídas por responsável
-        function drawPieChart() {
+function drawPieChart() {
             const canvas = document.getElementById('chartPie');
             if (!canvas) return;
             const ctx = canvas.getContext('2d');
@@ -1954,7 +1954,8 @@ document.getElementById('dashNaoIniciado').textContent = tarefasSetor.filter(t =
             canvas.width = rect.width;
             canvas.height = rect.height;
             
-            const concluidas = tasks.filter(t => t.status === 'concluido' && t.setor === 'faturamento' && t.responsavel && t.responsavel.nome);
+            const tarefasSetor = tasks.filter(t => t.setor === 'faturamento');
+            const concluidas = tarefasSetor.filter(t => t.status === 'concluido' && t.responsavel && t.responsavel.nome);
             const porResp = {};
             concluidas.forEach(t => {
                 porResp[t.responsavel.nome] = (porResp[t.responsavel.nome] || 0) + 1;
