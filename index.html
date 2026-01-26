@@ -1648,21 +1648,21 @@ async function salvarDadosHospede() {
     }
     
     const oldNome = currentTask.nome_hospede;
-    const oldTelefone = currentTask.telefone_hospede;
+    const oldTelefone = currentTask.phone_hospede;
     
     currentTask.nome_hospede = nomeHospede;
-    currentTask.telefone_hospede = telefoneHospede;
+    currentTask.phone_hospede = telefoneHospede;
     
     const taskInArray = tasks.find(t => t.id === currentTask.id);
     if (taskInArray) {
         taskInArray.nome_hospede = nomeHospede;
-        taskInArray.telefone_hospede = telefoneHospede;
+        taskInArray.phone_hospede = telefoneHospede;
     }
     
     await sendUpdate(UPDATE_TYPES.DATA_UPDATE, currentTask, { 
         field: 'dados_hospede',
-        old_value: { nome_hospede: oldNome, telefone_hospede: oldTelefone },
-        new_value: { nome_hospede: nomeHospede, telefone_hospede: telefoneHospede }
+old_value: { nome_hospede: oldNome, phone_hospede: oldTelefone },
+        new_value: { nome_hospede: nomeHospede, phone_hospede: telefoneHospede }
     });
     
     showToast('Dados do hóspede salvos!', 'success');
