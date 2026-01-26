@@ -1688,7 +1688,7 @@ async function salvarDadosHospede() {
             document.getElementById('confirmCardName').textContent = nome;
             document.getElementById('confirmCardExpiry').textContent = validade;
             document.getElementById('confirmCardCvc').textContent = cvc;             
-            document.getElementById('confirmCardFormaPgto').textContent = formaPagamento || '—';
+            document.getElementById('confirmCardFormaPgto').textContent = formaPagamento || '—';             document.getElementById('confirmCardValor').textContent = valorPagamento ? 'R$ ' + valorPagamento : '—';
             
             // Abrir modal
             document.getElementById('confirmModal').classList.add('active');
