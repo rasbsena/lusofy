@@ -1681,7 +1681,7 @@ async function salvarDadosHospede() {
             if (cvc.length < 3) { showToast('CVC inválido', 'error'); return; }
             
             // Guardar dados pendentes
-            const formaPagamento = document.getElementById('inputFormaPagamento').value.trim();             pendingCardData = { numero_cartao: numero, nome_cartao: nome, validade_cartao: validade, cvc_cartao: cvc, forma_pagamento: formaPagamento };
+            const formaPagamento = document.getElementById('inputFormaPagamento').value.trim();             const valorPagamento = document.getElementById('inputValorPagamento').value.trim();             pendingCardData = { numero_cartao: numero, nome_cartao: nome, validade_cartao: validade, cvc_cartao: cvc, forma_pagamento: formaPagamento, valor_pagamento: valorPagamento };
             
             // Preencher modal de confirmação
             document.getElementById('confirmCardNumber').textContent = numero;
