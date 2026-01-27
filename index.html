@@ -1291,7 +1291,17 @@
         }
 
         // Atualiza status localmente (sem enviar ao backend ainda)
-        function updateStatusLocal(newStatus) {
+function updateStatusLocal(newStatus) {
+            // Se for bloqueio de mapa e estiver mudando para concluído, abre modal de confirmação
+            if (currentTask.tipo === 'bloqueio_mapa' && newStatus === 'concluido') {
+                if (abrirConfirmBloqueioModal()) {
+                    return; // Não atualiza status ainda, aguarda confirmação
+                } else {
+                    // Se não abriu o modal (datas não preenchidas), volta o select para o status atual
+                    renderModalContent();
+                    return;
+                }
+            }
             currentTask.status = newStatus;
         }
 
