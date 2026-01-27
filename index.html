@@ -684,6 +684,40 @@
             </div>
         </div>
     </div>
+    <!-- Modal Confirmação Bloqueio -->
+    <div class="confirm-modal-overlay" id="confirmBloqueioModal">
+        <div class="confirm-modal">
+            <div class="confirm-modal-header">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+                <h3>Confirmar Bloqueio de Mapa</h3>
+            </div>
+            <div class="confirm-modal-body">
+                <div class="confirm-card-preview" style="border-color:#8b5cf6;">
+                    <div style="text-align:center;margin-bottom:16px;">
+                        <p style="font-size:0.9rem;color:var(--text-secondary);margin-bottom:12px;">Você confirma que foi feito o bloqueio nas datas:</p>
+                        <div style="display:flex;justify-content:center;gap:24px;">
+                            <div class="card-field">
+                                <label>Check-in</label>
+                                <span id="confirmBloqueioCheckin" style="color:#8b5cf6;font-size:1.1rem;">--/--/----</span>
+                            </div>
+                            <div class="card-field">
+                                <label>Check-out</label>
+                                <span id="confirmBloqueioCheckout" style="color:#8b5cf6;font-size:1.1rem;">--/--/----</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="confirm-warning">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+                    <p>Ao confirmar, a tarefa será marcada como <strong>concluída</strong>.</p>
+                </div>
+                <div class="confirm-modal-footer">
+                    <button class="btn-secondary" onclick="closeConfirmBloqueioModal()">Cancelar</button>
+                    <button class="btn-primary" style="background:#8b5cf6;" onclick="confirmarConcluirBloqueio()">Confirmar e Concluir</button>
+                </div>
+            </div>
+        </div>
+    </div>
     <div class="toast-container" id="toastContainer"></div>
     <script>
         const WEBHOOK_LOAD = 'https://n8n.upperfy.com.br/webhook/0fec17a7-8654-45ff-8ad6-lsfy1';
