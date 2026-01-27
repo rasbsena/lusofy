@@ -1637,7 +1637,42 @@ function formatTelefone(input) {
     }
     input.value = value;
 }
-
+async function salvarDatasBloqueio() {
+            const checkin = document.getElementById('inputCheckinBloqueio').value;
+            const checkout = document.getElementById('inputCheckoutBloqueio').value;
+            
+            if (!checkin || !checkout) {
+                showToast('Preencha as duas datas', 'error');
+                return;
+            }
+            
+            if (new Date(checkout) <= new Date(checkin)) {
+                showToast('Check-out deve ser após check-in', 'error');
+                return;
+            }
+            
+            const oldCheckin = currentTask.checkin_bloqueio;
+            const oldCheckout = currentTask.checkout_bloqueio;
+            
+            currentTask.checkin_bloqueio = checkin;
+            currentTask.checkout_bloqueio = checkout;
+            
+            const taskInArray = tasks.find(t => t.id === currentTask.id);
+            if (taskInArray) {
+                taskInArray.checkin_bloqueio = checkin;
+                taskInArray.checkout_bloqueio = checkout;
+            }
+            
+            await sendUpdate(UPDATE_TYPES.DATA_UPDATE, currentTask, {
+                field: 'datas_bloqueio',
+                old_value: { checkin_bloqueio: oldCheckin, checkout_bloqueio: oldCheckout },
+                new_value: { checkin_bloqueio: checkin, checkout_bloqueio: checkout }
+            });
+            
+            showToast('Datas do bloqueio salvas!', 'success');
+            renderModalContent();
+            renderBoard();
+        }
 async function salvarDadosHospede() {
     const nomeHospede = document.getElementById('inputNomeHospede').value.trim();
     const telefoneHospede = document.getElementById('inputTelefoneHospede').value.trim();
