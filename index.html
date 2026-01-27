@@ -1671,6 +1671,49 @@ function formatTelefone(input) {
     }
     input.value = value;
 }
+        function abrirConfirmBloqueioModal() {
+            const checkin = currentTask.checkin_bloqueio;
+            const checkout = currentTask.checkout_bloqueio;
+            
+            if (!checkin || !checkout) {
+                showToast('Preencha as datas de check-in e check-out antes de concluir', 'error');
+                return false;
+            }
+            
+            document.getElementById('confirmBloqueioCheckin').textContent = formatDate(checkin);
+            document.getElementById('confirmBloqueioCheckout').textContent = formatDate(checkout);
+            document.getElementById('confirmBloqueioModal').classList.add('active');
+            return true;
+        }
+        
+        function closeConfirmBloqueioModal() {
+            document.getElementById('confirmBloqueioModal').classList.remove('active');
+        }
+        
+        async function confirmarConcluirBloqueio() {
+            closeConfirmBloqueioModal();
+            
+            const oldStatus = currentTask.status;
+            currentTask.status = 'concluido';
+            currentTask.concluido_em = new Date().toISOString();
+            
+            const taskInArray = tasks.find(t => t.id === currentTask.id);
+            if (taskInArray) {
+                taskInArray.status = 'concluido';
+                taskInArray.concluido_em = currentTask.concluido_em;
+            }
+            
+            await sendUpdate(UPDATE_TYPES.STATUS_CHANGE, currentTask, {
+                old_status: oldStatus,
+                new_status: 'concluido',
+                checkin_bloqueio: currentTask.checkin_bloqueio,
+                checkout_bloqueio: currentTask.checkout_bloqueio
+            });
+            
+            showToast('Bloqueio concluído com sucesso!', 'success');
+            renderBoard();
+            closeModal();
+        }
 async function salvarDatasBloqueio() {
             const checkin = document.getElementById('inputCheckinBloqueio').value;
             const checkout = document.getElementById('inputCheckoutBloqueio').value;
