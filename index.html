@@ -1704,6 +1704,50 @@ function formatTelefone(input) {
     }
     input.value = value;
 }
+        function abrirConfirmExclusaoModal() {
+            document.getElementById('inputJustificativaExclusao').value = '';
+            document.getElementById('confirmExclusaoModal').classList.add('active');
+            return true;
+        }
+        
+        function closeConfirmExclusaoModal() {
+            document.getElementById('confirmExclusaoModal').classList.remove('active');
+            renderModalContent(); // Volta o select para o status anterior
+        }
+        
+        async function confirmarExclusao() {
+            const justificativa = document.getElementById('inputJustificativaExclusao').value.trim();
+            
+            if (!justificativa) {
+                showToast('Preencha a justificativa da exclusão', 'error');
+                return;
+            }
+            
+            closeConfirmExclusaoModal();
+            
+            const oldStatus = originalTask.status;
+            const oldDescricao = currentTask.descricao;
+            
+            currentTask.status = 'bloqueado';
+            currentTask.descricao = justificativa;
+            
+            const taskInArray = tasks.find(t => t.id === currentTask.id);
+            if (taskInArray) {
+                taskInArray.status = 'bloqueado';
+                taskInArray.descricao = justificativa;
+            }
+            
+            await sendUpdate(UPDATE_TYPES.STATUS_CHANGE, currentTask, {
+                old_status: oldStatus,
+                new_status: 'bloqueado',
+                old_descricao: oldDescricao,
+                justificativa_exclusao: justificativa
+            });
+            
+            showToast('Tarefa programada para exclusão', 'success');
+            renderBoard();
+            closeModal();
+        }
         function abrirConfirmBloqueioModal() {
             const checkin = currentTask.checkin_bloqueio;
             const checkout = currentTask.checkout_bloqueio;
