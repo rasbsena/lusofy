@@ -2181,7 +2181,7 @@ const dadosParaEnviar = {
 
         document.getElementById('taskModal').addEventListener('click', function(e) { if (e.target.id === 'taskModal') closeModal(); });
         document.getElementById('confirmModal').addEventListener('click', function(e) { if (e.target.id === 'confirmModal') closeConfirmModal(); });         document.getElementById('confirmBloqueioModal').addEventListener('click', function(e) { if (e.target.id === 'confirmBloqueioModal') closeConfirmBloqueioModal(); });         document.getElementById('confirmExclusaoModal').addEventListener('click', function(e) { if (e.target.id === 'confirmExclusaoModal') closeConfirmExclusaoModal(); });
-        document.addEventListener('keydown', function(e) { if (e.key === 'Escape') { closeModal(); cancelCamera(); closeConfirmModal(); closeConfirmBloqueioModal(); } });
+        document.addEventListener('keydown', function(e) { if (e.key === 'Escape') { closeModal(); cancelCamera(); closeConfirmModal(); closeConfirmBloqueioModal(); closeConfirmExclusaoModal(); } });
         
         // Dashboard
         function toggleDashboard() {
