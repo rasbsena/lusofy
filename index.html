@@ -1315,12 +1315,6 @@
 
         // Atualiza status localmente (sem enviar ao backend ainda)
 function updateStatusLocal(newStatus) {
-            // Se estiver mudando para bloqueado, abre modal de confirmação de exclusão
-            if (newStatus === 'bloqueado') {
-                abrirConfirmExclusaoModal();
-                return;
-            }
-            
             // Se for bloqueio de mapa e estiver mudando para concluído, abre modal de confirmação
             if (currentTask.tipo === 'bloqueio_mapa' && newStatus === 'concluido') {
                 if (abrirConfirmBloqueioModal()) {
@@ -1710,50 +1704,6 @@ function formatTelefone(input) {
     }
     input.value = value;
 }
-        function abrirConfirmExclusaoModal() {
-            document.getElementById('inputJustificativaExclusao').value = '';
-            document.getElementById('confirmExclusaoModal').classList.add('active');
-            return true;
-        }
-        
-        function closeConfirmExclusaoModal() {
-            document.getElementById('confirmExclusaoModal').classList.remove('active');
-            renderModalContent(); // Volta o select para o status anterior
-        }
-        
-        async function confirmarExclusao() {
-            const justificativa = document.getElementById('inputJustificativaExclusao').value.trim();
-            
-            if (!justificativa) {
-                showToast('Preencha a justificativa da exclusão', 'error');
-                return;
-            }
-            
-            closeConfirmExclusaoModal();
-            
-            const oldStatus = originalTask.status;
-            const oldDescricao = currentTask.descricao;
-            
-            currentTask.status = 'bloqueado';
-            currentTask.descricao = justificativa;
-            
-            const taskInArray = tasks.find(t => t.id === currentTask.id);
-            if (taskInArray) {
-                taskInArray.status = 'bloqueado';
-                taskInArray.descricao = justificativa;
-            }
-            
-            await sendUpdate(UPDATE_TYPES.STATUS_CHANGE, currentTask, {
-                old_status: oldStatus,
-                new_status: 'bloqueado',
-                old_descricao: oldDescricao,
-                justificativa_exclusao: justificativa
-            });
-            
-            showToast('Tarefa programada para exclusão', 'success');
-            renderBoard();
-            closeModal();
-        }
         function abrirConfirmBloqueioModal() {
             const checkin = currentTask.checkin_bloqueio;
             const checkout = currentTask.checkout_bloqueio;
@@ -2180,8 +2130,8 @@ const dadosParaEnviar = {
         }
 
         document.getElementById('taskModal').addEventListener('click', function(e) { if (e.target.id === 'taskModal') closeModal(); });
-        document.getElementById('confirmModal').addEventListener('click', function(e) { if (e.target.id === 'confirmModal') closeConfirmModal(); });         document.getElementById('confirmBloqueioModal').addEventListener('click', function(e) { if (e.target.id === 'confirmBloqueioModal') closeConfirmBloqueioModal(); });         document.getElementById('confirmExclusaoModal').addEventListener('click', function(e) { if (e.target.id === 'confirmExclusaoModal') closeConfirmExclusaoModal(); });
-        document.addEventListener('keydown', function(e) { if (e.key === 'Escape') { closeModal(); cancelCamera(); closeConfirmModal(); closeConfirmBloqueioModal(); closeConfirmExclusaoModal(); } });
+        document.getElementById('confirmModal').addEventListener('click', function(e) { if (e.target.id === 'confirmModal') closeConfirmModal(); });         document.getElementById('confirmBloqueioModal').addEventListener('click', function(e) { if (e.target.id === 'confirmBloqueioModal') closeConfirmBloqueioModal(); });
+        document.addEventListener('keydown', function(e) { if (e.key === 'Escape') { closeModal(); cancelCamera(); closeConfirmModal(); closeConfirmBloqueioModal(); } });
         
         // Dashboard
         function toggleDashboard() {
