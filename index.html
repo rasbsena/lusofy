@@ -684,6 +684,29 @@
             </div>
         </div>
     </div>
+    <!-- Modal Confirmação Exclusão (Status Bloqueado) -->
+    <div class="confirm-modal-overlay" id="confirmExclusaoModal">
+        <div class="confirm-modal">
+            <div class="confirm-modal-header" style="border-color:#ef4444;">
+                <svg viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+                <h3 style="color:#ef4444;">Atenção: Programar Exclusão</h3>
+            </div>
+            <div class="confirm-modal-body">
+                <div class="confirm-warning" style="background:rgba(239,68,68,0.15);border-color:rgba(239,68,68,0.4);">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+                    <p style="color:#fca5a5;">Ao marcar como <strong>Bloqueado</strong>, esta tarefa será programada para <strong>exclusão</strong>. Use este status apenas para tarefas que não poderão ser executadas.</p>
+                </div>
+                <div style="margin-top:16px;">
+                    <label style="font-size:0.75rem;color:var(--text-muted);text-transform:uppercase;font-weight:600;display:block;margin-bottom:6px;">Justificativa da Exclusão <span style="color:#ef4444;">*</span></label>
+                    <textarea id="inputJustificativaExclusao" class="comentario-textarea" placeholder="Explique o motivo pelo qual esta tarefa não poderá ser executada..." style="min-height:100px;border-color:rgba(239,68,68,0.4);"></textarea>
+                </div>
+                <div class="confirm-modal-footer" style="margin-top:16px;">
+                    <button class="btn-secondary" onclick="closeConfirmExclusaoModal()">Cancelar</button>
+                    <button class="btn-primary" style="background:#ef4444;" onclick="confirmarExclusao()">Confirmar Exclusão</button>
+                </div>
+            </div>
+        </div>
+    </div>
     <!-- Modal Confirmação Bloqueio -->
     <div class="confirm-modal-overlay" id="confirmBloqueioModal">
         <div class="confirm-modal">
