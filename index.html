@@ -1315,6 +1315,12 @@
 
         // Atualiza status localmente (sem enviar ao backend ainda)
 function updateStatusLocal(newStatus) {
+            // Se estiver mudando para bloqueado, abre modal de confirmação de exclusão
+            if (newStatus === 'bloqueado') {
+                abrirConfirmExclusaoModal();
+                return;
+            }
+            
             // Se for bloqueio de mapa e estiver mudando para concluído, abre modal de confirmação
             if (currentTask.tipo === 'bloqueio_mapa' && newStatus === 'concluido') {
                 if (abrirConfirmBloqueioModal()) {
