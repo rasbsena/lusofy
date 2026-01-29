@@ -2528,16 +2528,31 @@ const dadosParaEnviar = {
             
             function createIndicators() {
                 leftIndicator = document.createElement('div');
-                leftIndicator.className = 'kanban-scroll-indicator left';
-                leftIndicator.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>';
-                kanbanContainer.appendChild(leftIndicator);
+                leftIndicator.className = 'kanban-scroll-zone left';
+                leftIndicator.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M15 18l-6-6 6-6"/></svg>';
+                document.body.appendChild(leftIndicator);
                 
                 rightIndicator = document.createElement('div');
-                rightIndicator.className = 'kanban-scroll-indicator right';
-                rightIndicator.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>';
-                kanbanContainer.appendChild(rightIndicator);
+                rightIndicator.className = 'kanban-scroll-zone right';
+                rightIndicator.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 18l6-6-6-6"/></svg>';
+                document.body.appendChild(rightIndicator);
                 
                 updateIndicatorsVisibility();
+                updateIndicatorsPosition();
+            }
+            
+            function updateIndicatorsPosition() {
+                if (!leftIndicator || !rightIndicator) return;
+                
+                const rect = kanbanContainer.getBoundingClientRect();
+                
+                leftIndicator.style.top = rect.top + 'px';
+                leftIndicator.style.bottom = 'auto';
+                leftIndicator.style.height = rect.height + 'px';
+                
+                rightIndicator.style.top = rect.top + 'px';
+                rightIndicator.style.bottom = 'auto';
+                rightIndicator.style.height = rect.height + 'px';
             }
             
             function updateIndicatorsVisibility() {
@@ -2643,6 +2658,9 @@ const dadosParaEnviar = {
             kanbanContainer.addEventListener('mousemove', handleEdgeScroll);
             
             kanbanContainer.addEventListener('scroll', updateIndicatorsVisibility);
+            
+            window.addEventListener('scroll', updateIndicatorsPosition);
+            window.addEventListener('resize', updateIndicatorsPosition);
             
             document.addEventListener('dragover', function(e) {
                 if (!draggedCard) return;
