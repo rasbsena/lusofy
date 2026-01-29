@@ -184,6 +184,16 @@
         .empty-column svg { width: 40px; height: 40px; margin-bottom: 10px; opacity: 0.4; }
         .empty-column p { font-size: 0.8rem; }
         .kanban-column.drag-over .column-cards { background: rgba(255, 207, 0, 0.05); border-radius: 8px; }
+        /* Edge Scroll Indicators */
+        .kanban-container { position: relative; }
+        .kanban-scroll-indicator { position: absolute; top: 0; bottom: 0; width: 50px; pointer-events: none; z-index: 10; display: flex; align-items: center; justify-content: center; opacity: 0.5; transition: opacity 0.2s ease; }
+        .kanban-scroll-indicator.left { left: 0; }
+        .kanban-scroll-indicator.right { right: 0; }
+        .kanban-scroll-indicator svg { width: 24px; height: 24px; color: var(--accent); filter: drop-shadow(0 0 4px rgba(0,0,0,0.5)); }
+        .kanban-scroll-indicator.hidden { opacity: 0; }
+        .kanban-scroll-indicator.active { opacity: 1; }
+        .kanban-scroll-indicator.active.left { background: linear-gradient(to right, rgba(255, 207, 0, 0.25), transparent); }
+        .kanban-scroll-indicator.active.right { background: linear-gradient(to left, rgba(255, 207, 0, 0.25), transparent); }
         .logo-sun { width: 36px; height: 36px; color: var(--accent); }
         .dados-pagamento-section { background: var(--bg-card); border-radius: 8px; padding: 16px; border: 2px solid #f59e0b; }
         .dados-pagamento-form { display: flex; flex-direction: column; gap: 12px; }
