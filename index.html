@@ -2175,7 +2175,25 @@ const dadosParaEnviar = {
         }
         function updateCronometro() { if (!currentTask) return; const el = document.getElementById('cronometro'); if (el) { const span = el.querySelector('span'); if (span) span.textContent = calcularCronometro(currentTask.inicio_previsto); } setTimeout(updateCronometro, 60000); }
         function getIniciais(nome) { if (!nome) return 'NA'; return nome.split(' ').map(n => n[0]).slice(0, 2).join('').toUpperCase(); }
-function formatDate(dateStr) { if (!dateStr) return '—'; const d = new Date(dateStr); return d.toLocaleString('pt-BR', { timeZone: 'America/Sao_Paulo', day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' }); }        function formatDateTime(dateStr) { if (!dateStr) return '—'; const d = new Date(dateStr); return d.toLocaleDateString('pt-BR') + ' ' + d.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }); }
+        function calcularTempoRestante(prazoStr) {
+            if (!prazoStr) return { texto: '—', classe: '' };
+            const agora = new Date();
+            const prazo = new Date(prazoStr);
+            const diff = prazo - agora;
+            const absMs = Math.abs(diff);
+            const minutos = Math.floor(absMs / (1000 * 60)) % 60;
+            const horas = Math.floor(absMs / (1000 * 60 * 60)) % 24;
+            const dias = Math.floor(absMs / (1000 * 60 * 60 * 24));
+            let texto = '';
+            if (dias > 0) texto = dias + 'd ' + horas + 'h';
+            else if (horas > 0) texto = horas + 'h ' + minutos + 'min';
+            else texto = minutos + 'min';
+            if (diff < 0) return { texto: 'Atrasado há ' + texto, classe: 'atrasado' };
+            if (diff < 1000 * 60 * 60 * 2) return { texto: 'Faltam ' + texto, classe: 'urgente' };
+            if (diff < 1000 * 60 * 60 * 24) return { texto: 'Faltam ' + texto, classe: 'atencao' };
+            return { texto: 'Faltam ' + texto, classe: 'tranquilo' };
+        }
+        function formatDate(dateStr) { if (!dateStr) return '—'; const d = new Date(dateStr); return d.toLocaleString('pt-BR', { timeZone: 'America/Sao_Paulo', day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' }); }        function formatDateTime(dateStr) { if (!dateStr) return '—'; const d = new Date(dateStr); return d.toLocaleDateString('pt-BR') + ' ' + d.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }); }
         
         function showToast(message, type) {
             type = type || 'info';
