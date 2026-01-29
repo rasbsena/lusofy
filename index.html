@@ -2501,6 +2501,131 @@ const dadosParaEnviar = {
         if (localStorage.getItem('lusofy_theme') === 'light') {
             document.body.classList.add('light-theme');
         }
+        // Edge Scrolling Horizontal para o Kanban (Desktop only)
+(function() {
+    const kanbanContainer = document.querySelector('.kanban-container');
+    if (!kanbanContainer) return;
+    
+    const EDGE_ZONE = 100; // pixels da borda que ativam o scroll
+    const MAX_SPEED = 20; // velocidade máxima de scroll (pixels por frame)
+    const MIN_SPEED = 2; // velocidade mínima de scroll
+    
+    let scrollAnimationId = null;
+    let currentScrollSpeed = 0;
+    let isMouseInContainer = false;
+    
+    // Detecta se é touch device
+    function isTouchDevice() {
+        return 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+    }
+    
+    // Calcula velocidade proporcional à proximidade da borda
+    function calculateSpeed(distanceFromEdge) {
+        // Quanto menor a distância, maior a velocidade
+        const ratio = 1 - (distanceFromEdge / EDGE_ZONE);
+        return MIN_SPEED + (MAX_SPEED - MIN_SPEED) * ratio;
+    }
+    
+    function handleEdgeScroll(e) {
+        if (isTouchDevice()) return;
+        
+        const rect = kanbanContainer.getBoundingClientRect();
+        const mouseX = e.clientX - rect.left;
+        const containerWidth = rect.width;
+        
+        // Verifica borda esquerda
+        if (mouseX < EDGE_ZONE && kanbanContainer.scrollLeft > 0) {
+            currentScrollSpeed = -calculateSpeed(mouseX);
+            startScrollAnimation();
+        }
+        // Verifica borda direita
+        else if (mouseX > containerWidth - EDGE_ZONE && 
+                 kanbanContainer.scrollLeft < kanbanContainer.scrollWidth - containerWidth) {
+            const distanceFromRight = containerWidth - mouseX;
+            currentScrollSpeed = calculateSpeed(distanceFromRight);
+            startScrollAnimation();
+        }
+        // Fora das zonas de edge
+        else {
+            stopScrollAnimation();
+        }
+    }
+    
+    function startScrollAnimation() {
+        if (scrollAnimationId) return; // Já está rodando
+        
+        function animate() {
+            if (!isMouseInContainer || currentScrollSpeed === 0) {
+                stopScrollAnimation();
+                return;
+            }
+            
+            kanbanContainer.scrollLeft += currentScrollSpeed;
+            scrollAnimationId = requestAnimationFrame(animate);
+        }
+        
+        scrollAnimationId = requestAnimationFrame(animate);
+    }
+    
+    function stopScrollAnimation() {
+        if (scrollAnimationId) {
+            cancelAnimationFrame(scrollAnimationId);
+            scrollAnimationId = null;
+        }
+        currentScrollSpeed = 0;
+    }
+    
+    // Event listeners
+    kanbanContainer.addEventListener('mouseenter', function() {
+        isMouseInContainer = true;
+    });
+    
+    kanbanContainer.addEventListener('mouseleave', function() {
+        isMouseInContainer = false;
+        stopScrollAnimation();
+    });
+    
+    kanbanContainer.addEventListener('mousemove', handleEdgeScroll);
+    
+    // Suporte ao drag and drop - detecta movimento durante arrasto
+    document.addEventListener('dragover', function(e) {
+        if (!draggedCard) return; // Usa a variável global draggedCard
+        
+        const rect = kanbanContainer.getBoundingClientRect();
+        
+        // Verifica se o drag está dentro do container verticalmente
+        if (e.clientY < rect.top || e.clientY > rect.bottom) {
+            stopScrollAnimation();
+            return;
+        }
+        
+        const mouseX = e.clientX - rect.left;
+        const containerWidth = rect.width;
+        
+        isMouseInContainer = true;
+        
+        // Borda esquerda durante drag
+        if (mouseX >= 0 && mouseX < EDGE_ZONE && kanbanContainer.scrollLeft > 0) {
+            currentScrollSpeed = -calculateSpeed(mouseX);
+            startScrollAnimation();
+        }
+        // Borda direita durante drag
+        else if (mouseX > containerWidth - EDGE_ZONE && mouseX <= containerWidth &&
+                 kanbanContainer.scrollLeft < kanbanContainer.scrollWidth - containerWidth) {
+            const distanceFromRight = containerWidth - mouseX;
+            currentScrollSpeed = calculateSpeed(distanceFromRight);
+            startScrollAnimation();
+        }
+        else {
+            stopScrollAnimation();
+        }
+    });
+    
+    // Para o scroll quando o drag termina
+    document.addEventListener('dragend', function() {
+        stopScrollAnimation();
+    });
+})();
     </script>
 </body>
 </html>
