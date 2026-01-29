@@ -1295,6 +1295,7 @@
 
         function renderModalContent() {
             const modal = document.getElementById('modalBody');
+            const cronometro = calcularCronometro(currentTask.inicio_previsto);
             const statusConfig = STATUS_CONFIG[currentTask.status] || STATUS_CONFIG['nao_iniciado'];
             const tipoConfig = TIPO_CONFIG[currentTask.tipo] || {};
             const isColetarDados = currentTask.tipo === 'coletar_dados';
@@ -2171,6 +2172,14 @@ const dadosParaEnviar = {
             }
         });
 
+        function calcularCronometro(inicioStr) {
+            if (!inicioStr) return '—';
+            const inicio = new Date(inicioStr), agora = new Date(), diff = agora - inicio;
+            if (diff < 0) return 'Não iniciado';
+            const dias = Math.floor(diff / (1000*60*60*24)), horas = Math.floor((diff % (1000*60*60*24)) / (1000*60*60)), minutos = Math.floor((diff % (1000*60*60)) / (1000*60));
+            return dias + 'd ' + horas + 'h ' + minutos + 'm';
+        }
+        function updateCronometro() { if (!currentTask) return; const el = document.getElementById('cronometro'); if (el) { const span = el.querySelector('span'); if (span) span.textContent = calcularCronometro(currentTask.inicio_previsto); } setTimeout(updateCronometro, 60000); }
         function getIniciais(nome) { if (!nome) return 'NA'; return nome.split(' ').map(n => n[0]).slice(0, 2).join('').toUpperCase(); }
         function calcularTempoRestante(prazoStr) {
             if (!prazoStr) return { texto: '—', classe: '' };
