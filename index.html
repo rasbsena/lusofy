@@ -2181,10 +2181,11 @@ const dadosParaEnviar = {
         }
         function updateCronometro() { if (!currentTask) return; const el = document.getElementById('cronometro'); if (el) { const span = el.querySelector('span'); if (span) span.textContent = calcularCronometro(currentTask.inicio_previsto); } setTimeout(updateCronometro, 60000); }
         function getIniciais(nome) { if (!nome) return 'NA'; return nome.split(' ').map(n => n[0]).slice(0, 2).join('').toUpperCase(); }
-        function calcularTempoRestante(prazoStr) {
+function calcularTempoRestante(prazoStr) {
             if (!prazoStr) return { texto: '—', classe: '' };
             const agora = new Date();
             const prazo = new Date(prazoStr);
+            prazo.setMinutes(prazo.getMinutes() + prazo.getTimezoneOffset());
             const diff = prazo - agora;
             const absMs = Math.abs(diff);
             const minutos = Math.floor(absMs / (1000 * 60)) % 60;
