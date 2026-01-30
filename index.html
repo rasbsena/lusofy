@@ -1779,8 +1779,8 @@ function formatTelefone(input) {
                 return false;
             }
             
-            document.getElementById('confirmBloqueioCheckin').textContent = formatDate(checkin);
-            document.getElementById('confirmBloqueioCheckout').textContent = formatDate(checkout);
+            document.getElementById('confirmBloqueioCheckin').textContent = checkin.split('-').reverse().join('/');
+            document.getElementById('confirmBloqueioCheckout').textContent = checkout.split('-').reverse().join('/');
             document.getElementById('confirmBloqueioModal').classList.add('active');
             return true;
         }
