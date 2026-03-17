@@ -1534,7 +1534,7 @@ function updateStatusLocal(newStatus) {
                 if (response.ok) {
                     showToast('Intermediário cadastrado com sucesso!', 'success');
                     currentTask.status = 'concluido';
-                    currentTask.concluido_em = new Date().toISOString();
+                    currentTask.concluido_em = formatDateEnvio(new Date());
                     var taskInArray = tasks.find(function(t) { return t.id === currentTask.id; });
                     if (taskInArray) {
                         taskInArray.status = 'concluido';
@@ -1584,7 +1584,7 @@ async function enviarAcaoCobranca(acao) {
                     if (acao === 'COBRANÇA CONCLUÍDA') {
                         var oldStatus = currentTask.status;
                         currentTask.status = 'concluido';
-                        currentTask.concluido_em = new Date().toISOString();
+                        currentTask.concluido_em = formatDateEnvio(new Date());
                         
                         var taskInArray = tasks.find(function(t) { return t.id === currentTask.id; });
                         if (taskInArray) {
@@ -1676,7 +1676,7 @@ async function enviarAcaoCobranca(acao) {
             // Muda status para concluído
             var oldStatus = currentTask.status;
             currentTask.status = 'concluido';
-            currentTask.concluido_em = new Date().toISOString();
+            currentTask.concluido_em = formatDateEnvio(new Date());
             
             if (taskInArray) {
                 taskInArray.status = 'concluido';
@@ -1797,7 +1797,7 @@ function formatTelefone(input) {
             
             const oldStatus = currentTask.status;
             currentTask.status = 'concluido';
-            currentTask.concluido_em = new Date().toISOString();
+            currentTask.concluido_em = formatDateEnvio(new Date());
             
             const taskInArray = tasks.find(t => t.id === currentTask.id);
             if (taskInArray) {
