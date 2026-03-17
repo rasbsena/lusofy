@@ -2244,8 +2244,8 @@ function calcularTempoRestante(task) { if (task.tempo_restante_texto && task.tem
         }
 
         document.getElementById('taskModal').addEventListener('click', function(e) { if (e.target.id === 'taskModal') closeModal(); });
-        document.getElementById('confirmModal').addEventListener('click', function(e) { if (e.target.id === 'confirmModal') closeConfirmModal(); });         document.getElementById('confirmBloqueioModal').addEventListener('click', function(e) { if (e.target.id === 'confirmBloqueioModal') closeConfirmBloqueioModal(); });         document.getElementById('confirmExclusaoModal').addEventListener('click', function(e) { if (e.target.id === 'confirmExclusaoModal') closeConfirmExclusaoModal(); });
-        document.addEventListener('keydown', function(e) { if (e.key === 'Escape') { closeModal(); cancelCamera(); closeConfirmModal(); closeConfirmBloqueioModal(); closeConfirmExclusaoModal(); } });
+        document.getElementById('confirmModal').addEventListener('click', function(e) { if (e.target.id === 'confirmModal') closeConfirmModal(); });         document.getElementById('confirmBloqueioModal').addEventListener('click', function(e) { if (e.target.id === 'confirmBloqueioModal') closeConfirmBloqueioModal(); });         document.getElementById('confirmExclusaoModal').addEventListener('click', function(e) { if (e.target.id === 'confirmExclusaoModal') closeConfirmExclusaoModal(); });         document.getElementById('emailModal').addEventListener('click', function(e) { if (e.target.id === 'emailModal') closeEmailModal(); });
+        document.addEventListener('keydown', function(e) { if (e.key === 'Escape') { closeModal(); cancelCamera(); closeConfirmModal(); closeConfirmBloqueioModal(); closeConfirmExclusaoModal(); closeEmailModal(); } });
         
         // Dashboard
         function toggleDashboard() {
