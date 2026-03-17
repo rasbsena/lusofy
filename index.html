@@ -1816,7 +1816,23 @@ function formatTelefone(input) {
         function closeConfirmBloqueioModal() {
             document.getElementById('confirmBloqueioModal').classList.remove('active');
         }
-        
+        function openEmailModal() {
+            if (!currentTask || !currentTask.solicitacao_conteudo) return;
+            const content = currentTask.solicitacao_conteudo;
+            const modalBody = document.getElementById('emailModalBody');
+            const isHtml = content.trim().startsWith('<') && content.includes('>');
+            if (isHtml) {
+                modalBody.className = 'email-modal-body html-content';
+                modalBody.innerHTML = content;
+            } else {
+                modalBody.className = 'email-modal-body text-content';
+                modalBody.textContent = content;
+            }
+            document.getElementById('emailModal').classList.add('active');
+        }
+        function closeEmailModal() {
+            document.getElementById('emailModal').classList.remove('active');
+        }
         async function confirmarConcluirBloqueio() {
             closeConfirmBloqueioModal();
             
