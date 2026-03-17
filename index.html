@@ -773,6 +773,16 @@
             </div>
         </div>
     </div>
+    <!-- Modal Ver Email -->
+    <div class="email-modal-overlay" id="emailModal">
+        <div class="email-modal">
+            <div class="email-modal-header">
+                <h3><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>Conteúdo do Email</h3>
+                <button class="modal-close" onclick="closeEmailModal()"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg></button>
+            </div>
+            <div class="email-modal-body" id="emailModalBody"></div>
+        </div>
+    </div>
     <div class="toast-container" id="toastContainer"></div>
     <script>
         const WEBHOOK_LOAD = 'https://n8n.upperfy.com.br/webhook/0fec17a7-8654-45ff-8ad6-lsfy1';
