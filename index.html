@@ -2111,7 +2111,7 @@ const dadosParaEnviar = {
                 if (input.value) {
                     const oldVal = currentTask[field];
                     // Usa T12:00:00 (meio-dia) para evitar problema de fuso horário na virada do dia
-                    const newVal = input.value + 'T12:00:00.000Z';
+                    const newVal = input.value + ' 23:59:59';
                     // Atualiza currentTask
                     currentTask[field] = newVal;
                     // Atualiza também no array tasks
