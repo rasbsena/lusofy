@@ -1255,13 +1255,22 @@
             return hours.toString().padStart(2, '0') + ':' + minutes.toString().padStart(2, '0') + ':' + seconds.toString().padStart(2, '0');
         }
         
-        function updateWaitTimers() {
+function updateWaitTimers() {
             const timers = document.querySelectorAll('.card-wait-timer');
             const now = Date.now();
             timers.forEach(timer => {
                 const created = timer.dataset.created;
                 if (created) {
-                const createdTime = new Date(created.replace(' ', 'T')).getTime();                    const elapsed = now - createdTime;
+                    let createdStr = created;
+                    if (created.includes('/')) {
+                        const partes = created.split(' ');
+                        const dataPartes = partes[0].split('/');
+                        createdStr = dataPartes[2] + '-' + dataPartes[1] + '-' + dataPartes[0] + (partes[1] ? 'T' + partes[1] : 'T00:00:00');
+                    } else {
+                        createdStr = created.replace(' ', 'T');
+                    }
+                    const createdTime = new Date(createdStr).getTime();
+                    const elapsed = now - createdTime;
                     const valueSpan = timer.querySelector('.timer-value');
                     if (valueSpan) {
                         valueSpan.textContent = formatWaitTime(elapsed);
