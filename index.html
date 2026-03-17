@@ -1236,8 +1236,7 @@
             timers.forEach(timer => {
                 const created = timer.dataset.created;
                 if (created) {
-                    const createdTime = new Date(created).getTime();
-                    const elapsed = now - createdTime;
+                const createdTime = new Date(created.replace(' ', 'T')).getTime();                    const elapsed = now - createdTime;
                     const valueSpan = timer.querySelector('.timer-value');
                     if (valueSpan) {
                         valueSpan.textContent = formatWaitTime(elapsed);
@@ -2176,13 +2175,7 @@ const dadosParaEnviar = {
             }
         });
 
-        function calcularCronometro(inicioStr) {
-            if (!inicioStr) return '—';
-            const inicio = new Date(inicioStr), agora = new Date(), diff = agora - inicio;
-            if (diff < 0) return 'Não iniciado';
-            const dias = Math.floor(diff / (1000*60*60*24)), horas = Math.floor((diff % (1000*60*60*24)) / (1000*60*60)), minutos = Math.floor((diff % (1000*60*60)) / (1000*60));
-            return dias + 'd ' + horas + 'h ' + minutos + 'm';
-        }
+function calcularCronometro(inicioStr) { return '—'; }
         function updateCronometro() { }
         function getIniciais(nome) { if (!nome) return 'NA'; return nome.split(' ').map(n => n[0]).slice(0, 2).join('').toUpperCase(); }
 function calcularTempoRestante(task) { if (task.tempo_restante_texto && task.tempo_restante_classe) { return { texto: task.tempo_restante_texto, classe: task.tempo_restante_classe }; } return { texto: '—', classe: '' }; }
