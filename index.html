@@ -2242,9 +2242,8 @@ function calcularTempoRestante(task) { if (!task.prazo) return { texto: '—', c
         }
 
         document.getElementById('taskModal').addEventListener('click', function(e) { if (e.target.id === 'taskModal') closeModal(); });
-        document.getElementById('confirmModal').addEventListener('click', function(e) { if (e.target.id === 'confirmModal') closeConfirmModal(); });         document.getElementById('confirmBloqueioModal').addEventListener('click', function(e) { if (e.target.id === 'confirmBloqueioModal') closeConfirmBloqueioModal(); });         document.getElementById('confirmExclusaoModal').addEventListener('click', function(e) { if (e.target.id === 'confirmExclusaoModal') closeConfirmExclusaoModal(); });         document.getElementById('emailModal').addEventListener('click', function(e) { if (e.target.id === 'emailModal') closeEmailModal(); });
-        document.addEventListener('keydown', function(e) { if (e.key === 'Escape') { closeModal(); cancelCamera(); closeConfirmModal(); closeConfirmBloqueioModal(); closeConfirmExclusaoModal(); closeEmailModal(); } });
-        
+        document.getElementById('confirmModal').addEventListener('click', function(e) { if (e.target.id === 'confirmModal') closeConfirmModal(); });         document.getElementById('confirmBloqueioModal').addEventListener('click', function(e) { if (e.target.id === 'confirmBloqueioModal') closeConfirmBloqueioModal(); });         document.getElementById('confirmExclusaoModal').addEventListener('click', function(e) { if (e.target.id === 'confirmExclusaoModal') closeConfirmExclusaoModal(); });         document.getElementById('emailModal').addEventListener('click', function(e) { if (e.target.id === 'emailModal') closeEmailModal(); });         document.getElementById('confirmDataVencimentoModal').addEventListener('click', function(e) { if (e.target.id === 'confirmDataVencimentoModal') closeConfirmDataVencimentoModal(); });
+        document.addEventListener('keydown', function(e) { if (e.key === 'Escape') { closeModal(); cancelCamera(); closeConfirmModal(); closeConfirmBloqueioModal(); closeConfirmExclusaoModal(); closeEmailModal(); closeConfirmDataVencimentoModal(); } });        
         // Dashboard
         function toggleDashboard() {
             const dash = document.getElementById('dashboard');
