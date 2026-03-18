@@ -1782,6 +1782,52 @@ function formatTelefone(input) {
             }
             document.getElementById('emailModal').classList.add('active');
         }
+        function abrirConfirmacaoDataVencimento() {
+            var dataInput = document.getElementById('inputDataVencimento').value;
+            
+            if (!dataInput) {
+                showToast('Selecione uma data de vencimento', 'error');
+                return;
+            }
+            
+            var dataFormatada = dataInput.split('-').reverse().join('/');
+            document.getElementById('confirmDataVencimentoValor').textContent = dataFormatada;
+            document.getElementById('confirmDataVencimentoModal').classList.add('active');
+        }
+        
+        function closeConfirmDataVencimentoModal() {
+            document.getElementById('confirmDataVencimentoModal').classList.remove('active');
+        }
+        
+        async function confirmarDataVencimento() {
+            var dataInput = document.getElementById('inputDataVencimento').value;
+            
+            closeConfirmDataVencimentoModal();
+            
+            var oldStatus = currentTask.status;
+            currentTask.data_vencimento = dataInput;
+            currentTask.data_vencimento_confirmada = true;
+            currentTask.status = 'concluido';
+            currentTask.concluido_em = formatDateEnvio(new Date());
+            
+            var taskInArray = tasks.find(function(t) { return t.id === currentTask.id; });
+            if (taskInArray) {
+                taskInArray.data_vencimento = dataInput;
+                taskInArray.data_vencimento_confirmada = true;
+                taskInArray.status = 'concluido';
+                taskInArray.concluido_em = currentTask.concluido_em;
+            }
+            
+            await sendUpdate(UPDATE_TYPES.STATUS_CHANGE, currentTask, {
+                old_status: oldStatus,
+                new_status: 'concluido',
+                data_vencimento: dataInput
+            });
+            
+            showToast('Faturamento concluído com sucesso!', 'success');
+            renderBoard();
+            closeModal();
+        }
 function closeEmailModal() {
             document.getElementById('emailModal').classList.remove('active');
             document.getElementById('emailModalBody').innerHTML = '';
