@@ -1353,7 +1353,6 @@ function updateWaitTimers() {
                 (isCobrancaDigitada ? renderDadosPagamentoCobranca(hasPaymentData) : '') +
                 (currentTask.tipo === 'cobranca_link' ? renderCobrancaViaLink() : '') +
                 (currentTask.tipo === 'cobranca_digitada' ? renderBotoesCobrancaDigitada() : '') +
-                (currentTask.tipo === 'cadastrar_intermediario' ? renderFormularioIntermediario() : '') +
                 renderArquivosSection() +
                 renderComentariosSection();
             
