@@ -1475,6 +1475,23 @@ function updateStatusLocal(newStatus) {
             }
             input.value = value;
         }
+
+        async function enviarIntermediario() {
+            var nome = document.getElementById('inputNomeIntermediario').value.trim();
+            var cnpj = document.getElementById('inputCnpjIntermediario').value.trim();
+            var dominio = document.getElementById('inputDominioIntermediario').value.trim();
+            var taxa = document.getElementById('inputTaxaIntermediario').value.trim();
+            var operadora = document.getElementById('inputOperadoraIntermediario').value;
+            
+            if (!nome || !cnpj || !dominio || !taxa || !operadora) {
+                showToast('Preencha todos os campos obrigatórios', 'error');
+                return;
+            }
+            
+            if (cnpj.replace(/\D/g, '').length !== 14) {
+                showToast('CNPJ inválido', 'error');
+                return;
+            }
             
             var payload = {
                 update_type: 9,
