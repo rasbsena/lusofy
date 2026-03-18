@@ -1403,6 +1403,16 @@ function updateStatusLocal(newStatus) {
                     return;
                 }
             }
+            
+            // Se for faturar e estiver mudando para concluído, exige data de vencimento
+            if (currentTask.tipo === 'faturar' && newStatus === 'concluido') {
+                if (!currentTask.data_vencimento_confirmada) {
+                    showToast('Confirme a data de vencimento antes de concluir', 'error');
+                    renderModalContent();
+                    return;
+                }
+            }
+            
             currentTask.status = newStatus;
         }
 
