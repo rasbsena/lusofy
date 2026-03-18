@@ -530,13 +530,15 @@
                     <h3>Histórico de Concluídos</h3>
                     <span class="historico-count" id="historicoCount">0</span>
                 </div>
-                <div class="historico-filters">
+<div class="historico-filters">
                     <select id="filtroTipo" onchange="renderHistoricoTable()">
                         <option value="">Todos os tipos</option>
                         <option value="bloqueio_mapa">Bloqueio de Mapa</option>
+                        <option value="cancelamento">Cancelamentos</option>
                         <option value="coletar_dados">Coletar Dados</option>
                         <option value="cobranca_digitada">Cobrança Digitada</option>
-                        <option value="checar_tarifarios">Checar Tarifários</option>
+                        <option value="cobranca_link">Cobrança Via Link</option>
+                        <option value="faturar">Faturamento</option>
                     </select>
                     <select id="filtroResponsavel" onchange="renderHistoricoTable()">
                         <option value="">Todos os responsáveis</option>
