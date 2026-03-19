@@ -2704,6 +2704,44 @@ document.addEventListener('keydown', function(e) { if (e.key === 'Escape') { clo
                 ctx.fillText(nomeAbrev, x + barW / 2, pad.top + h + 15);
             });
         }
+        function openMobileFilters() {
+            document.getElementById('mobileFiltersOverlay').classList.add('active');
+            document.getElementById('filtroPrioridadeMobile').value = document.getElementById('filtroPrioridade').value;
+            document.getElementById('filtroTipoMobile').value = document.getElementById('filtroTipo').value;
+            document.getElementById('filtroResponsavelMobile').value = document.getElementById('filtroResponsavel').value;
+            var selectResp = document.getElementById('filtroResponsavelMobile');
+            var selectRespOriginal = document.getElementById('filtroResponsavel');
+            selectResp.innerHTML = selectRespOriginal.innerHTML;
+        }
+        
+        function closeMobileFilters() {
+            document.getElementById('mobileFiltersOverlay').classList.remove('active');
+        }
+        
+        function clearMobileFilters() {
+            document.getElementById('filtroPrioridadeMobile').value = '';
+            document.getElementById('filtroTipoMobile').value = '';
+            document.getElementById('filtroResponsavelMobile').value = '';
+        }
+        
+        function applyMobileFilters() {
+            document.getElementById('filtroPrioridade').value = document.getElementById('filtroPrioridadeMobile').value;
+            document.getElementById('filtroTipo').value = document.getElementById('filtroTipoMobile').value;
+            document.getElementById('filtroResponsavel').value = document.getElementById('filtroResponsavelMobile').value;
+            aplicarFiltros();
+            updateFilterBadge();
+            closeMobileFilters();
+        }
+        
+        function updateFilterBadge() {
+            var count = 0;
+            if (document.getElementById('filtroPrioridade').value) count++;
+            if (document.getElementById('filtroTipo').value) count++;
+            if (document.getElementById('filtroResponsavel').value) count++;
+            var badge = document.getElementById('filterCountBadge');
+            if (count > 0) { badge.textContent = count; badge.style.display = 'inline'; }
+            else { badge.style.display = 'none'; }
+        }
 function openMobileSearch() {
             document.getElementById('mobileSearchOverlay').classList.add('active');
             document.getElementById('mobileSearchInput').focus();
