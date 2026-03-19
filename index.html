@@ -551,6 +551,11 @@
     <main class="main-content" id="mainContent">
         <div class="kanban-container">
                         <div class="filters-bar">
+                <button class="btn-filters-mobile" onclick="openMobileFilters()">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg>
+                    Filtros
+                    <span class="filter-count" id="filterCountBadge" style="display:none;">0</span>
+                </button>
                 <div class="filters-group">
                     <label>Filtrar:</label>
                     <select id="filtroPrioridade" onchange="aplicarFiltros()">
