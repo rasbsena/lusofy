@@ -2609,6 +2609,16 @@ function calcularTempoRestante(task) { if (!task.prazo) return { texto: '—', c
                 ctx.fillText(nomeAbrev, x + barW / 2, pad.top + h + 15);
             });
         }
+
+        function toggleMobileDrawer() {
+            document.getElementById('mobileDrawer').classList.toggle('active');
+            document.getElementById('mobileDrawerOverlay').classList.toggle('active');
+        }
+        
+        function closeMobileDrawer() {
+            document.getElementById('mobileDrawer').classList.remove('active');
+            document.getElementById('mobileDrawerOverlay').classList.remove('active');
+        }
         
         function toggleTheme() {
             document.body.classList.toggle('light-theme');
