@@ -232,8 +232,28 @@
         .error-state svg { width: 60px; height: 60px; color: #ef4444; margin-bottom: 16px; }
         .error-state h3 { font-family: 'Oswald', sans-serif; font-size: 1.2rem; margin-bottom: 8px; color: var(--text-primary); }
         .error-state p { color: var(--text-muted); margin-bottom: 16px; }
-        @media (max-width: 768px) { .header { padding: 0 16px; } .header-nav { display: none; } .kanban-container { padding: 0 16px; } .kanban-column { width: 300px; min-width: 300px; } }
+@media (max-width: 768px) { .header { padding: 0 16px; } .header-nav { display: none; } .kanban-container { padding: 0 16px; } .kanban-column { width: 300px; min-width: 300px; } .header-search { display: none; } .btn-menu-mobile { display: flex; } }
         @media (max-width: 600px) { .dados-pagamento-form .form-row { grid-template-columns: 1fr; } }
+        /* Menu Mobile */
+        .btn-menu-mobile { display: none; align-items: center; justify-content: center; width: 44px; height: 44px; background: var(--bg-card); border: 2px solid var(--border-color); border-radius: 8px; cursor: pointer; transition: all 0.2s ease; }
+        .btn-menu-mobile:hover { border-color: var(--accent); background: rgba(255, 207, 0, 0.1); }
+        .btn-menu-mobile svg { color: var(--text-primary); }
+        .mobile-drawer-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.7); backdrop-filter: blur(4px); z-index: 9998; opacity: 0; visibility: hidden; transition: all 0.3s ease; }
+        .mobile-drawer-overlay.active { opacity: 1; visibility: visible; }
+        .mobile-drawer { position: fixed; top: 0; left: -280px; width: 280px; height: 100%; background: var(--bg-primary); border-right: 3px solid var(--accent); z-index: 9999; transition: left 0.3s ease; display: flex; flex-direction: column; }
+        .mobile-drawer.active { left: 0; }
+        .mobile-drawer-header { padding: 20px; border-bottom: 2px solid var(--border-color); display: flex; align-items: center; justify-content: space-between; }
+        .mobile-drawer-header h2 { font-family: 'Oswald', sans-serif; font-size: 1.4rem; color: var(--accent); letter-spacing: 2px; }
+        .mobile-drawer-close { width: 36px; height: 36px; background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 8px; cursor: pointer; display: flex; align-items: center; justify-content: center; color: var(--text-secondary); transition: all 0.2s ease; }
+        .mobile-drawer-close:hover { background: var(--accent); color: var(--bg-primary); border-color: var(--accent); }
+        .mobile-drawer-nav { flex: 1; padding: 20px; display: flex; flex-direction: column; gap: 10px; }
+        .mobile-drawer-nav a { display: flex; align-items: center; gap: 12px; padding: 14px 16px; background: var(--bg-card); border: 2px solid var(--border-color); border-radius: 10px; color: var(--text-primary); text-decoration: none; font-family: 'Oswald', sans-serif; font-size: 1rem; text-transform: uppercase; letter-spacing: 1px; transition: all 0.2s ease; }
+        .mobile-drawer-nav a:hover { border-color: var(--accent); background: rgba(255, 207, 0, 0.1); }
+        .mobile-drawer-nav a.active { background: var(--accent); color: var(--bg-primary); border-color: var(--accent); }
+        .mobile-drawer-nav a svg { width: 20px; height: 20px; }
+        .mobile-drawer-footer { padding: 20px; border-top: 2px solid var(--border-color); }
+        .mobile-drawer-footer a { display: flex; align-items: center; gap: 10px; padding: 12px 16px; background: var(--bg-card); border: 2px solid var(--border-color); border-radius: 10px; color: var(--text-primary); text-decoration: none; font-family: 'Montserrat', sans-serif; font-size: 0.9rem; transition: all 0.2s ease; }
+        .mobile-drawer-footer a:hover { border-color: var(--accent); }
         .confirm-modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(6px); display: none; align-items: center; justify-content: center; z-index: 4000; padding: 24px; }
         .confirm-modal-overlay.active { display: flex; }
         .confirm-modal { background: var(--bg-secondary); border-radius: 16px; border: 2px solid var(--accent); width: 100%; max-width: 450px; overflow: hidden; box-shadow: 0 25px 50px rgba(0,0,0,0.5); }
