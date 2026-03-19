@@ -873,6 +873,50 @@
             <div class="email-modal-body" id="emailModalBody"></div>
         </div>
     </div>
+    <!-- Mobile Filters -->
+    <div class="mobile-filters-overlay" id="mobileFiltersOverlay" onclick="closeMobileFilters()">
+        <div class="mobile-filters-container" onclick="event.stopPropagation()">
+            <div class="mobile-filters-header">
+                <h3>Filtros</h3>
+                <button class="mobile-filters-close" onclick="closeMobileFilters()">
+                    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
+                </button>
+            </div>
+            <div class="mobile-filters-body">
+                <div class="mobile-filter-group">
+                    <label>Prioridade</label>
+                    <select id="filtroPrioridadeMobile">
+                        <option value="">Todas Prioridades</option>
+                        <option value="alta">Alta</option>
+                        <option value="media">Média</option>
+                        <option value="baixa">Baixa</option>
+                    </select>
+                </div>
+                <div class="mobile-filter-group">
+                    <label>Tipo</label>
+                    <select id="filtroTipoMobile">
+                        <option value="">Todos os Tipos</option>
+                        <option value="bloqueio_mapa">Bloqueio de Mapa</option>
+                        <option value="cancelamento">Cancelamentos</option>
+                        <option value="coletar_dados">Coletar Dados</option>
+                        <option value="cobranca_digitada">Cobrança Digitada</option>
+                        <option value="cobranca_link">Cobrança Via Link</option>
+                        <option value="faturar">Faturamento</option>
+                    </select>
+                </div>
+                <div class="mobile-filter-group">
+                    <label>Responsável</label>
+                    <select id="filtroResponsavelMobile">
+                        <option value="">Todos Responsáveis</option>
+                    </select>
+                </div>
+            </div>
+            <div class="mobile-filters-footer">
+                <button class="btn-clear" onclick="clearMobileFilters()">Limpar</button>
+                <button class="btn-apply" onclick="applyMobileFilters()">Aplicar</button>
+            </div>
+        </div>
+    </div>
     <!-- Mobile Search -->
     <div class="mobile-search-overlay" id="mobileSearchOverlay">
         <div class="mobile-search-header">
