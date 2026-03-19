@@ -2633,7 +2633,31 @@ document.addEventListener('keydown', function(e) { if (e.key === 'Escape') { clo
                 ctx.fillText(nomeAbrev, x + barW / 2, pad.top + h + 15);
             });
         }
-
+function openMobileSearch() {
+            document.getElementById('mobileSearchOverlay').classList.add('active');
+            document.getElementById('mobileSearchInput').focus();
+        }
+        
+        function closeMobileSearch() {
+            document.getElementById('mobileSearchOverlay').classList.remove('active');
+            document.getElementById('mobileSearchInput').value = '';
+            document.getElementById('mobileSearchResults').innerHTML = '';
+        }
+        
+        function handleMobileSearch(value) {
+            var results = document.getElementById('mobileSearchResults');
+            var termo = value.toLowerCase().trim();
+            if (termo.length < 3) { results.innerHTML = ''; return; }
+            var resultados = tasks.filter(function(t) { return t.status !== 'concluido' && (t.nome || '').toLowerCase().includes(termo); }).slice(0, 10);
+            if (resultados.length === 0) { results.innerHTML = '<div class="search-autocomplete-empty">Nenhuma tarefa encontrada</div>'; return; }
+            results.innerHTML = resultados.map(function(task) { var tipoConfig = TIPO_CONFIG[task.tipo] || {}; return '<div class="search-autocomplete-item" onclick="openModalFromMobileSearch(' + task.id + ')"><span class="tipo-dot" style="background:' + (tipoConfig.color || '#666') + '"></span><div class="item-info"><div class="item-nome">' + task.nome + '</div><div class="item-tipo">' + (tipoConfig.label || task.tipo) + '</div></div></div>'; }).join('');
+        }
+        
+        function openModalFromMobileSearch(taskId) {
+            closeMobileSearch();
+            openModal(taskId);
+        }
+        
         function toggleMobileDrawer() {
             document.getElementById('mobileDrawer').classList.toggle('active');
             document.getElementById('mobileDrawerOverlay').classList.toggle('active');
