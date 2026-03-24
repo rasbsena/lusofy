@@ -623,6 +623,11 @@
             }
             .form-group textarea { min-height: 80px; }
 
+            .autocomplete-dropdown { max-height: 180px; }
+            .autocomplete-item { padding: 14px 12px; font-size: 0.9rem; }
+
+            .pousada-manual-aviso { font-size: 0.72rem; padding: 10px; }
+
             .row { flex-direction: column; gap: 0; }
 
             .radio-group { gap: 8px; }
@@ -714,6 +719,82 @@
             .btn-row { margin-top: 16px; }
         }
 
+        /* ── AUTOCOMPLETE POUSADA ── */
+        .autocomplete-wrap { position: relative; }
+        .autocomplete-dropdown {
+            position: absolute;
+            top: 100%;
+            left: 0; right: 0;
+            background: #fff;
+            border: 2px solid var(--navy);
+            border-top: none;
+            border-radius: 0 0 var(--radius) var(--radius);
+            max-height: 200px;
+            overflow-y: auto;
+            z-index: 50;
+            display: none;
+            box-shadow: 0 8px 24px rgba(4,31,67,0.18);
+        }
+        .autocomplete-dropdown.active { display: block; }
+        .autocomplete-item {
+            padding: 12px 14px;
+            cursor: pointer;
+            font-size: 0.88rem;
+            color: var(--gray-900);
+            border-bottom: 1px solid var(--gray-100);
+            transition: background 0.15s;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .autocomplete-item:last-child { border-bottom: none; }
+        .autocomplete-item:hover, .autocomplete-item.selected { background: rgba(255,207,0,0.12); }
+        .autocomplete-item .ac-dot {
+            width: 8px; height: 8px;
+            border-radius: 50%;
+            background: var(--green);
+            flex-shrink: 0;
+        }
+        .autocomplete-item .ac-name { flex: 1; font-weight: 600; }
+        .autocomplete-loading {
+            padding: 14px;
+            text-align: center;
+            font-size: 0.8rem;
+            color: var(--gray-500);
+        }
+        .autocomplete-loading .ac-spinner {
+            display: inline-block;
+            width: 14px; height: 14px;
+            border: 2px solid var(--gray-300);
+            border-top-color: var(--navy);
+            border-radius: 50%;
+            animation: spin 0.6s linear infinite;
+            vertical-align: middle;
+            margin-right: 6px;
+        }
+
+        /* Aviso pousada manual */
+        .pousada-manual-aviso {
+            display: none;
+            align-items: flex-start;
+            gap: 8px;
+            margin-top: 8px;
+            padding: 10px 12px;
+            background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+            border: 1.5px solid #f59e0b;
+            border-radius: 8px;
+            font-size: 0.75rem;
+            color: #92400e;
+            line-height: 1.4;
+        }
+        .pousada-manual-aviso.visible { display: flex; }
+        .pousada-manual-aviso svg {
+            width: 16px; height: 16px;
+            flex-shrink: 0;
+            margin-top: 1px;
+            color: #f59e0b;
+        }
+
         /* ── ACESSO NEGADO ── */
         .acesso-negado {
             position: fixed;
@@ -802,8 +883,15 @@
             <div class="card-body">
                 <div class="form-group">
                     <label>Nome da Pousada <span class="required">*</span></label>
-                    <input type="text" id="nomePousada" placeholder="Ex: Pousada H Guarujá">
+                    <div class="autocomplete-wrap" id="pousadaWrap">
+                        <input type="text" id="nomePousada" placeholder="Digite para buscar..." autocomplete="off" oninput="buscarPousada(this.value)">
+                        <div class="autocomplete-dropdown" id="pousadaDropdown"></div>
+                    </div>
                     <div class="error-msg" id="err-pousada">Informe o nome da pousada</div>
+                    <div class="pousada-manual-aviso" id="pousadaManualAviso">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+                        <span>Esta pousada não consta nos registros. O envio automático ao grupo da pousada <strong>não será efetuado</strong>.</span>
+                    </div>
                 </div>
 
                 <div class="form-group">
@@ -815,6 +903,12 @@
                     <label>Nome do Hóspede <span class="required">*</span></label>
                     <input type="text" id="nomeHospede" placeholder="Nome completo do hóspede">
                     <div class="error-msg" id="err-hospede">Informe o nome do hóspede</div>
+                </div>
+
+                <div class="form-group">
+                    <label>Número do Hóspede <span class="required">*</span></label>
+                    <input type="tel" id="telefoneHospede" placeholder="5511999999999" inputmode="numeric" maxlength="13" oninput="this.value = this.value.replace(/\D/g, '')">
+                    <div class="error-msg" id="err-telefone">Informe o número (ex: 5511999999999)</div>
                 </div>
 
                 <div class="form-group">
@@ -967,6 +1061,92 @@
 <script>
     const dias = ['Domingo','Segunda-feira','Terça-feira','Quarta-feira','Quinta-feira','Sexta-feira','Sábado'];
 
+    // ══ Estado do autocomplete da pousada ══
+    let pousadaSelecionada = null; // { nome, id, ... } se veio da busca, null se manual
+    let buscaPousadaTimeout = null;
+
+    async function buscarPousada(termo) {
+        const dropdown = document.getElementById('pousadaDropdown');
+        const aviso = document.getElementById('pousadaManualAviso');
+
+        // Limpa seleção anterior sempre que digitar
+        pousadaSelecionada = null;
+        aviso.classList.remove('visible');
+
+        if (termo.length < 3) {
+            dropdown.classList.remove('active');
+            dropdown.innerHTML = '';
+            return;
+        }
+
+        // Debounce
+        clearTimeout(buscaPousadaTimeout);
+        buscaPousadaTimeout = setTimeout(async () => {
+            dropdown.innerHTML = '<div class="autocomplete-loading"><span class="ac-spinner"></span>Buscando...</div>';
+            dropdown.classList.add('active');
+
+            try {
+                const resp = await fetch('https://n8n.upperfy.com.br/webhook/0fec17a7-8654-45ff-8ad6-vmm', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ termo: termo })
+                });
+
+                const data = await resp.json();
+                const lista = Array.isArray(data) ? data : (data.pousadas || data.results || []);
+
+                if (lista.length === 0) {
+                    dropdown.classList.remove('active');
+                    dropdown.innerHTML = '';
+                    // Mostra aviso de pousada manual
+                    aviso.classList.add('visible');
+                    return;
+                }
+
+                dropdown.innerHTML = lista.map((p, i) => {
+                    const nome = p.nome || p.name || p.nome_parceiro || p;
+                    const id = p.id || p.id_parceiro || null;
+                    return '<div class="autocomplete-item" onclick="selecionarPousada(this)" data-nome="' + (typeof nome === 'string' ? nome : nome) + '" data-id="' + (id || '') + '" data-json=\'' + JSON.stringify(p).replace(/'/g, '&#39;') + '\'>' +
+                        '<span class="ac-dot"></span>' +
+                        '<span class="ac-name">' + (typeof nome === 'string' ? nome : nome) + '</span>' +
+                        '</div>';
+                }).join('');
+                dropdown.classList.add('active');
+
+            } catch (err) {
+                console.error('Erro ao buscar pousadas:', err);
+                dropdown.classList.remove('active');
+                dropdown.innerHTML = '';
+                aviso.classList.add('visible');
+            }
+        }, 400);
+    }
+
+    function selecionarPousada(el) {
+        const nome = el.dataset.nome;
+        const id = el.dataset.id;
+        let jsonData = {};
+        try { jsonData = JSON.parse(el.dataset.json); } catch(e) {}
+
+        document.getElementById('nomePousada').value = nome;
+        document.getElementById('pousadaDropdown').classList.remove('active');
+        document.getElementById('pousadaManualAviso').classList.remove('visible');
+
+        pousadaSelecionada = { nome: nome, id: id, ...jsonData };
+    }
+
+    // Fechar dropdown ao clicar fora
+    document.addEventListener('click', function(e) {
+        const wrap = document.getElementById('pousadaWrap');
+        if (wrap && !wrap.contains(e.target)) {
+            document.getElementById('pousadaDropdown').classList.remove('active');
+            // Se digitou algo mas não selecionou da lista, mostra aviso
+            if (!pousadaSelecionada && val('nomePousada').length >= 3) {
+                document.getElementById('pousadaManualAviso').classList.add('visible');
+            }
+        }
+    });
+
     // Toggle valor pendente
     document.querySelectorAll('input[name="pagamento"]').forEach(r => {
         r.addEventListener('change', () => {
@@ -1029,6 +1209,7 @@
 
         if (!val('nomePousada')) { showError('nomePousada', 'err-pousada'); ok = false; }
         if (!val('nomeHospede')) { showError('nomeHospede', 'err-hospede'); ok = false; }
+        if (!val('telefoneHospede') || val('telefoneHospede').length < 10) { showError('telefoneHospede', 'err-telefone'); ok = false; }
         if (!val('dataCheckin')) { showError('dataCheckin', 'err-checkin'); ok = false; }
         if (!val('dataCheckout')) { showError('dataCheckout', 'err-checkout'); ok = false; }
         if (!pag) { document.getElementById('err-pagamento').classList.add('visible'); ok = false; }
@@ -1114,8 +1295,11 @@
 
         const payload = {
             nome_pousada: val('nomePousada'),
+            pousada_cadastrada: pousadaSelecionada ? true : false,
+            pousada_dados: pousadaSelecionada || null,
             acomodacao: val('acomodacao'),
             nome_hospede: val('nomeHospede'),
+            telefone_hospede: val('telefoneHospede'),
             titular_reserva: val('titularReserva'),
             data_checkin: val('dataCheckin'),
             data_checkout: val('dataCheckout'),
@@ -1331,6 +1515,8 @@
         document.querySelectorAll('input:not([type="radio"]), textarea').forEach(el => el.value = '');
         document.querySelectorAll('input[type="radio"]').forEach(el => el.checked = false);
         document.getElementById('valorPendenteWrap').classList.remove('open');
+        document.getElementById('pousadaManualAviso').classList.remove('visible');
+        pousadaSelecionada = null;
         clearErrors();
         updateStepper(1);
         window.scrollTo({ top: 0, behavior: 'smooth' });
