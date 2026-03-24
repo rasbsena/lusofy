@@ -1160,6 +1160,7 @@
         document.getElementById('pousadaManualAviso').classList.remove('visible');
 
         pousadaSelecionada = {
+            id: jsonData.id || null,
             nome_parceiro: jsonData.nome_parceiro || nome,
             endereco_completo: jsonData.endereco_completo || '',
             areacomum: jsonData.areacomum || '',
@@ -1359,6 +1360,7 @@
         const payload = {
             nome_pousada: val('nomePousada'),
             pousada_cadastrada: pousadaSelecionada ? true : false,
+            id_pousada: p.id || null,
             endereco_completo: p.endereco_completo || null,
             areacomum: p.areacomum || null,
             horario_checkin: p.horario_checkin || null,
