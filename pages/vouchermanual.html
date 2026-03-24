@@ -1354,14 +1354,15 @@
 
         const pag = document.querySelector('input[name="pagamento"]:checked');
         const user = getLocalStorage().user || {};
-
-        // Gerar HTML standalone do voucher (mesmo layout do n8n)
-        const voucherHtml = gerarVoucherHtml();
+        const p = pousadaSelecionada || {};
 
         const payload = {
             nome_pousada: val('nomePousada'),
             pousada_cadastrada: pousadaSelecionada ? true : false,
-            pousada_dados: pousadaSelecionada || null,
+            endereco_completo: p.endereco_completo || null,
+            areacomum: p.areacomum || null,
+            horario_checkin: p.horario_checkin || null,
+            horario_checkout: p.horario_checkout || null,
             acomodacao: val('acomodacao'),
             nome_hospede: val('nomeHospede'),
             telefone_hospede: val('telefoneHospede'),
@@ -1376,8 +1377,7 @@
                 id_funcionario: user.id_funcionario || null,
                 nome: user.nome || 'Desconhecido',
                 email: user.email || null
-            },
-            voucher_html: voucherHtml
+            }
         };
 
         try {
@@ -1389,9 +1389,6 @@
 
             if (!resp.ok) throw new Error('Erro ' + resp.status);
 
-            // Baixar PDF do voucher
-            baixarVoucherPdf(voucherHtml);
-
             document.getElementById('previewSection').classList.remove('active');
             document.getElementById('successSection').classList.add('active');
             updateStepper(3);
@@ -1401,220 +1398,6 @@
         } finally {
             btn.classList.remove('loading');
         }
-    }
-
-    function gerarVoucherHtml() {
-        const nomePousada = val('nomePousada');
-        const acomodacao = val('acomodacao');
-        const nomeHospede = val('nomeHospede');
-        const titularReserva = val('titularReserva');
-        const checkin = val('dataCheckin');
-        const checkout = val('dataCheckout');
-        const pag = document.querySelector('input[name="pagamento"]:checked');
-        const observacoes = val('observacoes');
-        const valorPendente = val('valorPendente');
-
-        const ciFormatado = formatarData(checkin);
-        const coFormatado = formatarData(checkout);
-        const ciDia = getDia(checkin);
-        const coDia = getDia(checkout);
-        const ciSemana = getDiaSemana(checkin);
-        const coSemana = getDiaSemana(checkout);
-
-        // Dados extras da pousada (quando selecionada do autocomplete)
-        const p = pousadaSelecionada || {};
-        const endereco = p.endereco_completo || '';
-        const areaComum = p.areacomum || '';
-        const horarioCheckin = p.horario_checkin || '';
-        const horarioCheckout = p.horario_checkout || '';
-
-        const titularHtml = titularReserva ? `
-            <div class="pagamento-section">
-                <div class="pagamento-label">Titular da Reserva</div>
-                <div class="pagamento-name">${titularReserva}</div>
-            </div>` : '';
-
-        const enderecoHtml = endereco ? `
-            <div class="info-section localizacao-section">
-                <div class="info-section-title">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
-                    Localização
-                </div>
-                <div class="info-section-content">${endereco.replace(/\\n/g, '<br>')}</div>
-            </div>` : '';
-
-        let horariosHtml = '';
-        if (horarioCheckin || horarioCheckout) {
-            let linhas = '';
-            if (horarioCheckin) linhas += 'Check-in a partir das <strong>' + horarioCheckin + '</strong>';
-            if (horarioCheckin && horarioCheckout) linhas += '<br>';
-            if (horarioCheckout) linhas += 'Check-out até as <strong>' + horarioCheckout + '</strong>';
-            horariosHtml = `
-            <div class="info-section">
-                <div class="info-section-title">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
-                    Horários
-                </div>
-                <div class="info-section-content">${linhas}</div>
-            </div>`;
-        }
-
-        const areaComumHtml = areaComum ? `
-            <div class="info-section">
-                <div class="info-section-title">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
-                    Informações Importantes
-                </div>
-                <div class="info-section-content">${areaComum.replace(/\\n/g, '<br>')}</div>
-            </div>` : '';
-
-        const obsHtml = observacoes ? `
-            <div class="info-section observacao-section">
-                <div class="info-section-title">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
-                    Observações
-                </div>
-                <div class="info-section-content">${observacoes.replace(/\n/g, '<br>')}</div>
-            </div>` : '';
-
-        let pagamentoHtml = '';
-        if (pag.value === 'parcial') {
-            pagamentoHtml = `
-            <div class="info-section observacao-section">
-                <div class="info-section-title">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
-                    Pagamento Parcial
-                </div>
-                <div class="info-section-content">Valor pendente: <strong>${valorPendente}</strong></div>
-            </div>`;
-        }
-
-        return `<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Voucher de Check-in</title>
-    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        @page { size: A4; margin: 0; }
-        body { font-family: 'Montserrat', sans-serif; background: #ffffff; min-height: 100vh; display: flex; align-items: flex-start; justify-content: center; padding: 30px 20px; }
-        .voucher { background: #ffffff; width: 100%; max-width: 480px; border-radius: 24px; overflow: hidden; box-shadow: 0 25px 80px rgba(0,0,0,0.15); position: relative; border: 1px solid #e5e7eb; }
-        .voucher-header { background: linear-gradient(135deg, #041f43 0%, #0a3570 100%); padding: 24px 20px; text-align: center; position: relative; }
-        .voucher-header::after { content: ''; position: absolute; bottom: -12px; left: 0; right: 0; height: 24px; background: #ffffff; border-radius: 50% 50% 0 0 / 100% 100% 0 0; }
-        .logo { font-family: 'Oswald', sans-serif; font-size: 1.6rem; font-weight: 700; color: #ffcf00; letter-spacing: 3px; margin-bottom: 4px; }
-        .voucher-type { font-family: 'Oswald', sans-serif; font-size: 0.75rem; color: rgba(255,255,255,0.8); text-transform: uppercase; letter-spacing: 2px; }
-        .voucher-body { padding: 20px 22px; }
-        .pousada-name { font-family: 'Oswald', sans-serif; font-size: 1.4rem; font-weight: 700; color: #041f43; text-align: center; margin-bottom: 3px; text-transform: uppercase; letter-spacing: 1px; }
-        .acomodacao { text-align: center; color: #666; font-size: 0.85rem; margin-bottom: 16px; font-weight: 500; }
-        .hospede-section { background: linear-gradient(135deg, #ffcf00 0%, #ffe566 100%); border-radius: 14px; padding: 14px; margin-bottom: 14px; text-align: center; }
-        .hospede-label { font-size: 0.65rem; color: #041f43; text-transform: uppercase; letter-spacing: 1.5px; font-weight: 600; margin-bottom: 3px; }
-        .hospede-name { font-family: 'Oswald', sans-serif; font-size: 1.3rem; font-weight: 700; color: #041f43; text-transform: uppercase; }
-        .pagamento-section { background: linear-gradient(135deg, #e0f2fe 0%, #bae6fd 100%); border-radius: 14px; padding: 12px 16px; margin-bottom: 14px; text-align: center; border: 2px solid #0ea5e9; }
-        .pagamento-label { font-size: 0.65rem; color: #0369a1; text-transform: uppercase; letter-spacing: 1.5px; font-weight: 600; margin-bottom: 3px; }
-        .pagamento-name { font-family: 'Oswald', sans-serif; font-size: 1.05rem; font-weight: 700; color: #0c4a6e; text-transform: uppercase; }
-        .datas-container { display: flex; gap: 12px; margin-bottom: 14px; }
-        .data-box { flex: 1; border-radius: 10px; padding: 12px; text-align: center; border: 2px solid; }
-        .data-box.checkin { border-color: #22c55e; background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%); }
-        .data-box.checkout { border-color: #ef4444; background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%); }
-        .data-label { font-size: 0.6rem; text-transform: uppercase; letter-spacing: 1.5px; font-weight: 700; margin-bottom: 6px; }
-        .data-box.checkin .data-label { color: #16a34a; }
-        .data-box.checkout .data-label { color: #dc2626; }
-        .data-dia { font-family: 'Oswald', sans-serif; font-size: 1.7rem; font-weight: 700; color: #041f43; line-height: 1; }
-        .data-completa { font-size: 0.78rem; color: #041f43; font-weight: 600; margin-top: 3px; }
-        .data-semana { font-size: 0.68rem; color: #666; margin-top: 3px; }
-        .info-section { background: #f8f9fa; border-radius: 10px; padding: 12px 14px; margin-bottom: 10px; }
-        .info-section-title { font-family: 'Oswald', sans-serif; font-size: 0.7rem; color: #041f43; text-transform: uppercase; letter-spacing: 1px; font-weight: 600; margin-bottom: 6px; display: flex; align-items: center; gap: 6px; }
-        .info-section-title svg { width: 14px; height: 14px; color: #ffcf00; }
-        .info-section-content { font-size: 0.82rem; color: #333; line-height: 1.5; }
-        .localizacao-section { background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%); border: 2px solid #10b981; }
-        .observacao-section { background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); border: 2px dashed #f59e0b; }
-        .voucher-footer { background: #041f43; padding: 12px 20px; text-align: center; }
-        .footer-text { font-size: 0.65rem; color: rgba(255,255,255,0.7); letter-spacing: 0.5px; }
-        .footer-text strong { color: #ffcf00; }
-        .corner-cut { position: absolute; width: 18px; height: 18px; background: #ffffff; border-radius: 50%; border: 1px solid #e5e7eb; }
-        .corner-cut.left { left: -9px; top: 50%; transform: translateY(-50%); }
-        .corner-cut.right { right: -9px; top: 50%; transform: translateY(-50%); }
-        @media print {
-            body { background: #fff; padding: 20px; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-            .voucher { box-shadow: none; max-width: 480px; margin: 0 auto; page-break-inside: avoid; }
-        }
-    </style>
-</head>
-<body>
-    <div class="voucher">
-        <div class="voucher-header">
-            <div class="logo">LUSOTUR VIAGENS</div>
-            <div class="voucher-type">Voucher de Check-in</div>
-        </div>
-        <div class="voucher-body">
-            <div class="pousada-name">${nomePousada}</div>
-            <div class="acomodacao">${acomodacao || '—'}</div>
-            <div class="hospede-section">
-                <div class="hospede-label">Hóspede</div>
-                <div class="hospede-name">${nomeHospede}</div>
-            </div>
-            ${titularHtml}
-            <div class="datas-container">
-                <div class="data-box checkin">
-                    <div class="data-label">Check-in</div>
-                    <div class="data-dia">${ciDia}</div>
-                    <div class="data-completa">${ciFormatado}</div>
-                    <div class="data-semana">${ciSemana}</div>
-                </div>
-                <div class="data-box checkout">
-                    <div class="data-label">Check-out</div>
-                    <div class="data-dia">${coDia}</div>
-                    <div class="data-completa">${coFormatado}</div>
-                    <div class="data-semana">${coSemana}</div>
-                </div>
-            </div>
-            ${enderecoHtml}
-            ${horariosHtml}
-            ${areaComumHtml}
-            ${pagamentoHtml}
-            ${obsHtml}
-        </div>
-        <div class="corner-cut left"></div>
-        <div class="corner-cut right"></div>
-        <div class="voucher-footer">
-            <div class="footer-text">
-                Apresente este voucher no momento do check-in<br>
-                <strong>Powered by Lusotur Viagens</strong>
-            </div>
-        </div>
-    </div>
-</body>
-</html>`;
-    }
-
-    function baixarVoucherPdf(html) {
-        // Abre o voucher em nova aba — funciona tanto no mobile quanto desktop
-        const blob = new Blob([html], { type: 'text/html; charset=utf-8' });
-        const url = URL.createObjectURL(blob);
-        const win = window.open(url, '_blank');
-
-        if (win) {
-            // Quando a aba carrega, dispara print automaticamente
-            win.onload = function() {
-                setTimeout(function() {
-                    win.print();
-                }, 600);
-            };
-        } else {
-            // Se popup bloqueado, oferece download direto do HTML
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = 'voucher-checkin.html';
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            showToast('Abra o arquivo baixado para imprimir/salvar como PDF.');
-        }
-
-        // Libera a URL após um tempo
-        setTimeout(function() { URL.revokeObjectURL(url); }, 10000);
     }
 
     function novoVoucher() {
