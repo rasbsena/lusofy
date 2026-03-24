@@ -1018,6 +1018,21 @@
                     <div class="pv-pagamento-value" id="pv-pag-value"></div>
                 </div>
 
+                <div class="pv-obs" id="pv-endereco-wrap" style="display:none">
+                    <div class="pv-obs-title" style="color:#065f46;">📍 Localização</div>
+                    <div class="pv-obs-text" id="pv-endereco"></div>
+                </div>
+
+                <div class="pv-obs" id="pv-horarios-wrap" style="display:none">
+                    <div class="pv-obs-title" style="color:#041f43;">🕐 Horários</div>
+                    <div class="pv-obs-text" id="pv-horarios"></div>
+                </div>
+
+                <div class="pv-obs" id="pv-areacomum-wrap" style="display:none">
+                    <div class="pv-obs-title" style="color:#041f43;">ℹ️ Informações Importantes</div>
+                    <div class="pv-obs-text" id="pv-areacomum"></div>
+                </div>
+
                 <div class="pv-obs" id="pv-obs-wrap" style="display:none">
                     <div class="pv-obs-title">Observações</div>
                     <div class="pv-obs-text" id="pv-obs"></div>
@@ -1093,22 +1108,34 @@
                 });
 
                 const data = await resp.json();
-                const lista = Array.isArray(data) ? data : (data.pousadas || data.results || []);
+
+                // Suporta múltiplos formatos de resposta:
+                // { results: [...] } ou [...] direto ou { pousadas: [...] }
+                let lista = [];
+                if (Array.isArray(data)) {
+                    lista = data;
+                } else if (data.results && Array.isArray(data.results)) {
+                    lista = data.results;
+                } else if (data.pousadas && Array.isArray(data.pousadas)) {
+                    lista = data.pousadas;
+                }
+
+                // Filtra itens que não são objetos válidos
+                lista = lista.filter(p => p && typeof p === 'object' && (p.nome_parceiro || p.nome || p.name));
 
                 if (lista.length === 0) {
                     dropdown.classList.remove('active');
                     dropdown.innerHTML = '';
-                    // Mostra aviso de pousada manual
                     aviso.classList.add('visible');
                     return;
                 }
 
-                dropdown.innerHTML = lista.map((p, i) => {
-                    const nome = p.nome || p.name || p.nome_parceiro || p;
-                    const id = p.id || p.id_parceiro || null;
-                    return '<div class="autocomplete-item" onclick="selecionarPousada(this)" data-nome="' + (typeof nome === 'string' ? nome : nome) + '" data-id="' + (id || '') + '" data-json=\'' + JSON.stringify(p).replace(/'/g, '&#39;') + '\'>' +
+                dropdown.innerHTML = lista.map(p => {
+                    const nome = p.nome_parceiro || p.nome || p.name || '(sem nome)';
+                    const jsonStr = JSON.stringify(p).replace(/'/g, '&#39;').replace(/"/g, '&quot;');
+                    return '<div class="autocomplete-item" onclick="selecionarPousada(this)" data-json="' + jsonStr + '">' +
                         '<span class="ac-dot"></span>' +
-                        '<span class="ac-name">' + (typeof nome === 'string' ? nome : nome) + '</span>' +
+                        '<span class="ac-name">' + nome + '</span>' +
                         '</div>';
                 }).join('');
                 dropdown.classList.add('active');
@@ -1123,16 +1150,23 @@
     }
 
     function selecionarPousada(el) {
-        const nome = el.dataset.nome;
-        const id = el.dataset.id;
         let jsonData = {};
         try { jsonData = JSON.parse(el.dataset.json); } catch(e) {}
+
+        const nome = jsonData.nome_parceiro || jsonData.nome || jsonData.name || el.textContent.trim();
 
         document.getElementById('nomePousada').value = nome;
         document.getElementById('pousadaDropdown').classList.remove('active');
         document.getElementById('pousadaManualAviso').classList.remove('visible');
 
-        pousadaSelecionada = { nome: nome, id: id, ...jsonData };
+        pousadaSelecionada = {
+            nome_parceiro: jsonData.nome_parceiro || nome,
+            endereco_completo: jsonData.endereco_completo || '',
+            areacomum: jsonData.areacomum || '',
+            horario_checkin: jsonData.horario_checkin || '',
+            horario_checkout: jsonData.horario_checkout || '',
+            ...jsonData
+        };
     }
 
     // Fechar dropdown ao clicar fora
@@ -1263,6 +1297,37 @@
             obsWrap.style.display = 'none';
         }
 
+        // Dados extras da pousada selecionada
+        const p = pousadaSelecionada || {};
+
+        const enderecoWrap = document.getElementById('pv-endereco-wrap');
+        if (p.endereco_completo) {
+            document.getElementById('pv-endereco').textContent = p.endereco_completo;
+            enderecoWrap.style.display = 'block';
+        } else {
+            enderecoWrap.style.display = 'none';
+        }
+
+        const horariosWrap = document.getElementById('pv-horarios-wrap');
+        if (p.horario_checkin || p.horario_checkout) {
+            let txt = '';
+            if (p.horario_checkin) txt += 'Check-in a partir das ' + p.horario_checkin;
+            if (p.horario_checkin && p.horario_checkout) txt += '  •  ';
+            if (p.horario_checkout) txt += 'Check-out até as ' + p.horario_checkout;
+            document.getElementById('pv-horarios').textContent = txt;
+            horariosWrap.style.display = 'block';
+        } else {
+            horariosWrap.style.display = 'none';
+        }
+
+        const areaComumWrap = document.getElementById('pv-areacomum-wrap');
+        if (p.areacomum) {
+            document.getElementById('pv-areacomum').textContent = p.areacomum;
+            areaComumWrap.style.display = 'block';
+        } else {
+            areaComumWrap.style.display = 'none';
+        }
+
         document.getElementById('formSection').classList.add('hidden');
         document.getElementById('previewSection').classList.add('active');
         updateStepper(2);
@@ -1356,10 +1421,51 @@
         const ciSemana = getDiaSemana(checkin);
         const coSemana = getDiaSemana(checkout);
 
+        // Dados extras da pousada (quando selecionada do autocomplete)
+        const p = pousadaSelecionada || {};
+        const endereco = p.endereco_completo || '';
+        const areaComum = p.areacomum || '';
+        const horarioCheckin = p.horario_checkin || '';
+        const horarioCheckout = p.horario_checkout || '';
+
         const titularHtml = titularReserva ? `
             <div class="pagamento-section">
                 <div class="pagamento-label">Titular da Reserva</div>
                 <div class="pagamento-name">${titularReserva}</div>
+            </div>` : '';
+
+        const enderecoHtml = endereco ? `
+            <div class="info-section localizacao-section">
+                <div class="info-section-title">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                    Localização
+                </div>
+                <div class="info-section-content">${endereco.replace(/\\n/g, '<br>')}</div>
+            </div>` : '';
+
+        let horariosHtml = '';
+        if (horarioCheckin || horarioCheckout) {
+            let linhas = '';
+            if (horarioCheckin) linhas += 'Check-in a partir das <strong>' + horarioCheckin + '</strong>';
+            if (horarioCheckin && horarioCheckout) linhas += '<br>';
+            if (horarioCheckout) linhas += 'Check-out até as <strong>' + horarioCheckout + '</strong>';
+            horariosHtml = `
+            <div class="info-section">
+                <div class="info-section-title">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+                    Horários
+                </div>
+                <div class="info-section-content">${linhas}</div>
+            </div>`;
+        }
+
+        const areaComumHtml = areaComum ? `
+            <div class="info-section">
+                <div class="info-section-title">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
+                    Informações Importantes
+                </div>
+                <div class="info-section-content">${areaComum.replace(/\\n/g, '<br>')}</div>
             </div>` : '';
 
         const obsHtml = observacoes ? `
@@ -1421,6 +1527,7 @@
         .info-section-title { font-family: 'Oswald', sans-serif; font-size: 0.75rem; color: #041f43; text-transform: uppercase; letter-spacing: 1px; font-weight: 600; margin-bottom: 8px; display: flex; align-items: center; gap: 8px; }
         .info-section-title svg { width: 16px; height: 16px; color: #ffcf00; }
         .info-section-content { font-size: 0.9rem; color: #333; line-height: 1.6; }
+        .localizacao-section { background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%); border: 2px solid #10b981; }
         .observacao-section { background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); border: 2px dashed #f59e0b; }
         .voucher-footer { background: #041f43; padding: 15px 24px; text-align: center; }
         .footer-text { font-size: 0.7rem; color: rgba(255,255,255,0.7); letter-spacing: 0.5px; }
@@ -1459,6 +1566,9 @@
                     <div class="data-semana">${coSemana}</div>
                 </div>
             </div>
+            ${enderecoHtml}
+            ${horariosHtml}
+            ${areaComumHtml}
             ${pagamentoHtml}
             ${obsHtml}
         </div>
