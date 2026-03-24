@@ -1,0 +1,1128 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Voucher Manual - Lusotur Viagens</title>
+    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --navy: #041f43;
+            --navy-light: #0a3570;
+            --gold: #ffcf00;
+            --gold-light: #ffe566;
+            --green: #22c55e;
+            --green-bg: #f0fdf4;
+            --red: #ef4444;
+            --red-bg: #fef2f2;
+            --blue: #0ea5e9;
+            --blue-bg: #e0f2fe;
+            --gray-50: #f8f9fa;
+            --gray-100: #e9ecef;
+            --gray-300: #ced4da;
+            --gray-500: #6c757d;
+            --gray-700: #495057;
+            --gray-900: #212529;
+            --radius: 12px;
+            --shadow: 0 4px 24px rgba(4, 31, 67, 0.12);
+            --shadow-lg: 0 12px 48px rgba(4, 31, 67, 0.18);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background: linear-gradient(160deg, #041f43 0%, #062a5a 40%, #0a3570 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: flex-start;
+            justify-content: center;
+            padding: 30px 16px 60px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 520px;
+        }
+
+        /* ── HEADER ── */
+        .page-header {
+            text-align: center;
+            margin-bottom: 28px;
+        }
+        .page-header .logo {
+            font-family: 'Oswald', sans-serif;
+            font-size: 1.6rem;
+            font-weight: 700;
+            color: var(--gold);
+            letter-spacing: 3px;
+        }
+        .page-header .subtitle {
+            font-family: 'Oswald', sans-serif;
+            font-size: 0.8rem;
+            color: rgba(255,255,255,0.6);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-top: 4px;
+        }
+
+        /* ── CARD ── */
+        .card {
+            background: #fff;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: var(--shadow-lg);
+        }
+        .card-header {
+            background: linear-gradient(135deg, var(--navy) 0%, var(--navy-light) 100%);
+            padding: 20px 24px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .card-header .step-badge {
+            width: 32px; height: 32px;
+            background: var(--gold);
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-family: 'Oswald', sans-serif;
+            font-weight: 700;
+            font-size: 0.95rem;
+            color: var(--navy);
+            flex-shrink: 0;
+        }
+        .card-header h2 {
+            font-family: 'Oswald', sans-serif;
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #fff;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .card-body { padding: 24px; }
+
+        /* ── STEPPER ── */
+        .stepper {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            margin-bottom: 24px;
+        }
+        .stepper-dot {
+            width: 10px; height: 10px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.25);
+            transition: all 0.3s;
+        }
+        .stepper-dot.active {
+            background: var(--gold);
+            box-shadow: 0 0 12px rgba(255,207,0,0.5);
+            transform: scale(1.3);
+        }
+        .stepper-dot.done { background: var(--green); }
+
+        /* ── FORM ELEMENTS ── */
+        .form-group {
+            margin-bottom: 18px;
+        }
+        .form-group label {
+            display: block;
+            font-family: 'Oswald', sans-serif;
+            font-size: 0.72rem;
+            font-weight: 600;
+            color: var(--navy);
+            text-transform: uppercase;
+            letter-spacing: 1.2px;
+            margin-bottom: 6px;
+        }
+        .form-group label .required {
+            color: var(--red);
+            margin-left: 2px;
+        }
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px 14px;
+            border: 2px solid var(--gray-100);
+            border-radius: var(--radius);
+            font-family: 'Montserrat', sans-serif;
+            font-size: 0.9rem;
+            color: var(--gray-900);
+            background: var(--gray-50);
+            transition: border-color 0.2s, box-shadow 0.2s;
+            outline: none;
+        }
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            border-color: var(--navy);
+            box-shadow: 0 0 0 3px rgba(4,31,67,0.1);
+            background: #fff;
+        }
+        .form-group input.error,
+        .form-group select.error {
+            border-color: var(--red);
+            box-shadow: 0 0 0 3px rgba(239,68,68,0.12);
+        }
+        .form-group .error-msg {
+            font-size: 0.75rem;
+            color: var(--red);
+            margin-top: 4px;
+            display: none;
+        }
+        .form-group .error-msg.visible { display: block; }
+        .form-group textarea { resize: vertical; min-height: 70px; }
+
+        .row {
+            display: flex;
+            gap: 14px;
+        }
+        .row .form-group { flex: 1; }
+
+        /* ── RADIO PAGAMENTO ── */
+        .radio-group {
+            display: flex;
+            gap: 10px;
+        }
+        .radio-option {
+            flex: 1;
+            position: relative;
+        }
+        .radio-option input { display: none; }
+        .radio-option .radio-label {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 12px;
+            border: 2px solid var(--gray-100);
+            border-radius: var(--radius);
+            cursor: pointer;
+            font-family: 'Oswald', sans-serif;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--gray-500);
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            transition: all 0.25s;
+            background: var(--gray-50);
+        }
+        .radio-option .radio-label .icon { font-size: 1.1rem; }
+        .radio-option input:checked + .radio-label {
+            border-color: var(--navy);
+            background: linear-gradient(135deg, var(--navy) 0%, var(--navy-light) 100%);
+            color: #fff;
+            box-shadow: 0 4px 16px rgba(4,31,67,0.25);
+        }
+        .radio-option input:checked + .radio-label.parcial-label {
+            border-color: #f59e0b;
+            background: linear-gradient(135deg, #f59e0b 0%, #fbbf24 100%);
+            color: var(--navy);
+        }
+
+        /* ── VALOR PENDENTE ── */
+        .valor-pendente-wrap {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.35s ease, opacity 0.3s ease, margin 0.3s ease;
+            opacity: 0;
+            margin-top: 0;
+        }
+        .valor-pendente-wrap.open {
+            max-height: 120px;
+            opacity: 1;
+            margin-top: 14px;
+        }
+        .valor-pendente-inner {
+            background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+            border: 2px dashed #f59e0b;
+            border-radius: var(--radius);
+            padding: 14px;
+        }
+        .valor-pendente-inner label {
+            color: #92400e;
+        }
+        .valor-pendente-inner input {
+            border-color: #f59e0b;
+            background: #fff;
+        }
+
+        /* ── BUTTONS ── */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 14px 28px;
+            border: none;
+            border-radius: var(--radius);
+            font-family: 'Oswald', sans-serif;
+            font-size: 0.95rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            cursor: pointer;
+            transition: all 0.25s;
+            width: 100%;
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, var(--gold) 0%, var(--gold-light) 100%);
+            color: var(--navy);
+            box-shadow: 0 4px 20px rgba(255,207,0,0.35);
+        }
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 28px rgba(255,207,0,0.45);
+        }
+        .btn-primary:active { transform: translateY(0); }
+
+        .btn-outline {
+            background: transparent;
+            color: var(--gray-500);
+            border: 2px solid var(--gray-300);
+        }
+        .btn-outline:hover {
+            border-color: var(--navy);
+            color: var(--navy);
+        }
+
+        .btn-confirm {
+            background: linear-gradient(135deg, var(--green) 0%, #16a34a 100%);
+            color: #fff;
+            box-shadow: 0 4px 20px rgba(34,197,94,0.35);
+        }
+        .btn-confirm:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 28px rgba(34,197,94,0.45);
+        }
+
+        .btn-row {
+            display: flex;
+            gap: 10px;
+            margin-top: 24px;
+        }
+        .btn-row .btn { flex: 1; }
+
+        /* ── PREVIEW ── */
+        .preview-section { display: none; }
+        .preview-section.active { display: block; }
+        .form-section { display: block; }
+        .form-section.hidden { display: none; }
+
+        .preview-voucher {
+            background: #fff;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: var(--shadow-lg);
+            position: relative;
+        }
+        .pv-header {
+            background: linear-gradient(135deg, var(--navy) 0%, var(--navy-light) 100%);
+            padding: 24px 20px;
+            text-align: center;
+            position: relative;
+        }
+        .pv-header::after {
+            content: '';
+            position: absolute;
+            bottom: -12px; left: 0; right: 0;
+            height: 24px;
+            background: #fff;
+            border-radius: 50% 50% 0 0 / 100% 100% 0 0;
+        }
+        .pv-logo {
+            font-family: 'Oswald', sans-serif;
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: var(--gold);
+            letter-spacing: 3px;
+        }
+        .pv-type {
+            font-family: 'Oswald', sans-serif;
+            font-size: 0.7rem;
+            color: rgba(255,255,255,0.7);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-top: 2px;
+        }
+        .pv-body { padding: 24px 20px; }
+
+        .pv-pousada {
+            font-family: 'Oswald', sans-serif;
+            font-size: 1.35rem;
+            font-weight: 700;
+            color: var(--navy);
+            text-align: center;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 4px;
+        }
+        .pv-acomodacao {
+            text-align: center;
+            color: var(--gray-500);
+            font-size: 0.85rem;
+            font-weight: 500;
+            margin-bottom: 18px;
+        }
+        .pv-hospede {
+            background: linear-gradient(135deg, var(--gold) 0%, var(--gold-light) 100%);
+            border-radius: 14px;
+            padding: 16px;
+            text-align: center;
+            margin-bottom: 14px;
+        }
+        .pv-hospede-label {
+            font-size: 0.65rem;
+            color: var(--navy);
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            font-weight: 600;
+            margin-bottom: 3px;
+        }
+        .pv-hospede-name {
+            font-family: 'Oswald', sans-serif;
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--navy);
+            text-transform: uppercase;
+        }
+        .pv-titular {
+            background: linear-gradient(135deg, var(--blue-bg) 0%, #bae6fd 100%);
+            border: 2px solid var(--blue);
+            border-radius: 14px;
+            padding: 12px 16px;
+            text-align: center;
+            margin-bottom: 14px;
+        }
+        .pv-titular-label {
+            font-size: 0.65rem;
+            color: #0369a1;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            font-weight: 600;
+            margin-bottom: 3px;
+        }
+        .pv-titular-name {
+            font-family: 'Oswald', sans-serif;
+            font-size: 1.05rem;
+            font-weight: 700;
+            color: #0c4a6e;
+            text-transform: uppercase;
+        }
+        .pv-datas {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 14px;
+        }
+        .pv-data-box {
+            flex: 1;
+            border-radius: 10px;
+            padding: 14px;
+            text-align: center;
+            border: 2px solid;
+        }
+        .pv-data-box.checkin {
+            border-color: var(--green);
+            background: linear-gradient(135deg, var(--green-bg) 0%, #dcfce7 100%);
+        }
+        .pv-data-box.checkout {
+            border-color: var(--red);
+            background: linear-gradient(135deg, var(--red-bg) 0%, #fee2e2 100%);
+        }
+        .pv-data-label {
+            font-size: 0.6rem;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            font-weight: 700;
+            margin-bottom: 6px;
+        }
+        .pv-data-box.checkin .pv-data-label { color: #16a34a; }
+        .pv-data-box.checkout .pv-data-label { color: #dc2626; }
+        .pv-data-dia {
+            font-family: 'Oswald', sans-serif;
+            font-size: 1.7rem;
+            font-weight: 700;
+            color: var(--navy);
+            line-height: 1;
+        }
+        .pv-data-full {
+            font-size: 0.78rem;
+            color: var(--navy);
+            font-weight: 600;
+            margin-top: 3px;
+        }
+        .pv-data-week {
+            font-size: 0.68rem;
+            color: var(--gray-500);
+            margin-top: 3px;
+        }
+
+        .pv-pagamento {
+            border-radius: 10px;
+            padding: 14px;
+            text-align: center;
+            margin-bottom: 14px;
+        }
+        .pv-pagamento.total {
+            background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%);
+            border: 2px solid #10b981;
+        }
+        .pv-pagamento.parcial {
+            background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+            border: 2px dashed #f59e0b;
+        }
+        .pv-pagamento-label {
+            font-size: 0.65rem;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            font-weight: 600;
+            margin-bottom: 3px;
+        }
+        .pv-pagamento.total .pv-pagamento-label { color: #065f46; }
+        .pv-pagamento.parcial .pv-pagamento-label { color: #92400e; }
+        .pv-pagamento-value {
+            font-family: 'Oswald', sans-serif;
+            font-size: 1.1rem;
+            font-weight: 700;
+        }
+        .pv-pagamento.total .pv-pagamento-value { color: #065f46; }
+        .pv-pagamento.parcial .pv-pagamento-value { color: #92400e; }
+
+        .pv-obs {
+            background: var(--gray-50);
+            border-radius: 10px;
+            padding: 12px 14px;
+            margin-bottom: 10px;
+        }
+        .pv-obs-title {
+            font-family: 'Oswald', sans-serif;
+            font-size: 0.68rem;
+            color: var(--navy);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+        .pv-obs-text {
+            font-size: 0.82rem;
+            color: var(--gray-700);
+            line-height: 1.5;
+        }
+
+        .pv-corner {
+            position: absolute;
+            width: 18px; height: 18px;
+            background: linear-gradient(135deg, var(--navy) 0%, #062a5a 100%);
+            border-radius: 50%;
+        }
+        .pv-corner.left { left: -9px; top: 50%; transform: translateY(-50%); }
+        .pv-corner.right { right: -9px; top: 50%; transform: translateY(-50%); }
+
+        .pv-footer {
+            background: var(--navy);
+            padding: 12px 20px;
+            text-align: center;
+        }
+        .pv-footer-text {
+            font-size: 0.65rem;
+            color: rgba(255,255,255,0.6);
+            letter-spacing: 0.5px;
+        }
+        .pv-footer-text strong { color: var(--gold); }
+
+        /* ── SUCCESS ── */
+        .success-section { display: none; text-align: center; padding: 40px 24px; }
+        .success-section.active { display: block; }
+        .success-icon {
+            width: 72px; height: 72px;
+            background: linear-gradient(135deg, var(--green) 0%, #16a34a 100%);
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            margin: 0 auto 20px;
+            box-shadow: 0 8px 32px rgba(34,197,94,0.3);
+        }
+        .success-icon svg { width: 36px; height: 36px; color: #fff; }
+        .success-title {
+            font-family: 'Oswald', sans-serif;
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: var(--navy);
+            text-transform: uppercase;
+            margin-bottom: 8px;
+        }
+        .success-msg {
+            font-size: 0.9rem;
+            color: var(--gray-500);
+            line-height: 1.5;
+        }
+
+        /* ── LOADING ── */
+        .btn.loading {
+            pointer-events: none;
+            opacity: 0.7;
+        }
+        .spinner {
+            width: 18px; height: 18px;
+            border: 2.5px solid rgba(255,255,255,0.3);
+            border-top-color: #fff;
+            border-radius: 50%;
+            animation: spin 0.6s linear infinite;
+            display: none;
+        }
+        .btn.loading .spinner { display: block; }
+        .btn.loading .btn-text { display: none; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        /* ── ERROR TOAST ── */
+        .toast {
+            position: fixed;
+            bottom: 24px; left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: var(--red);
+            color: #fff;
+            padding: 12px 24px;
+            border-radius: var(--radius);
+            font-size: 0.85rem;
+            font-weight: 600;
+            box-shadow: 0 8px 32px rgba(239,68,68,0.4);
+            z-index: 100;
+            transition: transform 0.35s ease;
+            text-align: center;
+            max-width: 90%;
+        }
+        .toast.show { transform: translateX(-50%) translateY(0); }
+        /* ── ACESSO NEGADO ── */
+        .acesso-negado {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: linear-gradient(160deg, #041f43 0%, #062a5a 40%, #0a3570 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+        }
+        .acesso-negado-card {
+            background: rgba(6, 42, 90, 0.8);
+            border-radius: 20px;
+            padding: 50px 40px;
+            text-align: center;
+            max-width: 450px;
+            width: 90%;
+            border: 2px solid rgba(26, 74, 122, 0.6);
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        .acesso-negado-icon {
+            width: 80px; height: 80px;
+            margin: 0 auto 24px;
+            color: var(--red);
+        }
+        .acesso-negado-title {
+            font-family: 'Oswald', sans-serif;
+            font-size: 1.5rem;
+            color: #fff;
+            margin-bottom: 12px;
+        }
+        .acesso-negado-msg {
+            font-size: 0.9rem;
+            color: rgba(255,255,255,0.7);
+            line-height: 1.6;
+            margin-bottom: 30px;
+        }
+        .acesso-negado-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 14px 28px;
+            background: var(--gold);
+            color: var(--navy);
+            font-family: 'Oswald', sans-serif;
+            font-weight: 700;
+            font-size: 0.9rem;
+            border: none;
+            border-radius: var(--radius);
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .acesso-negado-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(255, 207, 0, 0.4);
+        }
+        .acesso-negado-btn svg { width: 18px; height: 18px; }
+
+        .container.hidden { display: none; }
+    </style>
+</head>
+<body>
+
+<div class="container hidden" id="mainContainer">
+    <div class="page-header">
+        <div class="logo">LUSOTUR VIAGENS</div>
+        <div class="subtitle">Voucher Manual</div>
+    </div>
+
+    <div class="stepper">
+        <div class="stepper-dot active" id="dot-1"></div>
+        <div class="stepper-dot" id="dot-2"></div>
+        <div class="stepper-dot" id="dot-3"></div>
+    </div>
+
+    <!-- ═══════ FORMULÁRIO ═══════ -->
+    <div class="form-section" id="formSection">
+        <div class="card">
+            <div class="card-header">
+                <div class="step-badge">1</div>
+                <h2>Dados da Reserva</h2>
+            </div>
+            <div class="card-body">
+                <div class="form-group">
+                    <label>Nome da Pousada <span class="required">*</span></label>
+                    <input type="text" id="nomePousada" placeholder="Ex: Pousada H Guarujá">
+                    <div class="error-msg" id="err-pousada">Informe o nome da pousada</div>
+                </div>
+
+                <div class="form-group">
+                    <label>Acomodação</label>
+                    <input type="text" id="acomodacao" placeholder="Ex: Duplo, Suíte Master...">
+                </div>
+
+                <div class="form-group">
+                    <label>Nome do Hóspede <span class="required">*</span></label>
+                    <input type="text" id="nomeHospede" placeholder="Nome completo do hóspede">
+                    <div class="error-msg" id="err-hospede">Informe o nome do hóspede</div>
+                </div>
+
+                <div class="form-group">
+                    <label>Titular da Reserva</label>
+                    <input type="text" id="titularReserva" placeholder="Se diferente do hóspede">
+                </div>
+
+                <div class="row">
+                    <div class="form-group">
+                        <label>Check-in <span class="required">*</span></label>
+                        <input type="date" id="dataCheckin">
+                        <div class="error-msg" id="err-checkin">Informe a data</div>
+                    </div>
+                    <div class="form-group">
+                        <label>Check-out <span class="required">*</span></label>
+                        <input type="date" id="dataCheckout">
+                        <div class="error-msg" id="err-checkout">Informe a data</div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Pagamento <span class="required">*</span></label>
+                    <div class="radio-group">
+                        <div class="radio-option">
+                            <input type="radio" name="pagamento" id="pagTotal" value="total">
+                            <label for="pagTotal" class="radio-label">
+                                <span class="icon">✓</span> Total
+                            </label>
+                        </div>
+                        <div class="radio-option">
+                            <input type="radio" name="pagamento" id="pagParcial" value="parcial">
+                            <label for="pagParcial" class="radio-label parcial-label">
+                                <span class="icon">⚠</span> Parcial
+                            </label>
+                        </div>
+                    </div>
+                    <div class="error-msg" id="err-pagamento">Selecione o tipo de pagamento</div>
+                </div>
+
+                <div class="valor-pendente-wrap" id="valorPendenteWrap">
+                    <div class="valor-pendente-inner">
+                        <div class="form-group" style="margin-bottom:0">
+                            <label>Valor Pendente <span class="required">*</span></label>
+                            <input type="text" id="valorPendente" placeholder="R$ 0,00" inputmode="decimal">
+                            <div class="error-msg" id="err-valor">Informe o valor pendente</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Observações</label>
+                    <textarea id="observacoes" placeholder="Informações adicionais..."></textarea>
+                </div>
+
+                <button class="btn btn-primary" onclick="irParaPreview()">
+                    <span class="btn-text">Revisar Voucher →</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ═══════ PREVIEW ═══════ -->
+    <div class="preview-section" id="previewSection">
+        <div class="card" style="margin-bottom:16px">
+            <div class="card-header">
+                <div class="step-badge">2</div>
+                <h2>Confirme as Informações</h2>
+            </div>
+        </div>
+
+        <div class="preview-voucher" id="previewVoucher">
+            <div class="pv-header">
+                <div class="pv-logo">LUSOTUR VIAGENS</div>
+                <div class="pv-type">Voucher de Check-in</div>
+            </div>
+            <div class="pv-body">
+                <div class="pv-pousada" id="pv-pousada"></div>
+                <div class="pv-acomodacao" id="pv-acomodacao"></div>
+
+                <div class="pv-hospede">
+                    <div class="pv-hospede-label">Hóspede</div>
+                    <div class="pv-hospede-name" id="pv-hospede"></div>
+                </div>
+
+                <div class="pv-titular" id="pv-titular-wrap" style="display:none">
+                    <div class="pv-titular-label">Titular da Reserva</div>
+                    <div class="pv-titular-name" id="pv-titular"></div>
+                </div>
+
+                <div class="pv-datas">
+                    <div class="pv-data-box checkin">
+                        <div class="pv-data-label">Check-in</div>
+                        <div class="pv-data-dia" id="pv-ci-dia"></div>
+                        <div class="pv-data-full" id="pv-ci-full"></div>
+                        <div class="pv-data-week" id="pv-ci-week"></div>
+                    </div>
+                    <div class="pv-data-box checkout">
+                        <div class="pv-data-label">Check-out</div>
+                        <div class="pv-data-dia" id="pv-co-dia"></div>
+                        <div class="pv-data-full" id="pv-co-full"></div>
+                        <div class="pv-data-week" id="pv-co-week"></div>
+                    </div>
+                </div>
+
+                <div class="pv-pagamento" id="pv-pagamento">
+                    <div class="pv-pagamento-label" id="pv-pag-label"></div>
+                    <div class="pv-pagamento-value" id="pv-pag-value"></div>
+                </div>
+
+                <div class="pv-obs" id="pv-obs-wrap" style="display:none">
+                    <div class="pv-obs-title">Observações</div>
+                    <div class="pv-obs-text" id="pv-obs"></div>
+                </div>
+            </div>
+            <div class="pv-corner left"></div>
+            <div class="pv-corner right"></div>
+            <div class="pv-footer">
+                <div class="pv-footer-text">Apresente este voucher no momento do check-in<br><strong>Powered by Lusotur Viagens</strong></div>
+            </div>
+        </div>
+
+        <div class="btn-row">
+            <button class="btn btn-outline" onclick="voltarParaForm()">← Voltar</button>
+            <button class="btn btn-confirm" id="btnConfirmar" onclick="confirmarEnvio()">
+                <span class="spinner"></span>
+                <span class="btn-text">Confirmar ✓</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- ═══════ SUCESSO ═══════ -->
+    <div class="success-section" id="successSection">
+        <div class="card">
+            <div class="card-body" style="padding:40px 24px">
+                <div class="success-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                </div>
+                <div class="success-title">Voucher Enviado!</div>
+                <div class="success-msg">Os dados foram enviados com sucesso para processamento.</div>
+                <button class="btn btn-primary" style="margin-top:24px" onclick="novoVoucher()">
+                    <span class="btn-text">Criar Novo Voucher</span>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+    const dias = ['Domingo','Segunda-feira','Terça-feira','Quarta-feira','Quinta-feira','Sexta-feira','Sábado'];
+
+    // Toggle valor pendente
+    document.querySelectorAll('input[name="pagamento"]').forEach(r => {
+        r.addEventListener('change', () => {
+            const wrap = document.getElementById('valorPendenteWrap');
+            if (r.value === 'parcial' && r.checked) {
+                wrap.classList.add('open');
+            } else {
+                wrap.classList.remove('open');
+            }
+        });
+    });
+
+    // Máscara de moeda no campo valor
+    document.getElementById('valorPendente').addEventListener('input', function(e) {
+        let v = this.value.replace(/\D/g, '');
+        if (!v) { this.value = ''; return; }
+        v = (parseInt(v) / 100).toFixed(2);
+        this.value = 'R$ ' + v.replace('.', ',').replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+    });
+
+    function val(id) { return document.getElementById(id).value.trim(); }
+
+    function clearErrors() {
+        document.querySelectorAll('.error').forEach(el => el.classList.remove('error'));
+        document.querySelectorAll('.error-msg').forEach(el => el.classList.remove('visible'));
+    }
+
+    function showError(inputId, msgId) {
+        document.getElementById(inputId).classList.add('error');
+        document.getElementById(msgId).classList.add('visible');
+    }
+
+    function formatarData(dateStr) {
+        const [y, m, d] = dateStr.split('-');
+        return `${d}/${m}/${y}`;
+    }
+
+    function getDiaSemana(dateStr) {
+        const d = new Date(dateStr + 'T12:00:00');
+        return dias[d.getDay()];
+    }
+
+    function getDia(dateStr) {
+        return dateStr.split('-')[2];
+    }
+
+    function updateStepper(step) {
+        for (let i = 1; i <= 3; i++) {
+            const dot = document.getElementById('dot-' + i);
+            dot.classList.remove('active', 'done');
+            if (i < step) dot.classList.add('done');
+            if (i === step) dot.classList.add('active');
+        }
+    }
+
+    function irParaPreview() {
+        clearErrors();
+        let ok = true;
+        const pag = document.querySelector('input[name="pagamento"]:checked');
+
+        if (!val('nomePousada')) { showError('nomePousada', 'err-pousada'); ok = false; }
+        if (!val('nomeHospede')) { showError('nomeHospede', 'err-hospede'); ok = false; }
+        if (!val('dataCheckin')) { showError('dataCheckin', 'err-checkin'); ok = false; }
+        if (!val('dataCheckout')) { showError('dataCheckout', 'err-checkout'); ok = false; }
+        if (!pag) { document.getElementById('err-pagamento').classList.add('visible'); ok = false; }
+        if (pag && pag.value === 'parcial' && !val('valorPendente')) { showError('valorPendente', 'err-valor'); ok = false; }
+
+        if (!ok) return;
+
+        // Preencher preview
+        document.getElementById('pv-pousada').textContent = val('nomePousada');
+        document.getElementById('pv-acomodacao').textContent = val('acomodacao') || '—';
+
+        document.getElementById('pv-hospede').textContent = val('nomeHospede');
+
+        const titular = val('titularReserva');
+        const titularWrap = document.getElementById('pv-titular-wrap');
+        if (titular) {
+            document.getElementById('pv-titular').textContent = titular;
+            titularWrap.style.display = 'block';
+        } else {
+            titularWrap.style.display = 'none';
+        }
+
+        const ci = val('dataCheckin');
+        const co = val('dataCheckout');
+        document.getElementById('pv-ci-dia').textContent = getDia(ci);
+        document.getElementById('pv-ci-full').textContent = formatarData(ci);
+        document.getElementById('pv-ci-week').textContent = getDiaSemana(ci);
+        document.getElementById('pv-co-dia').textContent = getDia(co);
+        document.getElementById('pv-co-full').textContent = formatarData(co);
+        document.getElementById('pv-co-week').textContent = getDiaSemana(co);
+
+        const pvPag = document.getElementById('pv-pagamento');
+        const pvPagLabel = document.getElementById('pv-pag-label');
+        const pvPagValue = document.getElementById('pv-pag-value');
+        if (pag.value === 'total') {
+            pvPag.className = 'pv-pagamento total';
+            pvPagLabel.textContent = 'Pagamento';
+            pvPagValue.textContent = 'Total Realizado';
+        } else {
+            pvPag.className = 'pv-pagamento parcial';
+            pvPagLabel.textContent = 'Pagamento Parcial';
+            pvPagValue.textContent = 'Pendente: ' + val('valorPendente');
+        }
+
+        const obs = val('observacoes');
+        const obsWrap = document.getElementById('pv-obs-wrap');
+        if (obs) {
+            document.getElementById('pv-obs').textContent = obs;
+            obsWrap.style.display = 'block';
+        } else {
+            obsWrap.style.display = 'none';
+        }
+
+        document.getElementById('formSection').classList.add('hidden');
+        document.getElementById('previewSection').classList.add('active');
+        updateStepper(2);
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function voltarParaForm() {
+        document.getElementById('previewSection').classList.remove('active');
+        document.getElementById('formSection').classList.remove('hidden');
+        updateStepper(1);
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function showToast(msg) {
+        const t = document.getElementById('toast');
+        t.textContent = msg;
+        t.classList.add('show');
+        setTimeout(() => t.classList.remove('show'), 4000);
+    }
+
+    async function confirmarEnvio() {
+        const btn = document.getElementById('btnConfirmar');
+        btn.classList.add('loading');
+
+        const pag = document.querySelector('input[name="pagamento"]:checked');
+        const user = getLocalStorage().user || {};
+
+        const payload = {
+            nome_pousada: val('nomePousada'),
+            acomodacao: val('acomodacao'),
+            nome_hospede: val('nomeHospede'),
+            titular_reserva: val('titularReserva'),
+            data_checkin: val('dataCheckin'),
+            data_checkout: val('dataCheckout'),
+            pagamento: pag.value,
+            valor_pendente: pag.value === 'parcial' ? val('valorPendente') : null,
+            observacoes: val('observacoes'),
+            enviado_em: new Date().toISOString(),
+            enviado_por: {
+                id_funcionario: user.id_funcionario || null,
+                nome: user.nome || 'Desconhecido',
+                email: user.email || null
+            }
+        };
+
+        try {
+            const resp = await fetch('https://n8n.upperfy.com.br/webhook-test/87544f9e-cc66-4647-8528-manual', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+
+            if (!resp.ok) throw new Error('Erro ' + resp.status);
+
+            document.getElementById('previewSection').classList.remove('active');
+            document.getElementById('successSection').classList.add('active');
+            updateStepper(3);
+        } catch (err) {
+            showToast('Erro ao enviar. Tente novamente.');
+            console.error(err);
+        } finally {
+            btn.classList.remove('loading');
+        }
+    }
+
+    function novoVoucher() {
+        document.getElementById('successSection').classList.remove('active');
+        document.getElementById('formSection').classList.remove('hidden');
+        document.querySelectorAll('input:not([type="radio"]), textarea').forEach(el => el.value = '');
+        document.querySelectorAll('input[type="radio"]').forEach(el => el.checked = false);
+        document.getElementById('valorPendenteWrap').classList.remove('open');
+        clearErrors();
+        updateStepper(1);
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+</script>
+
+<!-- ═══════ ACESSO NEGADO ═══════ -->
+<div class="acesso-negado" id="acessoNegado" style="display:none;">
+    <div class="acesso-negado-card">
+        <svg class="acesso-negado-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="3" y="11" width="18" height="11" rx="2"/>
+            <path d="M7 11V7a5 5 0 0110 0v4"/>
+            <circle cx="12" cy="16" r="1"/>
+        </svg>
+        <h2 class="acesso-negado-title">Acesso Negado</h2>
+        <p class="acesso-negado-msg" id="acessoNegadoMsg">Você não tem permissão para acessar esta página. Faça login na plataforma Upperfy.</p>
+        <a href="https://plataforma.upperfy.com.br" class="acesso-negado-btn">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+            Voltar à Plataforma
+        </a>
+    </div>
+</div>
+
+<script>
+    // ══════════════════════════════════
+    // AUTENTICAÇÃO - Cookie Upperfy
+    // ══════════════════════════════════
+
+    function getUpperfyCookie() {
+        const cookies = document.cookie.split(';');
+        for (let cookie of cookies) {
+            const [name, value] = cookie.trim().split('=');
+            if (name === 'upperfy_auth') {
+                try {
+                    return JSON.parse(decodeURIComponent(value));
+                } catch (e) {
+                    console.error('Erro ao parsear cookie:', e);
+                    return null;
+                }
+            }
+        }
+        return null;
+    }
+
+    function getLocalStorage() {
+        try {
+            const data = localStorage.getItem('lusofy_data');
+            return data ? JSON.parse(data) : { user: null };
+        } catch (e) {
+            return { user: null };
+        }
+    }
+
+    function initUserFromCookie() {
+        const stored = getLocalStorage();
+        if (stored.user) return stored.user;
+
+        const cookieData = getUpperfyCookie();
+        if (cookieData && cookieData.autenticado) {
+            const user = {
+                id_funcionario: cookieData.id_funcionario,
+                id_empresa: cookieData.id_empresa,
+                nome: cookieData.usuario?.nome,
+                email: cookieData.usuario?.email,
+                token: cookieData.token
+            };
+            try {
+                localStorage.setItem('lusofy_data', JSON.stringify({ user: user, lastSync: new Date().toISOString() }));
+            } catch (e) {}
+            return user;
+        }
+        return null;
+    }
+
+    function showAcessoNegado(mensagem) {
+        if (mensagem) {
+            document.getElementById('acessoNegadoMsg').textContent = mensagem;
+        }
+        document.getElementById('acessoNegado').style.display = 'flex';
+        document.getElementById('mainContainer').classList.add('hidden');
+    }
+
+    // Verifica autenticação ao carregar
+    (function() {
+        const user = initUserFromCookie();
+        if (!user) {
+            showAcessoNegado('Sessão não encontrada. Faça login na plataforma Upperfy para acessar o Voucher Manual.');
+        } else {
+            document.getElementById('mainContainer').classList.remove('hidden');
+        }
+    })();
+</script>
+
+</body>
+</html>
