@@ -1498,44 +1498,48 @@
     <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Montserrat', sans-serif; background: linear-gradient(135deg, #041f43 0%, #062a5a 100%); min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 20px; }
-        .voucher { background: #ffffff; width: 100%; max-width: 480px; border-radius: 24px; overflow: hidden; box-shadow: 0 25px 80px rgba(0,0,0,0.4); position: relative; }
-        .voucher-header { background: linear-gradient(135deg, #041f43 0%, #0a3570 100%); padding: 30px 24px; text-align: center; position: relative; }
-        .voucher-header::after { content: ''; position: absolute; bottom: -15px; left: 0; right: 0; height: 30px; background: #ffffff; border-radius: 50% 50% 0 0 / 100% 100% 0 0; }
-        .logo { font-family: 'Oswald', sans-serif; font-size: 1.8rem; font-weight: 700; color: #ffcf00; letter-spacing: 3px; margin-bottom: 8px; }
-        .voucher-type { font-family: 'Oswald', sans-serif; font-size: 0.85rem; color: rgba(255,255,255,0.8); text-transform: uppercase; letter-spacing: 2px; }
-        .voucher-body { padding: 30px 24px; }
-        .pousada-name { font-family: 'Oswald', sans-serif; font-size: 1.6rem; font-weight: 700; color: #041f43; text-align: center; margin-bottom: 5px; text-transform: uppercase; letter-spacing: 1px; }
-        .acomodacao { text-align: center; color: #666; font-size: 0.95rem; margin-bottom: 25px; font-weight: 500; }
-        .hospede-section { background: linear-gradient(135deg, #ffcf00 0%, #ffe566 100%); border-radius: 16px; padding: 20px; margin-bottom: 20px; text-align: center; }
-        .hospede-label { font-size: 0.7rem; color: #041f43; text-transform: uppercase; letter-spacing: 1.5px; font-weight: 600; margin-bottom: 5px; }
-        .hospede-name { font-family: 'Oswald', sans-serif; font-size: 1.5rem; font-weight: 700; color: #041f43; text-transform: uppercase; }
-        .pagamento-section { background: linear-gradient(135deg, #e0f2fe 0%, #bae6fd 100%); border-radius: 16px; padding: 16px 20px; margin-bottom: 20px; text-align: center; border: 2px solid #0ea5e9; }
-        .pagamento-label { font-size: 0.7rem; color: #0369a1; text-transform: uppercase; letter-spacing: 1.5px; font-weight: 600; margin-bottom: 5px; }
-        .pagamento-name { font-family: 'Oswald', sans-serif; font-size: 1.2rem; font-weight: 700; color: #0c4a6e; text-transform: uppercase; }
-        .datas-container { display: flex; gap: 15px; margin-bottom: 20px; }
-        .data-box { flex: 1; border-radius: 12px; padding: 16px; text-align: center; border: 2px solid; }
+        @page { size: A4; margin: 0; }
+        body { font-family: 'Montserrat', sans-serif; background: #ffffff; min-height: 100vh; display: flex; align-items: flex-start; justify-content: center; padding: 30px 20px; }
+        .voucher { background: #ffffff; width: 100%; max-width: 480px; border-radius: 24px; overflow: hidden; box-shadow: 0 25px 80px rgba(0,0,0,0.15); position: relative; border: 1px solid #e5e7eb; }
+        .voucher-header { background: linear-gradient(135deg, #041f43 0%, #0a3570 100%); padding: 24px 20px; text-align: center; position: relative; }
+        .voucher-header::after { content: ''; position: absolute; bottom: -12px; left: 0; right: 0; height: 24px; background: #ffffff; border-radius: 50% 50% 0 0 / 100% 100% 0 0; }
+        .logo { font-family: 'Oswald', sans-serif; font-size: 1.6rem; font-weight: 700; color: #ffcf00; letter-spacing: 3px; margin-bottom: 4px; }
+        .voucher-type { font-family: 'Oswald', sans-serif; font-size: 0.75rem; color: rgba(255,255,255,0.8); text-transform: uppercase; letter-spacing: 2px; }
+        .voucher-body { padding: 20px 22px; }
+        .pousada-name { font-family: 'Oswald', sans-serif; font-size: 1.4rem; font-weight: 700; color: #041f43; text-align: center; margin-bottom: 3px; text-transform: uppercase; letter-spacing: 1px; }
+        .acomodacao { text-align: center; color: #666; font-size: 0.85rem; margin-bottom: 16px; font-weight: 500; }
+        .hospede-section { background: linear-gradient(135deg, #ffcf00 0%, #ffe566 100%); border-radius: 14px; padding: 14px; margin-bottom: 14px; text-align: center; }
+        .hospede-label { font-size: 0.65rem; color: #041f43; text-transform: uppercase; letter-spacing: 1.5px; font-weight: 600; margin-bottom: 3px; }
+        .hospede-name { font-family: 'Oswald', sans-serif; font-size: 1.3rem; font-weight: 700; color: #041f43; text-transform: uppercase; }
+        .pagamento-section { background: linear-gradient(135deg, #e0f2fe 0%, #bae6fd 100%); border-radius: 14px; padding: 12px 16px; margin-bottom: 14px; text-align: center; border: 2px solid #0ea5e9; }
+        .pagamento-label { font-size: 0.65rem; color: #0369a1; text-transform: uppercase; letter-spacing: 1.5px; font-weight: 600; margin-bottom: 3px; }
+        .pagamento-name { font-family: 'Oswald', sans-serif; font-size: 1.05rem; font-weight: 700; color: #0c4a6e; text-transform: uppercase; }
+        .datas-container { display: flex; gap: 12px; margin-bottom: 14px; }
+        .data-box { flex: 1; border-radius: 10px; padding: 12px; text-align: center; border: 2px solid; }
         .data-box.checkin { border-color: #22c55e; background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%); }
         .data-box.checkout { border-color: #ef4444; background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%); }
-        .data-label { font-size: 0.65rem; text-transform: uppercase; letter-spacing: 1.5px; font-weight: 700; margin-bottom: 8px; }
+        .data-label { font-size: 0.6rem; text-transform: uppercase; letter-spacing: 1.5px; font-weight: 700; margin-bottom: 6px; }
         .data-box.checkin .data-label { color: #16a34a; }
         .data-box.checkout .data-label { color: #dc2626; }
-        .data-dia { font-family: 'Oswald', sans-serif; font-size: 2rem; font-weight: 700; color: #041f43; line-height: 1; }
-        .data-completa { font-size: 0.85rem; color: #041f43; font-weight: 600; margin-top: 4px; }
-        .data-semana { font-size: 0.75rem; color: #666; margin-top: 4px; }
-        .info-section { background: #f8f9fa; border-radius: 12px; padding: 16px; margin-bottom: 15px; }
-        .info-section-title { font-family: 'Oswald', sans-serif; font-size: 0.75rem; color: #041f43; text-transform: uppercase; letter-spacing: 1px; font-weight: 600; margin-bottom: 8px; display: flex; align-items: center; gap: 8px; }
-        .info-section-title svg { width: 16px; height: 16px; color: #ffcf00; }
-        .info-section-content { font-size: 0.9rem; color: #333; line-height: 1.6; }
+        .data-dia { font-family: 'Oswald', sans-serif; font-size: 1.7rem; font-weight: 700; color: #041f43; line-height: 1; }
+        .data-completa { font-size: 0.78rem; color: #041f43; font-weight: 600; margin-top: 3px; }
+        .data-semana { font-size: 0.68rem; color: #666; margin-top: 3px; }
+        .info-section { background: #f8f9fa; border-radius: 10px; padding: 12px 14px; margin-bottom: 10px; }
+        .info-section-title { font-family: 'Oswald', sans-serif; font-size: 0.7rem; color: #041f43; text-transform: uppercase; letter-spacing: 1px; font-weight: 600; margin-bottom: 6px; display: flex; align-items: center; gap: 6px; }
+        .info-section-title svg { width: 14px; height: 14px; color: #ffcf00; }
+        .info-section-content { font-size: 0.82rem; color: #333; line-height: 1.5; }
         .localizacao-section { background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%); border: 2px solid #10b981; }
         .observacao-section { background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); border: 2px dashed #f59e0b; }
-        .voucher-footer { background: #041f43; padding: 15px 24px; text-align: center; }
-        .footer-text { font-size: 0.7rem; color: rgba(255,255,255,0.7); letter-spacing: 0.5px; }
+        .voucher-footer { background: #041f43; padding: 12px 20px; text-align: center; }
+        .footer-text { font-size: 0.65rem; color: rgba(255,255,255,0.7); letter-spacing: 0.5px; }
         .footer-text strong { color: #ffcf00; }
-        .corner-cut { position: absolute; width: 20px; height: 20px; background: linear-gradient(135deg, #041f43 0%, #062a5a 100%); border-radius: 50%; }
-        .corner-cut.left { left: -10px; top: 50%; transform: translateY(-50%); }
-        .corner-cut.right { right: -10px; top: 50%; transform: translateY(-50%); }
-        @media print { body { background: #fff; padding: 0; } .voucher { box-shadow: none; max-width: 100%; } }
+        .corner-cut { position: absolute; width: 18px; height: 18px; background: #ffffff; border-radius: 50%; border: 1px solid #e5e7eb; }
+        .corner-cut.left { left: -9px; top: 50%; transform: translateY(-50%); }
+        .corner-cut.right { right: -9px; top: 50%; transform: translateY(-50%); }
+        @media print {
+            body { background: #fff; padding: 20px; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+            .voucher { box-shadow: none; max-width: 480px; margin: 0 auto; page-break-inside: avoid; }
+        }
     </style>
 </head>
 <body>
@@ -1586,37 +1590,31 @@
     }
 
     function baixarVoucherPdf(html) {
-        // Cria iframe oculto para renderizar o voucher e acionar impressão/PDF
-        const iframe = document.createElement('iframe');
-        iframe.style.cssText = 'position:fixed;top:-9999px;left:-9999px;width:520px;height:800px;border:none;';
-        document.body.appendChild(iframe);
+        // Abre o voucher em nova aba — funciona tanto no mobile quanto desktop
+        const blob = new Blob([html], { type: 'text/html; charset=utf-8' });
+        const url = URL.createObjectURL(blob);
+        const win = window.open(url, '_blank');
 
-        const doc = iframe.contentDocument || iframe.contentWindow.document;
-        doc.open();
-        doc.write(html);
-        doc.close();
-
-        // Aguarda fontes carregarem antes de imprimir
-        iframe.onload = function() {
-            setTimeout(function() {
-                try {
-                    iframe.contentWindow.focus();
-                    iframe.contentWindow.print();
-                } catch (e) {
-                    // Fallback: abre em nova aba para impressão manual
-                    const blob = new Blob([html], { type: 'text/html' });
-                    const url = URL.createObjectURL(blob);
-                    const win = window.open(url, '_blank');
-                    if (win) {
-                        win.onload = function() { win.print(); };
-                    }
-                }
-                // Remove iframe após um tempo
+        if (win) {
+            // Quando a aba carrega, dispara print automaticamente
+            win.onload = function() {
                 setTimeout(function() {
-                    document.body.removeChild(iframe);
-                }, 2000);
-            }, 800);
-        };
+                    win.print();
+                }, 600);
+            };
+        } else {
+            // Se popup bloqueado, oferece download direto do HTML
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'voucher-checkin.html';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            showToast('Abra o arquivo baixado para imprimir/salvar como PDF.');
+        }
+
+        // Libera a URL após um tempo
+        setTimeout(function() { URL.revokeObjectURL(url); }, 10000);
     }
 
     function novoVoucher() {
