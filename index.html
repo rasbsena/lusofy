@@ -1418,67 +1418,116 @@ function carregarMaisCards(tipo) {
             if (e.target.id === 'buscaAvancadaModal') closeModalBuscaAvancada();
         });
 
-        function renderHistoricoTable() {
-            const tbody = document.getElementById('historicoBody');
-            const emptyState = document.getElementById('historicoEmpty');
-            const countEl = document.getElementById('historicoCount');
-            const filtroTipo = document.getElementById('filtroTipo').value;
-            const filtroResponsavel = document.getElementById('filtroResponsavel').value;
-            const filtroDataDe = document.getElementById('filtroDataDe').value;
-            const filtroDataAte = document.getElementById('filtroDataAte').value;
-            
-            let concluidos = tasks.filter(t => t.status === 'concluido');
-            
-            // Aplicar filtros
-            if (filtroTipo) {
-                concluidos = concluidos.filter(t => t.tipo === filtroTipo);
-            }
-            if (filtroResponsavel) {
-                concluidos = concluidos.filter(t => t.responsavel && t.responsavel.nome === filtroResponsavel);
-            }
-            if (filtroDataDe) {
-                concluidos = concluidos.filter(t => t.concluido_em && t.concluido_em.split('T')[0] >= filtroDataDe);
-            }
-            if (filtroDataAte) {
-                concluidos = concluidos.filter(t => t.concluido_em && t.concluido_em.split('T')[0] <= filtroDataAte);
-            }
-            
-            // Ordenar por data de conclusão (mais recente primeiro)
-            concluidos.sort((a, b) => {
-                const dateA = a.concluido_em ? new Date(a.concluido_em) : new Date(0);
-                const dateB = b.concluido_em ? new Date(b.concluido_em) : new Date(0);
-                return dateB - dateA;
-            });
-            
-            // Atualizar contador
-            countEl.textContent = concluidos.length;
-            
-            // Popular dropdown de responsáveis
-            updateFiltroResponsaveis();
-            
-            if (concluidos.length === 0) {
-                tbody.innerHTML = '';
-                emptyState.style.display = 'block';
-                document.querySelector('.historico-table').style.display = 'none';
-                return;
-            }
-            
-            emptyState.style.display = 'none';
-            document.querySelector('.historico-table').style.display = 'table';
-            
-            tbody.innerHTML = concluidos.map(task => {
-                const tipoConfig = TIPO_CONFIG[task.tipo] || {};
-                const iniciais = getIniciais(task.responsavel?.nome || 'N/A');
-                return '<tr>' +
-                    '<td><span class="task-name" onclick="openModal(' + task.id + ')">' + task.nome + '</span></td>' +
-                    '<td><span class="tipo-badge"><span class="dot" style="background:' + (tipoConfig.color || '#666') + '"></span>' + (tipoConfig.label || task.tipo) + '</span></td>' +
-                    '<td><div class="responsavel-cell"><div class="avatar">' + iniciais + '</div><span>' + (task.responsavel?.nome || 'N/A') + '</span></div></td>' +
-                    '<td>' + formatDate(task.concluido_em) + '</td>' +
-                    '<td>' + formatDate(task.prazo) + '</td>' +
-                    '<td><button class="btn-secondary btn-ver" onclick="openModal(' + task.id + ')">Ver</button></td>' +
-                    '</tr>';
-            }).join('');
+function atualizarBotaoHistorico() {
+    var total = tasks.filter(function(t) { return t.status === 'concluido'; }).length;
+    var badge = document.getElementById('historicoBadge');
+    var btn = document.getElementById('btnToggleHistorico');
+    if (badge) badge.textContent = total;
+    if (btn) btn.style.display = total > 0 ? 'flex' : 'none';
+}
+
+function toggleHistorico() {
+    var container = document.getElementById('historicoContainer');
+    historicoAberto = !historicoAberto;
+    if (historicoAberto) {
+        container.style.display = 'block';
+        historicoCarregados = 0;
+        renderHistoricoTable();
+        var btn = document.getElementById('btnToggleHistorico');
+        if (btn) btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg> Fechar Histórico';
+    } else {
+        container.style.display = 'none';
+        var btn = document.getElementById('btnToggleHistorico');
+        if (btn) {
+            var total = tasks.filter(function(t) { return t.status === 'concluido'; }).length;
+            btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><path d="M22 4L12 14.01l-3-3"/></svg> Ver Histórico de Concluídos <span class="historico-badge">' + total + '</span>';
         }
+    }
+}
+
+function renderHistoricoTable() {
+    var tbody = document.getElementById('historicoBody');
+    var emptyState = document.getElementById('historicoEmpty');
+    var countEl = document.getElementById('historicoCount');
+    var filtroTipo = document.getElementById('filtroTipo').value;
+    var filtroResponsavel = document.getElementById('filtroResponsavel').value;
+    var filtroDataDe = document.getElementById('filtroDataDe').value;
+    var filtroDataAte = document.getElementById('filtroDataAte').value;
+    
+    var concluidos = tasks.filter(function(t) { return t.status === 'concluido'; });
+    if (filtroTipo) concluidos = concluidos.filter(function(t) { return t.tipo === filtroTipo; });
+    if (filtroResponsavel) concluidos = concluidos.filter(function(t) { return t.responsavel && t.responsavel.nome === filtroResponsavel; });
+    if (filtroDataDe) concluidos = concluidos.filter(function(t) { return t.concluido_em && t.concluido_em.split('T')[0] >= filtroDataDe; });
+    if (filtroDataAte) concluidos = concluidos.filter(function(t) { return t.concluido_em && t.concluido_em.split('T')[0] <= filtroDataAte; });
+    
+    concluidos.sort(function(a, b) {
+        var dateA = a.concluido_em ? new Date(a.concluido_em) : new Date(0);
+        var dateB = b.concluido_em ? new Date(b.concluido_em) : new Date(0);
+        return dateB - dateA;
+    });
+    
+    countEl.textContent = concluidos.length;
+    updateFiltroResponsaveis();
+    
+    if (concluidos.length === 0) {
+        tbody.innerHTML = '';
+        emptyState.style.display = 'block';
+        document.querySelector('.historico-table').style.display = 'none';
+        return;
+    }
+    
+    emptyState.style.display = 'none';
+    document.querySelector('.historico-table').style.display = 'table';
+    
+    // Mostra apenas os primeiros HISTORICO_POR_PAGINA
+    historicoCarregados = HISTORICO_POR_PAGINA;
+    var visiveis = concluidos.slice(0, historicoCarregados);
+    var restantes = concluidos.length - visiveis.length;
+    
+    tbody.innerHTML = visiveis.map(function(task) {
+        var tipoConfig = TIPO_CONFIG[task.tipo] || {};
+        var iniciais = getIniciais(task.responsavel?.nome || 'N/A');
+        return '<tr><td><span class="task-name" onclick="openModal(' + task.id + ')">' + task.nome + '</span></td><td><span class="tipo-badge"><span class="dot" style="background:' + (tipoConfig.color || '#666') + '"></span>' + (tipoConfig.label || task.tipo) + '</span></td><td><div class="responsavel-cell"><div class="avatar">' + iniciais + '</div><span>' + (task.responsavel?.nome || 'N/A') + '</span></div></td><td>' + formatDate(task.concluido_em) + '</td><td>' + formatDate(task.prazo) + '</td><td><button class="btn-secondary btn-ver" onclick="openModal(' + task.id + ')">Ver</button></td></tr>';
+    }).join('');
+    
+    if (restantes > 0) {
+        tbody.innerHTML += '<tr><td colspan="6"><button class="btn-carregar-mais-historico" onclick="carregarMaisHistorico()">Carregar mais ' + restantes + ' concluída' + (restantes > 1 ? 's' : '') + '</button></td></tr>';
+    }
+}
+
+function carregarMaisHistorico() {
+    var filtroTipo = document.getElementById('filtroTipo').value;
+    var filtroResponsavel = document.getElementById('filtroResponsavel').value;
+    var filtroDataDe = document.getElementById('filtroDataDe').value;
+    var filtroDataAte = document.getElementById('filtroDataAte').value;
+    
+    var concluidos = tasks.filter(function(t) { return t.status === 'concluido'; });
+    if (filtroTipo) concluidos = concluidos.filter(function(t) { return t.tipo === filtroTipo; });
+    if (filtroResponsavel) concluidos = concluidos.filter(function(t) { return t.responsavel && t.responsavel.nome === filtroResponsavel; });
+    if (filtroDataDe) concluidos = concluidos.filter(function(t) { return t.concluido_em && t.concluido_em.split('T')[0] >= filtroDataDe; });
+    if (filtroDataAte) concluidos = concluidos.filter(function(t) { return t.concluido_em && t.concluido_em.split('T')[0] <= filtroDataAte; });
+    
+    concluidos.sort(function(a, b) {
+        var dateA = a.concluido_em ? new Date(a.concluido_em) : new Date(0);
+        var dateB = b.concluido_em ? new Date(b.concluido_em) : new Date(0);
+        return dateB - dateA;
+    });
+    
+    historicoCarregados += HISTORICO_POR_PAGINA;
+    var visiveis = concluidos.slice(0, historicoCarregados);
+    var restantes = concluidos.length - visiveis.length;
+    var tbody = document.getElementById('historicoBody');
+    
+    tbody.innerHTML = visiveis.map(function(task) {
+        var tipoConfig = TIPO_CONFIG[task.tipo] || {};
+        var iniciais = getIniciais(task.responsavel?.nome || 'N/A');
+        return '<tr><td><span class="task-name" onclick="openModal(' + task.id + ')">' + task.nome + '</span></td><td><span class="tipo-badge"><span class="dot" style="background:' + (tipoConfig.color || '#666') + '"></span>' + (tipoConfig.label || task.tipo) + '</span></td><td><div class="responsavel-cell"><div class="avatar">' + iniciais + '</div><span>' + (task.responsavel?.nome || 'N/A') + '</span></div></td><td>' + formatDate(task.concluido_em) + '</td><td>' + formatDate(task.prazo) + '</td><td><button class="btn-secondary btn-ver" onclick="openModal(' + task.id + ')">Ver</button></td></tr>';
+    }).join('');
+    
+    if (restantes > 0) {
+        tbody.innerHTML += '<tr><td colspan="6"><button class="btn-carregar-mais-historico" onclick="carregarMaisHistorico()">Carregar mais ' + restantes + ' concluída' + (restantes > 1 ? 's' : '') + '</button></td></tr>';
+    }
+}
         
         function updateFiltroResponsaveis() {
             const select = document.getElementById('filtroResponsavel');
