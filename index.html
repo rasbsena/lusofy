@@ -1057,6 +1057,11 @@ const TIPO_CONFIG = {
         let draggedCard = null;
         let cameraStream = null;
         let paymentDataCache = {};
+        var cardsVisiveis = {};
+        var CARDS_POR_PAGINA = 20;
+        var historicoAberto = false;
+        var historicoCarregados = 0;
+        var HISTORICO_POR_PAGINA = 10;
 
         // Função para converter URLs em links clicáveis
         function linkify(text) {
