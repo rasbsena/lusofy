@@ -1512,13 +1512,57 @@ function carregarMaisCards(tipo) {
         }
 
         function setupDragAndDrop() {
-            const cards = document.querySelectorAll('.task-card');
-            const columns = document.querySelectorAll('.column-cards');
-            cards.forEach(card => { card.addEventListener('dragstart', handleDragStart); card.addEventListener('dragend', handleDragEnd); });
-            columns.forEach(column => { column.addEventListener('dragover', handleDragOver); column.addEventListener('drop', handleDrop); column.addEventListener('dragleave', handleDragLeave); });
-            // Inicia atualização dos cronômetros de espera
-            updateWaitTimers();
-        }
+    var board = document.getElementById('kanbanBoard');
+    board.removeEventListener('dragstart', boardDragStart);
+    board.removeEventListener('dragend', boardDragEnd);
+    board.removeEventListener('click', boardClick);
+    board.addEventListener('dragstart', boardDragStart);
+    board.addEventListener('dragend', boardDragEnd);
+    board.addEventListener('click', boardClick);
+    var columns = document.querySelectorAll('.column-cards');
+    columns.forEach(function(column) {
+        column.addEventListener('dragover', handleDragOver);
+        column.addEventListener('drop', handleDrop);
+        column.addEventListener('dragleave', handleDragLeave);
+    });
+    updateWaitTimers();
+}
+
+function boardDragStart(e) {
+    var card = e.target.closest('.task-card');
+    if (!card) return;
+    draggedCard = card;
+    card.classList.add('dragging');
+    e.dataTransfer.effectAllowed = 'move';
+}
+
+function boardDragEnd(e) {
+    var card = e.target.closest('.task-card');
+    if (card) card.classList.remove('dragging');
+    document.querySelectorAll('.kanban-column').forEach(function(col) { col.classList.remove('drag-over'); });
+    draggedCard = null;
+}
+
+function boardClick(e) {
+    var btnMais = e.target.closest('.btn-carregar-mais');
+    if (btnMais) {
+        e.stopPropagation();
+        carregarMaisCards(btnMais.dataset.tipo);
+        return;
+    }
+    var card = e.target.closest('.task-card');
+    if (!card) return;
+    if (e.target.closest('button')) return;
+    var taskId = parseInt(card.dataset.id);
+    if (taskId) {
+        currentTask = tasks.find(function(t) { return t.id === taskId; });
+        if (!currentTask) return;
+        originalTask = JSON.parse(JSON.stringify(currentTask));
+        document.getElementById('modalTitle').textContent = currentTask.nome;
+        renderModalContent();
+        document.getElementById('taskModal').classList.add('active');
+    }
+}
         
         function formatWaitTime(ms) {
             const totalSeconds = Math.floor(ms / 1000);
