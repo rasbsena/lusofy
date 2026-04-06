@@ -1646,8 +1646,6 @@ function updateWaitTimers() {
             setTimeout(updateWaitTimers, 60000);
         }
         
-        function handleDragStart(e) { draggedCard = e.target; e.target.classList.add('dragging'); e.dataTransfer.effectAllowed = 'move'; }
-        function handleDragEnd(e) { e.target.classList.remove('dragging'); document.querySelectorAll('.kanban-column').forEach(col => col.classList.remove('drag-over')); draggedCard = null; }
         function handleDragOver(e) { e.preventDefault(); e.dataTransfer.dropEffect = 'move'; e.currentTarget.closest('.kanban-column').classList.add('drag-over'); }
         function handleDragLeave(e) { e.currentTarget.closest('.kanban-column').classList.remove('drag-over'); }
         
