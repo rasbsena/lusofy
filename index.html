@@ -1594,7 +1594,7 @@ function updateWaitTimers() {
                     }
                 }
             });
-            setTimeout(updateWaitTimers, 1000);
+            setTimeout(updateWaitTimers, 60000);
         }
         
         function handleDragStart(e) { draggedCard = e.target; e.target.classList.add('dragging'); e.dataTransfer.effectAllowed = 'move'; }
