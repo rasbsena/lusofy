@@ -1260,27 +1260,55 @@ const TIPO_CONFIG = {
             
             return resultado;
         }
-        function renderBoard() {
-            const board = document.getElementById('kanbanBoard');
-            board.innerHTML = '';
-            if (tasks.length === 0) {
-                board.innerHTML = '<div class="error-state"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 9h6M9 12h6M9 15h4"/></svg><h3>Nenhuma tarefa encontrada</h3><p>Não há tarefas cadastradas</p></div>';
-                return;
+function renderBoard() {
+    const board = document.getElementById('kanbanBoard');
+    board.innerHTML = '';
+    if (tasks.length === 0) {
+        board.innerHTML = '<div class="error-state"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 9h6M9 12h6M9 15h4"/></svg><h3>Nenhuma tarefa encontrada</h3><p>Não há tarefas cadastradas</p></div>';
+        return;
+    }
+    TIPO_ORDER.forEach(function(tipo) { cardsVisiveis[tipo] = CARDS_POR_PAGINA; });
+    TIPO_ORDER.forEach(function(tipo) {
+        var tipoConfig = TIPO_CONFIG[tipo];
+        var tipoTasksRaw = tasks.filter(function(t) { return t.tipo === tipo && t.status !== 'concluido'; });
+        var tipoTasks = filtrarEOrdenarTasks(tipoTasksRaw);
+        var totalTipo = tipoTasks.length;
+        var visiveis = tipoTasks.slice(0, cardsVisiveis[tipo]);
+        var restantes = totalTipo - visiveis.length;
+        var column = document.createElement('div');
+        column.className = 'kanban-column';
+        column.dataset.tipo = tipo;
+        var cardsHtml = '';
+        if (visiveis.length === 0) {
+            cardsHtml = '<div class="empty-column"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 9h6M9 12h6M9 15h4"/></svg><p>Nenhuma tarefa</p></div>';
+        } else {
+            cardsHtml = visiveis.map(function(task) { return renderCard(task); }).join('');
+            if (restantes > 0) {
+                cardsHtml += '<button class="btn-carregar-mais" data-tipo="' + tipo + '">Carregar mais ' + restantes + ' tarefa' + (restantes > 1 ? 's' : '') + '</button>';
             }
-            TIPO_ORDER.forEach(tipo => {
-                const tipoConfig = TIPO_CONFIG[tipo];
-                const tipoTasksRaw = tasks.filter(t => t.tipo === tipo && t.status !== 'concluido');
-                const tipoTasks = filtrarEOrdenarTasks(tipoTasksRaw);
-                const column = document.createElement('div');
-                column.className = 'kanban-column';
-                column.dataset.tipo = tipo;
-                column.innerHTML = '<div class="column-header"><div class="column-title"><div class="column-tipo-dot" style="background: ' + tipoConfig.color + '"></div><span class="column-name">' + tipoConfig.label + '</span></div><span class="column-count">' + tipoTasks.length + '</span></div><div class="column-cards" data-tipo="' + tipo + '">' + (tipoTasks.length === 0 ? '<div class="empty-column"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 9h6M9 12h6M9 15h4"/></svg><p>Nenhuma tarefa</p></div>' : tipoTasks.map(task => renderCard(task)).join('')) + '</div>';
-                board.appendChild(column);
-            });
-            setupDragAndDrop();
-            popularFiltroResponsaveis();
-            renderHistoricoTable();
         }
+        column.innerHTML = '<div class="column-header"><div class="column-title"><div class="column-tipo-dot" style="background: ' + tipoConfig.color + '"></div><span class="column-name">' + tipoConfig.label + '</span></div><span class="column-count">' + totalTipo + '</span></div><div class="column-cards" data-tipo="' + tipo + '">' + cardsHtml + '</div>';
+        board.appendChild(column);
+    });
+    setupDragAndDrop();
+    popularFiltroResponsaveis();
+    atualizarBotaoHistorico();
+}
+
+function carregarMaisCards(tipo) {
+    cardsVisiveis[tipo] = (cardsVisiveis[tipo] || CARDS_POR_PAGINA) + CARDS_POR_PAGINA;
+    var tipoTasksRaw = tasks.filter(function(t) { return t.tipo === tipo && t.status !== 'concluido'; });
+    var tipoTasks = filtrarEOrdenarTasks(tipoTasksRaw);
+    var visiveis = tipoTasks.slice(0, cardsVisiveis[tipo]);
+    var restantes = tipoTasks.length - visiveis.length;
+    var columnCards = document.querySelector('.column-cards[data-tipo="' + tipo + '"]');
+    if (!columnCards) return;
+    var cardsHtml = visiveis.map(function(task) { return renderCard(task); }).join('');
+    if (restantes > 0) {
+        cardsHtml += '<button class="btn-carregar-mais" data-tipo="' + tipo + '">Carregar mais ' + restantes + ' tarefa' + (restantes > 1 ? 's' : '') + '</button>';
+    }
+    columnCards.innerHTML = cardsHtml;
+}
         
         function handleSearchAutocomplete(value) {
             const autocomplete = document.getElementById('searchAutocomplete');
