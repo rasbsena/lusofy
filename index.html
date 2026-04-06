@@ -447,6 +447,73 @@
 .btn-ver-email:disabled { opacity: 0.4; cursor: not-allowed; border-color: var(--border-color); color: var(--text-muted); }
 .btn-ver-email:disabled:hover { background: var(--bg-card); border-color: var(--border-color); color: var(--text-muted); }
 .btn-ver-email svg { width: 16px; height: 16px; }
+.btn-carregar-mais {
+    width: 100%;
+    padding: 12px;
+    background: rgba(255, 207, 0, 0.1);
+    border: 2px dashed rgba(255, 207, 0, 0.3);
+    border-radius: 8px;
+    color: var(--accent);
+    font-family: 'Oswald', sans-serif;
+    font-size: 0.8rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+.btn-carregar-mais:hover {
+    background: rgba(255, 207, 0, 0.2);
+    border-color: var(--accent);
+}
+.historico-toggle-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    width: 100%;
+    padding: 16px;
+    background: var(--bg-column);
+    border: 2px solid var(--border-color);
+    border-radius: 12px;
+    color: var(--text-primary);
+    font-family: 'Oswald', sans-serif;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin: 24px;
+}
+.historico-toggle-btn:hover {
+    border-color: #22c55e;
+    background: rgba(34, 197, 94, 0.1);
+    color: #22c55e;
+}
+.historico-toggle-btn svg { width: 20px; height: 20px; color: #22c55e; }
+.historico-toggle-btn .historico-badge {
+    background: #22c55e;
+    color: var(--bg-primary);
+    font-size: 0.75rem;
+    padding: 3px 10px;
+    border-radius: 12px;
+}
+.btn-carregar-mais-historico {
+    width: 100%;
+    padding: 14px;
+    background: rgba(34, 197, 94, 0.1);
+    border: 2px dashed rgba(34, 197, 94, 0.3);
+    border-radius: 8px;
+    color: #22c55e;
+    font-family: 'Oswald', sans-serif;
+    font-size: 0.8rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-transform: uppercase;
+}
+.btn-carregar-mais-historico:hover {
+    background: rgba(34, 197, 94, 0.2);
+    border-color: #22c55e;
+}
     </style>
 </head>
 <body>
