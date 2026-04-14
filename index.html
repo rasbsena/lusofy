@@ -1295,9 +1295,23 @@ function renderBoard() {
         column.innerHTML = '<div class="column-header"><div class="column-title"><div class="column-tipo-dot" style="background: ' + tipoConfig.color + '"></div><span class="column-name">' + tipoConfig.label + '</span></div><span class="column-count">' + totalTipo + '</span></div><div class="column-cards" data-tipo="' + tipo + '">' + cardsHtml + '</div>';
         board.appendChild(column);
     });
-    setupDragAndDrop();
+setupDragAndDrop();
     popularFiltroResponsaveis();
     atualizarBotaoHistorico();
+    setupLazyColumns();
+}
+
+function setupLazyColumns() {
+    if (!('IntersectionObserver' in window)) return;
+    var columns = document.querySelectorAll('.kanban-column');
+    var observer = new IntersectionObserver(function(entries) {
+        entries.forEach(function(entry) {
+            if (entry.isIntersecting) {
+                entry.target.style.contentVisibility = 'auto';
+            }
+        });
+    }, { rootMargin: '200px' });
+    columns.forEach(function(col) { observer.observe(col); });
 }
 
 function carregarMaisCards(tipo) {
