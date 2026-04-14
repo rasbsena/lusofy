@@ -2535,17 +2535,75 @@ const dadosParaEnviar = {
             }, 300);
         }
         
-        async function selectResponsavel(id, nome) {
-            document.getElementById('responsavelInput').value = nome;
-            document.getElementById('responsavelDropdown').classList.remove('active');
-            const oldResp = currentTask.responsavel;
-            currentTask.responsavel = { id, nome };
-            await sendUpdate(UPDATE_TYPES.RESPONSAVEL_CHANGE, currentTask, { old_responsavel: oldResp, new_responsavel: { id, nome } });
-            renderBoard();
-            showToast('Responsável atualizado!', 'success');
+        // === BUSCA HÓSPEDE ===
+        let hospedeTimeout;
+        async function searchHospede(query) {
+            clearTimeout(hospedeTimeout);
+            const dropdown = document.getElementById('hospedeDropdown');
+            if (query.length < 3) { dropdown.classList.remove('active'); return; }
+            hospedeTimeout = setTimeout(async () => {
+                try {
+                    const response = await fetch('https://n8n.upperfy.com.br/webhook/crm-listar-clientes', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ query: query }) });
+                    const result = await response.json();
+                    const clientes = result[0]?.clientes || result.clientes || result || [];
+                    const filtrados = clientes.filter(c => c.name && c.name.toLowerCase().includes(query.toLowerCase())).slice(0, 8);
+                    if (filtrados.length > 0) {
+                        dropdown.innerHTML = filtrados.map(c => '<div class="responsavel-option" onclick="selectHospede(' + c.id + ', \'' + (c.name||'').replace(/'/g, "\\'") + '\')"><div class="responsavel-option-avatar">' + getIniciais(c.name) + '</div><div class="responsavel-option-info"><div class="responsavel-option-name">' + c.name + '</div><div class="responsavel-option-email">' + (c.phone || c.email || '') + '</div></div></div>').join('');
+                        dropdown.classList.add('active');
+                    } else {
+                        dropdown.innerHTML = '<div style="padding:10px;text-align:center;color:var(--text-muted);font-size:0.8rem;">Nenhum cliente encontrado<br><a href="https://crm.upperfy.com.br/clientes.html?novo=1" target="_blank" style="color:var(--accent);">+ Adicionar novo</a></div>';
+                        dropdown.classList.add('active');
+                    }
+                } catch (error) { console.error('Erro busca hóspede:', error); dropdown.classList.remove('active'); }
+            }, 300);
         }
 
-        async function editDate(field) {
+        async function selectHospede(id, nome) {
+            document.getElementById('hospedeInput').value = nome;
+            document.getElementById('hospedeDropdown').classList.remove('active');
+            var oldHospede = { id: currentTask.hospede_id, nome: currentTask.hospede_nome };
+            currentTask.hospede_id = id;
+            currentTask.hospede_nome = nome;
+            var taskInArray = tasks.find(t => t.id === currentTask.id);
+            if (taskInArray) { taskInArray.hospede_id = id; taskInArray.hospede_nome = nome; }
+            await sendUpdate(UPDATE_TYPES.DATA_UPDATE, currentTask, { field: 'hospede', old_value: oldHospede, new_value: { id: id, nome: nome } });
+            showToast('Hóspede vinculado!', 'success');
+        }
+
+        // === BUSCA PARCEIRO ===
+        let parceiroTimeout;
+        async function searchParceiro(query) {
+            clearTimeout(parceiroTimeout);
+            const dropdown = document.getElementById('parceiroDropdown');
+            if (query.length < 3) { dropdown.classList.remove('active'); return; }
+            parceiroTimeout = setTimeout(async () => {
+                try {
+                    const response = await fetch('https://n8n.upperfy.com.br/webhook/crm-listar-parceiros', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ query: query }) });
+                    const result = await response.json();
+                    const parceiros = result[0]?.parceiros || result.parceiros || result || [];
+                    const filtrados = parceiros.filter(p => p.name && p.name.toLowerCase().includes(query.toLowerCase())).slice(0, 8);
+                    if (filtrados.length > 0) {
+                        dropdown.innerHTML = filtrados.map(p => '<div class="responsavel-option" onclick="selectParceiro(' + p.id + ', \'' + (p.name||'').replace(/'/g, "\\'") + '\')"><div class="responsavel-option-avatar" style="background:#f59e0b;">' + getIniciais(p.name) + '</div><div class="responsavel-option-info"><div class="responsavel-option-name">' + p.name + '</div><div class="responsavel-option-email">' + (p.phone || p.email || '') + '</div></div></div>').join('');
+                        dropdown.classList.add('active');
+                    } else {
+                        dropdown.innerHTML = '<div style="padding:10px;text-align:center;color:var(--text-muted);font-size:0.8rem;">Nenhum parceiro encontrado<br><a href="https://crm.upperfy.com.br/parceiros.html?novo=1" target="_blank" style="color:var(--accent);">+ Adicionar novo</a></div>';
+                        dropdown.classList.add('active');
+                    }
+                } catch (error) { console.error('Erro busca parceiro:', error); dropdown.classList.remove('active'); }
+            }, 300);
+        }
+
+        async function selectParceiro(id, nome) {
+            document.getElementById('parceiroInput').value = nome;
+            document.getElementById('parceiroDropdown').classList.remove('active');
+            var oldParceiro = { id: currentTask.parceiro_id, nome: currentTask.parceiro_nome };
+            currentTask.parceiro_id = id;
+            currentTask.parceiro_nome = nome;
+            var taskInArray = tasks.find(t => t.id === currentTask.id);
+            if (taskInArray) { taskInArray.parceiro_id = id; taskInArray.parceiro_nome = nome; }
+            await sendUpdate(UPDATE_TYPES.DATA_UPDATE, currentTask, { field: 'parceiro', old_value: oldParceiro, new_value: { id: id, nome: nome } });
+            showToast('Parceiro vinculado!', 'success');
+        }{
             const container = event.currentTarget;
             const value = currentTask[field] ? currentTask[field].split('T')[0] : '';
             
