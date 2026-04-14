@@ -1798,6 +1798,8 @@ function updateWaitTimers() {
             
             updateCronometro();
             if (isCobrancaDigitada && hasPaymentData) { updatePaymentTimer(); }
+            var btnEmail = document.getElementById('footerBtnEmail');
+            if (btnEmail) { btnEmail.disabled = !currentTask.solicitacao_conteudo; }
         }
 
         // Atualiza status localmente (sem enviar ao backend ainda)
