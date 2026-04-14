@@ -2625,18 +2625,18 @@ const dadosParaEnviar = {
         }
         async function autoSugerirParceiro(parceiroId) {
             try {
-                var response = await fetch('https://n8n.upperfy.com.br/webhook/crm-listar-parceiros', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ query: '', tenant_id: 9 }) });
+                var response = await fetch('https://n8n.upperfy.com.br/webhook/0fec17a7-8654-45ff-sugest-parceiro', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ parceiro_id: parceiroId }) });
                 var result = await response.json();
-                var parceiros = result[0]?.parceiros || result.parceiros || result || [];
-                var encontrado = parceiros.find(function(p) { return p.id === parceiroId; });
-                if (encontrado) {
+                var encontrado = result[0] || result;
+                if (encontrado && encontrado.nome) {
                     var dropdown = document.getElementById('parceiroDropdown');
                     var input = document.getElementById('parceiroInput');
                     if (dropdown && input) {
                         input.value = '';
                         input.placeholder = 'Sugestão encontrada...';
+                        var nomeExibir = encontrado.apelido ? encontrado.nome + ' (' + encontrado.apelido + ')' : encontrado.nome;
                         dropdown.innerHTML = '<div style="padding:6px 10px;font-size:0.65rem;color:var(--accent);text-transform:uppercase;letter-spacing:1px;border-bottom:1px solid var(--border-color);">Parceiro sugerido</div>' +
-                            '<div class="responsavel-option" onclick="selectParceiro(' + encontrado.id + ', \'' + (encontrado.name||'').replace(/'/g, "\\'") + '\')"><div class="responsavel-option-avatar" style="background:#f59e0b;">' + getIniciais(encontrado.name) + '</div><div class="responsavel-option-info"><div class="responsavel-option-name">' + encontrado.name + '</div><div class="responsavel-option-email">' + (encontrado.phone || '') + '</div></div></div>';
+                            '<div class="responsavel-option" onclick="selectParceiro(' + encontrado.id + ', \'' + nomeExibir.replace(/'/g, "\\'") + '\')"><div class="responsavel-option-avatar" style="background:#f59e0b;">' + getIniciais(encontrado.nome) + '</div><div class="responsavel-option-info"><div class="responsavel-option-name">' + nomeExibir + '</div><div class="responsavel-option-email">' + (encontrado.apelido || '') + '</div></div></div>';
                         dropdown.classList.add('active');
                     }
                 }
@@ -2651,15 +2651,14 @@ const dadosParaEnviar = {
             if (query.length < 3) { dropdown.classList.remove('active'); return; }
             parceiroTimeout = setTimeout(async () => {
                 try {
-                    const response = await fetch('https://n8n.upperfy.com.br/webhook/crm-listar-parceiros', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ query: query, tenant_id: 9 }) });
+                    const response = await fetch('https://n8n.upperfy.com.br/webhook/0fec17a7-8654-45ff-busca-parceiro', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ query: query, tenant_id: 9 }) });
                     const result = await response.json();
-                    const parceiros = result[0]?.parceiros || result.parceiros || result || [];
-                    const filtrados = parceiros.filter(p => p.name && p.name.toLowerCase().includes(query.toLowerCase())).slice(0, 8);
+                    const filtrados = (Array.isArray(result) ? result : [result]).filter(p => p.nome).slice(0, 8);
                     if (filtrados.length > 0) {
-                        dropdown.innerHTML = filtrados.map(p => '<div class="responsavel-option" onclick="selectParceiro(' + p.id + ', \'' + (p.name||'').replace(/'/g, "\\'") + '\')"><div class="responsavel-option-avatar" style="background:#f59e0b;">' + getIniciais(p.name) + '</div><div class="responsavel-option-info"><div class="responsavel-option-name">' + p.name + '</div><div class="responsavel-option-email">' + (p.phone || p.email || '') + '</div></div></div>').join('');
+                        dropdown.innerHTML = filtrados.map(p => { var nomeExibir = p.apelido ? p.nome + ' (' + p.apelido + ')' : p.nome; return '<div class="responsavel-option" onclick="selectParceiro(' + p.id + ', \'' + nomeExibir.replace(/'/g, "\\'") + '\')"><div class="responsavel-option-avatar" style="background:#f59e0b;">' + getIniciais(p.nome) + '</div><div class="responsavel-option-info"><div class="responsavel-option-name">' + nomeExibir + '</div><div class="responsavel-option-email">' + (p.apelido || '') + '</div></div></div>'; }).join('');
                         dropdown.classList.add('active');
                     } else {
-                        dropdown.innerHTML = '<div style="padding:10px;text-align:center;color:var(--text-muted);font-size:0.8rem;">Nenhum parceiro encontrado<br><a href="https://crm.upperfy.com.br/parceiros.html?novo=1" target="_blank" style="color:var(--accent);">+ Adicionar novo</a></div>';
+                        dropdown.innerHTML = '<div style="padding:10px;text-align:center;color:var(--text-muted);font-size:0.8rem;">Nenhum parceiro encontrado</div>';
                         dropdown.classList.add('active');
                     }
                 } catch (error) { console.error('Erro busca parceiro:', error); dropdown.classList.remove('active'); }
