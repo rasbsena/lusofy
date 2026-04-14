@@ -718,9 +718,20 @@
             </div>
             <div class="modal-body" id="modalBody"></div>
             <div class="modal-footer">
-                <button class="btn-success" onclick="salvarAlteracoes()">
-                    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" style="margin-right:6px;vertical-align:middle;"><path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
-                    Salvar Alterações
+                <div class="modal-footer" style="justify-content:space-between;">
+                <div style="display:flex;gap:8px;">
+                    <button class="btn-ver-email" id="footerBtnEmail" onclick="openEmailModal()" style="padding:8px 14px;font-size:0.75rem;">
+                        <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+                        Email
+                    </button>
+                    <button class="btn-secondary" onclick="abrirConfirmExclusaoModal()" style="padding:8px 14px;font-size:0.75rem;border-color:#ef4444;color:#fca5a5;">
+                        <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" style="margin-right:4px;vertical-align:middle;"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+                        Bloquear
+                    </button>
+                </div>
+                <button class="btn-success" onclick="salvarAlteracoes()" style="padding:8px 16px;font-size:0.8rem;">
+                    <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" style="margin-right:4px;vertical-align:middle;"><path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+                    Salvar
                 </button>
             </div>
         </div>
@@ -1739,9 +1750,7 @@ function updateWaitTimers() {
             // Descrição
             colEsquerda += '<div class="modal-section"><div class="modal-section-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><path d="M14 2v6h6M16 13H8M16 17H8M10 9H8"/></svg>Descrição</div><div class="descricao-box">' + linkify(currentTask.descricao || 'Sem descrição') + '</div></div>';
             
-            // Ver Email
-            colEsquerda += '<div class="modal-section" style="text-align:center;"><button class="btn-ver-email" onclick="openEmailModal()" ' + (!currentTask.solicitacao_conteudo ? 'disabled' : '') + '><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>Ver Email</button></div>';
-            
+// Ver Email - movido para o footer            
             // Informação PMS
             if ((currentTask.tipo === 'bloqueio_mapa' || currentTask.tipo === 'cancelamento') && currentTask.informacaopms) {
                 colEsquerda += '<div class="modal-section"><div class="modal-section-title" style="color:#8b5cf6;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>Informação PMS</div><div class="descricao-box">' + linkify(currentTask.informacaopms) + '</div></div>';
