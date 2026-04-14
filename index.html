@@ -49,7 +49,7 @@
         .main-content { padding-top: 94px; padding-bottom: 24px; min-height: 100vh; }
         .kanban-container { padding: 0 24px; overflow-x: auto; }
         .kanban-board { display: flex; gap: 16px; min-width: max-content; padding-bottom: 24px; }
-        .kanban-column { width: 340px; min-width: 340px; background: var(--bg-column); border-radius: 12px; border: 1px solid var(--border-color); display: flex; flex-direction: column; max-height: calc(100vh - 130px); }
+        .kanban-column { width: 340px; min-width: 340px; background: var(--bg-column); border-radius: 12px; border: 1px solid var(--border-color); display: flex; flex-direction: column; max-height: calc(100vh - 130px); content-visibility: auto; contain-intrinsic-size: 340px 500px; }
         .column-header { padding: 16px; border-bottom: 1px solid var(--border-color); display: flex; align-items: center; justify-content: space-between; }
         .column-title { display: flex; align-items: center; gap: 10px; }
         .column-tipo-dot { width: 12px; height: 12px; border-radius: 50%; }
