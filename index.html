@@ -1780,7 +1780,6 @@ function updateWaitTimers() {
                 var hospedeValorInicial = currentTask.hospede_nome || currentTask.nome_hospede || '';
                 colDireita += '<div class="modal-section"><div class="modal-section-title" style="color:#06b6d4;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>Hóspede</div><div class="responsavel-search"><input type="text" class="responsavel-input" id="hospedeInput" value="' + hospedeValorInicial + '" placeholder="Digite 3 letras para buscar..." oninput="searchHospede(this.value)"><div class="responsavel-dropdown" id="hospedeDropdown"></div></div></div>';
             }
-                '</div></div>';
             
             // Parceiro (busca ou lacrado)
             if (currentTask.parceiro_id && currentTask.parceiro_confirmado) {
@@ -1794,7 +1793,6 @@ function updateWaitTimers() {
             } else {
                 colDireita += '<div class="modal-section"><div class="modal-section-title" style="color:#f59e0b;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>Parceiro</div><div class="responsavel-search"><input type="text" class="responsavel-input" id="parceiroInput" value="' + (currentTask.parceiro_nome || '') + '" placeholder="Digite 3 letras para buscar..." oninput="searchParceiro(this.value)"><div class="responsavel-dropdown" id="parceiroDropdown"></div></div></div>';
             }
-                '</div></div>';
             
             // Datas Bloqueio
             if (currentTask.tipo === 'bloqueio_mapa') {
