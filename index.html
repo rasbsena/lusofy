@@ -2565,7 +2565,7 @@ const dadosParaEnviar = {
                     if (pessoas.length > 0) {
                         let html = '';
                         pessoas.forEach(p => {
-                            html += '<div class="responsavel-option" onclick="selectResponsavel(' + p.id + ', \'' + (p.nome_completo||'').replace(/'/g, "\\'") + '\')"><div class="responsavel-option-avatar">' + getIniciais(p.nome_completo) + '</div><div class="responsavel-option-info"><div class="responsavel-option-name">' + p.nome_completo + '</div><div class="responsavel-option-email">' + (p.email||'') + '</div></div></div>';
+                            html += '<div class="responsavel-option" onclick="selectResponsavel(' + p.id + ', &quot;' + (p.nome_completo||'').replace(/"/g, '') + '&quot;)"><div class="responsavel-option-avatar">' + getIniciais(p.nome_completo) + '</div><div class="responsavel-option-info"><div class="responsavel-option-name">' + p.nome_completo + '</div><div class="responsavel-option-email">' + (p.email||'') + '</div></div></div>';
                         });
                         dropdown.innerHTML = html;
                         dropdown.classList.add('active');
@@ -2646,12 +2646,6 @@ const dadosParaEnviar = {
             if (taskInArray) { taskInArray.hospede_confirmado = false; }
             renderModalContent();
         }
-        function desvincularParceiro() {
-            currentTask.parceiro_confirmado = false;
-            var taskInArray = tasks.find(t => t.id === currentTask.id);
-            if (taskInArray) { taskInArray.parceiro_confirmado = false; }
-            renderModalContent();
-        }
         async function autoSugerirParceiro(parceiroId) {
             try {
                 var response = await fetch('https://n8n.upperfy.com.br/webhook/0fec17a7-8654-45ff-sugest-parceiro', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ parceiro_id: parceiroId }) });
@@ -2713,7 +2707,7 @@ const dadosParaEnviar = {
             if (taskInArray) { taskInArray.parceiro_confirmado = false; }
             renderModalContent();
         }
-        {
+        async function editDate(field) {
             const container = event.currentTarget;
             const value = currentTask[field] ? currentTask[field].split('T')[0] : '';
             
