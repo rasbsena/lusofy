@@ -110,7 +110,7 @@
         @media (max-width: 900px) { .modal-grid { grid-template-columns: repeat(2, 1fr); } }
         @media (max-width: 900px) { .modal-grid { grid-template-columns: repeat(2, 1fr); } }        
         @media (max-width: 600px) { .modal-grid { grid-template-columns: 1fr; } }
-        @media (max-width: 900px) { .modal-body > div[style*="grid-template-columns"] { grid-template-columns: 1fr !important; } }
+        @media (max-width: 900px) { .modal-body > div[style*="grid-template-columns"] { grid-template-columns: 1fr !important; } .modal-body > div[style*="grid-template-columns"] > div:nth-child(2) { display: none; } }
         .modal-field { background: var(--bg-card); border-radius: 6px; padding: 8px 10px; border: 1px solid var(--border-color); }
         .modal-field-label { font-size: 0.6rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 2px; font-weight: 600; }
         .modal-field-value { font-size: 0.82rem; color: var(--text-primary); font-weight: 500; display: flex; align-items: center; min-height: 24px; }
@@ -1782,8 +1782,9 @@ function updateWaitTimers() {
             colDireita += renderArquivosSection();
 
             // === MONTAGEM FINAL ===
-            modal.innerHTML = '<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">' +
+            modal.innerHTML = '<div style="display:grid;grid-template-columns:1fr 2px 1fr;gap:20px;">' +
                 '<div>' + colEsquerda + '</div>' +
+                '<div style="background:var(--border-color);border-radius:2px;"></div>' +
                 '<div>' + colDireita + '</div>' +
                 '</div>' +
                 renderComentariosSection();
