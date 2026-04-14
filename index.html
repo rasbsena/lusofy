@@ -1688,7 +1688,7 @@ function updateWaitTimers() {
         }
 
         function openModal(taskId) { currentTask = tasks.find(t => t.id === taskId); if (!currentTask) return; originalTask = JSON.parse(JSON.stringify(currentTask)); document.getElementById('modalTitle').textContent = currentTask.nome; renderModalContent(); document.getElementById('taskModal').classList.add('active'); }
-        function closeModal() { document.getElementById('taskModal').classList.remove('active'); currentTask = null; originalTask = null; }
+        function closeModal() { document.getElementById('taskModal').classList.remove('active'); currentTask = null; originalTask = null; loadTasks(); }
 
         // Salvar alterações e fechar modal
         async function salvarAlteracoes() {
