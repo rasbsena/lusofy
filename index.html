@@ -1782,8 +1782,18 @@ function updateWaitTimers() {
             }
                 '</div></div>';
             
-            // Parceiro (busca)
-            colDireita += '<div class="modal-section"><div class="modal-section-title" style="color:#f59e0b;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>Parceiro</div><div class="responsavel-search"><input type="text" class="responsavel-input" id="parceiroInput" value="' + (currentTask.parceiro_nome || '') + '" placeholder="Digite 3 letras para buscar..." oninput="searchParceiro(this.value)"><div class="responsavel-dropdown" id="parceiroDropdown"></div>' +
+            // Parceiro (busca ou lacrado)
+            if (currentTask.parceiro_id && currentTask.parceiro_confirmado) {
+                colDireita += '<div class="modal-section"><div class="modal-section-title" style="color:#f59e0b;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>Parceiro <span style="color:#22c55e;font-size:0.6rem;margin-left:6px;">✓ VINCULADO</span></div>' +
+                    '<div class="dados-pagamento-section completo" style="border-color:#f59e0b;padding:10px;">' +
+                    '<div style="display:flex;align-items:center;gap:10px;">' +
+                    '<div class="responsavel-option-avatar" style="background:#f59e0b;width:32px;height:32px;font-size:0.75rem;">' + getIniciais(currentTask.parceiro_nome) + '</div>' +
+                    '<div style="flex:1;"><div style="font-weight:600;font-size:0.85rem;">' + (currentTask.parceiro_nome || '') + '</div></div></div>' +
+                    '<button class="btn-secondary btn-edit-dados" onclick="desvincularParceiro()" style="margin-top:8px;padding:6px 10px;font-size:0.7rem;"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" style="margin-right:4px;vertical-align:middle;"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>Alterar</button>' +
+                    '</div></div>';
+            } else {
+                colDireita += '<div class="modal-section"><div class="modal-section-title" style="color:#f59e0b;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>Parceiro</div><div class="responsavel-search"><input type="text" class="responsavel-input" id="parceiroInput" value="' + (currentTask.parceiro_nome || '') + '" placeholder="Digite 3 letras para buscar..." oninput="searchParceiro(this.value)"><div class="responsavel-dropdown" id="parceiroDropdown"></div></div></div>';
+            }
                 '</div></div>';
             
             // Datas Bloqueio
@@ -1813,6 +1823,10 @@ function updateWaitTimers() {
             if (isCobrancaDigitada && hasPaymentData) { updatePaymentTimer(); }
             var btnEmail = document.getElementById('footerBtnEmail');
             if (btnEmail) { btnEmail.disabled = !currentTask.solicitacao_conteudo; }
+            // Auto-sugerir parceiro se tem id mas não confirmado
+            if (currentTask.parceiro_id && !currentTask.parceiro_confirmado && !currentTask.parceiro_nome) {
+                autoSugerirParceiro(currentTask.parceiro_id);
+            }
         }
 
         // Atualiza status localmente (sem enviar ao backend ainda)
@@ -2603,6 +2617,31 @@ const dadosParaEnviar = {
             if (taskInArray) { taskInArray.hospede_confirmado = false; }
             renderModalContent();
         }
+        function desvincularParceiro() {
+            currentTask.parceiro_confirmado = false;
+            var taskInArray = tasks.find(t => t.id === currentTask.id);
+            if (taskInArray) { taskInArray.parceiro_confirmado = false; }
+            renderModalContent();
+        }
+        async function autoSugerirParceiro(parceiroId) {
+            try {
+                var response = await fetch('https://n8n.upperfy.com.br/webhook/crm-listar-parceiros', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ query: '', tenant_id: 9 }) });
+                var result = await response.json();
+                var parceiros = result[0]?.parceiros || result.parceiros || result || [];
+                var encontrado = parceiros.find(function(p) { return p.id === parceiroId; });
+                if (encontrado) {
+                    var dropdown = document.getElementById('parceiroDropdown');
+                    var input = document.getElementById('parceiroInput');
+                    if (dropdown && input) {
+                        input.value = '';
+                        input.placeholder = 'Sugestão encontrada...';
+                        dropdown.innerHTML = '<div style="padding:6px 10px;font-size:0.65rem;color:var(--accent);text-transform:uppercase;letter-spacing:1px;border-bottom:1px solid var(--border-color);">Parceiro sugerido</div>' +
+                            '<div class="responsavel-option" onclick="selectParceiro(' + encontrado.id + ', \'' + (encontrado.name||'').replace(/'/g, "\\'") + '\')"><div class="responsavel-option-avatar" style="background:#f59e0b;">' + getIniciais(encontrado.name) + '</div><div class="responsavel-option-info"><div class="responsavel-option-name">' + encontrado.name + '</div><div class="responsavel-option-email">' + (encontrado.phone || '') + '</div></div></div>';
+                        dropdown.classList.add('active');
+                    }
+                }
+            } catch (error) { console.error('Erro ao sugerir parceiro:', error); }
+        }
 
         // === BUSCA PARCEIRO ===
         let parceiroTimeout;
@@ -2633,11 +2672,20 @@ const dadosParaEnviar = {
             var oldParceiro = { id: currentTask.parceiro_id, nome: currentTask.parceiro_nome };
             currentTask.parceiro_id = id;
             currentTask.parceiro_nome = nome;
+            currentTask.parceiro_confirmado = true;
             var taskInArray = tasks.find(t => t.id === currentTask.id);
-            if (taskInArray) { taskInArray.parceiro_id = id; taskInArray.parceiro_nome = nome; }
+            if (taskInArray) { taskInArray.parceiro_id = id; taskInArray.parceiro_nome = nome; taskInArray.parceiro_confirmado = true; }
             await sendUpdate(UPDATE_TYPES.DATA_UPDATE, currentTask, { field: 'parceiro', old_value: oldParceiro, new_value: { id: id, nome: nome } });
+            renderModalContent();
             showToast('Parceiro vinculado!', 'success');
-        }{
+        }
+        function desvincularParceiro() {
+            currentTask.parceiro_confirmado = false;
+            var taskInArray = tasks.find(t => t.id === currentTask.id);
+            if (taskInArray) { taskInArray.parceiro_confirmado = false; }
+            renderModalContent();
+        }
+        {
             const container = event.currentTarget;
             const value = currentTask[field] ? currentTask[field].split('T')[0] : '';
             
