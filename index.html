@@ -106,11 +106,12 @@
         .modal-section:last-child { margin-bottom: 0; }
         .modal-section-title { font-family: 'Oswald', sans-serif; font-size: 0.72rem; font-weight: 600; color: var(--accent); margin-bottom: 6px; text-transform: uppercase; letter-spacing: 1px; display: flex; align-items: center; gap: 6px; }
         .modal-section-title svg { width: 16px; height: 16px; }
-        .modal-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
+        .modal-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+        @media (max-width: 900px) { .modal-grid { grid-template-columns: repeat(2, 1fr); } }
         @media (max-width: 600px) { .modal-grid { grid-template-columns: 1fr; } }
-        .modal-field { background: var(--bg-card); border-radius: 8px; padding: 12px; border: 1px solid var(--border-color); }
-        .modal-field-label { font-size: 0.65rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px; font-weight: 600; }
-        .modal-field-value { font-size: 0.9rem; color: var(--text-primary); font-weight: 500; }
+        .modal-field { background: var(--bg-card); border-radius: 6px; padding: 8px 10px; border: 1px solid var(--border-color); }
+        .modal-field-label { font-size: 0.6rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 2px; font-weight: 600; }
+        .modal-field-value { font-size: 0.82rem; color: var(--text-primary); font-weight: 500; }
         .modal-field-value.editable { cursor: pointer; display: flex; align-items: center; gap: 8px; }
         .modal-field-value.editable:hover { color: var(--accent); }
         .modal-field-value.editable svg { width: 14px; height: 14px; opacity: 0.5; flex-shrink: 0; }
@@ -119,7 +120,7 @@
         .status-select-wrapper select:focus { outline: none; }
         .cronometro { display: flex; align-items: center; gap: 8px; font-family: 'Oswald', monospace; font-size: 1rem; color: var(--accent); font-weight: 600; }
         .cronometro svg { width: 16px; height: 16px; }
-        .descricao-box { background: var(--bg-card); border-radius: 8px; padding: 14px; border: 1px solid var(--border-color); min-height: 80px; font-size: 0.85rem; line-height: 1.5; color: var(--text-secondary); white-space: pre-wrap; }
+        .descricao-box { background: var(--bg-card); border-radius: 6px; padding: 10px; border: 1px solid var(--border-color); min-height: 60px; font-size: 0.78rem; line-height: 1.4; color: var(--text-secondary); white-space: pre-wrap; }
         .descricao-box a { color: var(--accent); text-decoration: underline; }
         .descricao-box a:hover { color: var(--accent-hover); }
         .responsavel-search { position: relative; }
