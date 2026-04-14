@@ -2573,7 +2573,36 @@ const dadosParaEnviar = {
                 } catch (error) { dropdown.classList.remove('active'); }
             }, 300);
         }
-        
+        async function selectResponsavel(id, nome) {
+            document.getElementById('responsavelInput').value = nome;
+            document.getElementById('responsavelDropdown').classList.remove('active');
+            const oldResp = currentTask.responsavel;
+            currentTask.responsavel = { id, nome };
+            await sendUpdate(UPDATE_TYPES.RESPONSAVEL_CHANGE, currentTask, { old_responsavel: oldResp, new_responsavel: { id, nome } });
+            renderBoard();
+            showToast('Responsável atualizado!', 'success');
+        }
+        async function atribuirAMim() {
+            var localData = getLocalStorage();
+            var user = localData.user;
+            if (!user || !user.id_funcionario) {
+                var cookieData = getUpperfyCookie();
+                if (cookieData && cookieData.autenticado) {
+                    user = { id_funcionario: cookieData.id_funcionario, nome: cookieData.usuario?.nome };
+                }
+            }
+            if (!user || !user.id_funcionario) {
+                showToast('Usuário não identificado', 'error');
+                return;
+            }
+            var oldResp = currentTask.responsavel;
+            currentTask.responsavel = { id: user.id_funcionario, nome: user.nome };
+            var taskInArray = tasks.find(t => t.id === currentTask.id);
+            if (taskInArray) { taskInArray.responsavel = { id: user.id_funcionario, nome: user.nome }; }
+            await sendUpdate(UPDATE_TYPES.RESPONSAVEL_CHANGE, currentTask, { old_responsavel: oldResp, new_responsavel: currentTask.responsavel });
+            renderModalContent();
+            showToast('Atribuído a você!', 'success');
+        }
         // === BUSCA HÓSPEDE ===
         let hospedeTimeout;
         async function searchHospede(query) {
