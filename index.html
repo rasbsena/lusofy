@@ -1765,8 +1765,21 @@ function updateWaitTimers() {
             // Responsável
             colDireita += '<div class="modal-section"><div class="modal-section-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>Responsável</div><div class="responsavel-search"><input type="text" class="responsavel-input" id="responsavelInput" value="' + (currentTask.responsavel?.nome || '') + '" placeholder="Digite para buscar..." oninput="searchResponsavel(this.value)"><div class="responsavel-dropdown" id="responsavelDropdown"></div></div></div>';
             
-            // Hóspede (busca)
-            colDireita += '<div class="modal-section"><div class="modal-section-title" style="color:#06b6d4;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>Hóspede</div><div class="responsavel-search"><input type="text" class="responsavel-input" id="hospedeInput" value="' + (currentTask.hospede_nome || '') + '" placeholder="Digite 3 letras para buscar..." oninput="searchHospede(this.value)"><div class="responsavel-dropdown" id="hospedeDropdown"></div>' +
+            // Hóspede (busca ou lacrado)
+            if (currentTask.hospede_id && currentTask.hospede_confirmado) {
+                colDireita += '<div class="modal-section"><div class="modal-section-title" style="color:#06b6d4;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>Hóspede <span style="color:#22c55e;font-size:0.6rem;margin-left:6px;">✓ VINCULADO</span></div>' +
+                    '<div class="dados-pagamento-section completo" style="border-color:#06b6d4;padding:10px;">' +
+                    '<div style="display:flex;align-items:center;gap:10px;">' +
+                    '<div class="responsavel-option-avatar" style="background:#06b6d4;width:32px;height:32px;font-size:0.75rem;">' + getIniciais(currentTask.hospede_nome) + '</div>' +
+                    '<div style="flex:1;"><div style="font-weight:600;font-size:0.85rem;">' + (currentTask.hospede_nome || '') + '</div>' +
+                    (currentTask.hospede_phone ? '<div style="font-size:0.7rem;color:var(--text-muted);margin-top:2px;">' + currentTask.hospede_phone + '</div>' : '') +
+                    '</div></div>' +
+                    '<button class="btn-secondary btn-edit-dados" onclick="desvincularHospede()" style="margin-top:8px;padding:6px 10px;font-size:0.7rem;"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" style="margin-right:4px;vertical-align:middle;"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>Alterar</button>' +
+                    '</div></div>';
+            } else {
+                var hospedeValorInicial = currentTask.hospede_nome || currentTask.nome_hospede || '';
+                colDireita += '<div class="modal-section"><div class="modal-section-title" style="color:#06b6d4;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>Hóspede</div><div class="responsavel-search"><input type="text" class="responsavel-input" id="hospedeInput" value="' + hospedeValorInicial + '" placeholder="Digite 3 letras para buscar..." oninput="searchHospede(this.value)"><div class="responsavel-dropdown" id="hospedeDropdown"></div></div></div>';
+            }
                 '</div></div>';
             
             // Parceiro (busca)
@@ -2560,7 +2573,7 @@ const dadosParaEnviar = {
                     const clientes = result[0]?.clientes || result.clientes || result || [];
                     const filtrados = clientes.filter(c => c.name && c.name.toLowerCase().includes(query.toLowerCase())).slice(0, 8);
                     if (filtrados.length > 0) {
-                        dropdown.innerHTML = filtrados.map(c => '<div class="responsavel-option" onclick="selectHospede(' + c.id + ', \'' + (c.name||'').replace(/'/g, "\\'") + '\')"><div class="responsavel-option-avatar">' + getIniciais(c.name) + '</div><div class="responsavel-option-info"><div class="responsavel-option-name">' + c.name + '</div><div class="responsavel-option-email">' + (c.phone || c.email || '') + '</div></div></div>').join('');
+                        dropdown.innerHTML = filtrados.map(c => { var ph = (c.phone && c.phone !== 'undefined' && c.phone !== 'null') ? c.phone : ''; return '<div class="responsavel-option" onclick="selectHospede(' + c.id + ', \'' + (c.name||'').replace(/'/g, "\\'") + '\', \'' + ph.replace(/'/g, "\\'") + '\')"><div class="responsavel-option-avatar" style="background:#06b6d4;">' + getIniciais(c.name) + '</div><div class="responsavel-option-info"><div class="responsavel-option-name">' + c.name + '</div><div class="responsavel-option-email">' + (ph || c.email || 'Sem telefone') + '</div></div></div>'; }).join('');
                         dropdown.classList.add('active');
                     } else {
                         dropdown.innerHTML = '<div style="padding:10px;text-align:center;color:var(--text-muted);font-size:0.8rem;">Nenhum cliente encontrado<br><a href="https://crm.upperfy.com.br/clientes.html?novo=1" target="_blank" style="color:var(--accent);">+ Adicionar novo</a></div>';
@@ -2570,16 +2583,25 @@ const dadosParaEnviar = {
             }, 300);
         }
 
-        async function selectHospede(id, nome) {
+        async function selectHospede(id, nome, phone) {
             document.getElementById('hospedeInput').value = nome;
             document.getElementById('hospedeDropdown').classList.remove('active');
             var oldHospede = { id: currentTask.hospede_id, nome: currentTask.hospede_nome };
             currentTask.hospede_id = id;
             currentTask.hospede_nome = nome;
+            currentTask.hospede_phone = phone || '';
+            currentTask.hospede_confirmado = true;
             var taskInArray = tasks.find(t => t.id === currentTask.id);
-            if (taskInArray) { taskInArray.hospede_id = id; taskInArray.hospede_nome = nome; }
-            await sendUpdate(UPDATE_TYPES.DATA_UPDATE, currentTask, { field: 'hospede', old_value: oldHospede, new_value: { id: id, nome: nome } });
+            if (taskInArray) { taskInArray.hospede_id = id; taskInArray.hospede_nome = nome; taskInArray.hospede_phone = phone || ''; taskInArray.hospede_confirmado = true; }
+            await sendUpdate(UPDATE_TYPES.DATA_UPDATE, currentTask, { field: 'hospede', old_value: oldHospede, new_value: { id: id, nome: nome, phone: phone || '' } });
+            renderModalContent();
             showToast('Hóspede vinculado!', 'success');
+        }
+        function desvincularHospede() {
+            currentTask.hospede_confirmado = false;
+            var taskInArray = tasks.find(t => t.id === currentTask.id);
+            if (taskInArray) { taskInArray.hospede_confirmado = false; }
+            renderModalContent();
         }
 
         // === BUSCA PARCEIRO ===
