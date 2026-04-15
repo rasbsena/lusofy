@@ -2672,17 +2672,26 @@ const dadosParaEnviar = {
                 hospede_confirmado: currentTask.hospede_confirmado || false,
                 acomodacao: currentTask.acomodacao || null,
                 acomodacao_confirmada: currentTask.acomodacao_confirmada || false,
-                checkin_bloqueio: currentTask.checkin_bloqueio || null,
-                checkout_bloqueio: currentTask.checkout_bloqueio || null,
+                checkin_bloqueio: currentTask.checkin_bloqueio ? currentTask.checkin_bloqueio.split('-').reverse().join('/') : null,
+                checkout_bloqueio: currentTask.checkout_bloqueio ? currentTask.checkout_bloqueio.split('-').reverse().join('/') : null,
                 nome_hospede: currentTask.nome_hospede || null,
                 phone_hospede: currentTask.phone_hospede ? currentTask.phone_hospede.replace(/^\+/, '') : null
             };
             var localData = getLocalStorage();
+            var cardResumo = {
+                id: currentTask.id,
+                nome: currentTask.nome,
+                tipo: currentTask.tipo,
+                status: currentTask.status,
+                prioridade: currentTask.prioridade,
+                parceiro_id: currentTask.parceiro_id || null,
+                responsavel: currentTask.responsavel || null
+            };
             var payload = {
                 update_type: UPDATE_TYPES.DATA_UPDATE,
                 update_type_name: 'DATA_UPDATE',
                 timestamp: new Date().toISOString(),
-                card: currentTask,
+                card: cardResumo,
                 local_storage: localData,
                 field: 'registro',
                 registro: registro
