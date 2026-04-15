@@ -2131,6 +2131,8 @@ async function enviarAcaoCobranca(acao) {
                     '<div class="campo-pagamento"><label>Nome no Cartão</label><span>' + (dados.nome_cartao || '—') + '</span></div>' +
                     '<div class="campo-pagamento"><label>Validade</label><span>' + (dados.validade_cartao || '—') + '</span></div>' +
                     '<div class="campo-pagamento"><label>CVC</label><span>' + (dados.cvc_cartao || '—') + '</span></div>' +
+                    '<div class="campo-pagamento"><label>Forma de Pagamento</label><span>' + (dados.forma_pagamento || '—') + '</span></div>' +
+                    '<div class="campo-pagamento"><label>Valor</label><span>' + (dados.valor_pagamento ? 'R$ ' + dados.valor_pagamento : '—') + '</span></div>' +
                     '<div class="dados-timer"><span id="paymentTimer">Expira em: ' + formatTimer(timeRemaining) + '</span></div>' +
                     '</div></div>';
             }
