@@ -2635,7 +2635,7 @@ const dadosParaEnviar = {
             currentTask.hospede_confirmado = true;
             var taskInArray = tasks.find(t => t.id === currentTask.id);
             if (taskInArray) { taskInArray.hospede_id = id; taskInArray.hospede_nome = nome; taskInArray.hospede_phone = phone || ''; taskInArray.hospede_confirmado = true; }
-            await sendUpdate(UPDATE_TYPES.DATA_UPDATE, currentTask, { field: 'hospede', old_value: oldHospede, new_value: { id: id, nome: nome, phone: phone || '' } });
+            await sendUpdate(UPDATE_TYPES.DATA_UPDATE, currentTask, { field: 'hospede', old_value: oldHospede, new_value: { cliente_id: id, hospede_nome: nome, hospede_phone: phone || '', hospede_confirmado: true } });
             renderModalContent();
             showToast('Hóspede vinculado!', 'success');
         }
@@ -2696,7 +2696,7 @@ const dadosParaEnviar = {
             currentTask.parceiro_confirmado = true;
             var taskInArray = tasks.find(t => t.id === currentTask.id);
             if (taskInArray) { taskInArray.parceiro_id = id; taskInArray.parceiro_nome = nome; taskInArray.parceiro_confirmado = true; }
-            await sendUpdate(UPDATE_TYPES.DATA_UPDATE, currentTask, { field: 'parceiro', old_value: oldParceiro, new_value: { id: id, nome: nome } });
+            await sendUpdate(UPDATE_TYPES.DATA_UPDATE, currentTask, { field: 'parceiro', old_value: oldParceiro, new_value: { parceiro_id: id, parceiro_nome: nome, parceiro_confirmado: true } });
             renderModalContent();
             showToast('Parceiro vinculado!', 'success');
         }
