@@ -2635,7 +2635,7 @@ const dadosParaEnviar = {
             var oldHospede = { id: currentTask.hospede_id, nome: currentTask.hospede_nome };
             currentTask.hospede_id = id;
             currentTask.hospede_nome = nome;
-            currentTask.hospede_phone = phone || '';
+            currentTask.hospede_phone = (phone || '').replace(/^\+/, '');
             currentTask.hospede_confirmado = true;
             var taskInArray = tasks.find(t => t.id === currentTask.id);
             if (taskInArray) { taskInArray.hospede_id = id; taskInArray.hospede_nome = nome; taskInArray.hospede_phone = phone || ''; taskInArray.hospede_confirmado = true; }
@@ -2668,14 +2668,14 @@ const dadosParaEnviar = {
                 parceiro_confirmado: currentTask.parceiro_confirmado || false,
                 cliente_id: currentTask.hospede_id || null,
                 hospede_nome: currentTask.hospede_nome || null,
-                hospede_phone: currentTask.hospede_phone || null,
+                hospede_phone: currentTask.hospede_phone ? currentTask.hospede_phone.replace(/^\+/, '') : null,
                 hospede_confirmado: currentTask.hospede_confirmado || false,
                 acomodacao: currentTask.acomodacao || null,
                 acomodacao_confirmada: currentTask.acomodacao_confirmada || false,
                 checkin_bloqueio: currentTask.checkin_bloqueio || null,
                 checkout_bloqueio: currentTask.checkout_bloqueio || null,
                 nome_hospede: currentTask.nome_hospede || null,
-                phone_hospede: currentTask.phone_hospede || null
+                phone_hospede: currentTask.phone_hospede ? currentTask.phone_hospede.replace(/^\+/, '') : null
             };
             var localData = getLocalStorage();
             var payload = {
