@@ -1700,7 +1700,7 @@ function updateWaitTimers() {
             }
         }
 
-        function openModal(taskId) { currentTask = tasks.find(t => t.id === taskId); if (!currentTask) return; originalTask = JSON.parse(JSON.stringify(currentTask)); document.getElementById('modalTitle').textContent = currentTask.nome; renderModalContent(); document.getElementById('taskModal').classList.add('active'); }
+        function openModal(taskId) { currentTask = tasks.find(t => t.id === taskId); if (!currentTask) return; originalTask = JSON.parse(JSON.stringify(currentTask)); document.getElementById('modalTitle').textContent = currentTask.nome; if (currentTask.status === 'nao_iniciado') { currentTask.status = 'em_andamento'; var taskInArray = tasks.find(t => t.id === taskId); if (taskInArray) { taskInArray.status = 'em_andamento'; } sendUpdate(UPDATE_TYPES.STATUS_CHANGE, currentTask, { old_status: 'nao_iniciado', new_status: 'em_andamento' }); renderBoard(); } renderModalContent(); document.getElementById('taskModal').classList.add('active'); }
         function closeModal() { document.getElementById('taskModal').classList.remove('active'); currentTask = null; originalTask = null; loadTasks(); }
 
         // Salvar alterações e fechar modal
