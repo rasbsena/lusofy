@@ -2348,11 +2348,7 @@ async function salvarDatasBloqueio() {
                 taskInArray.checkout_bloqueio = checkout;
             }
             
-            await sendUpdate(UPDATE_TYPES.DATA_UPDATE, currentTask, {
-                field: 'datas_bloqueio',
-                old_value: { checkin_bloqueio: oldCheckin, checkout_bloqueio: oldCheckout },
-                new_value: { checkin_bloqueio: checkin, checkout_bloqueio: checkout }
-            });
+            await enviarRegistro();
             
             showToast('Datas do bloqueio salvas!', 'success');
             renderModalContent();
@@ -2379,11 +2375,7 @@ async function salvarDadosHospede() {
         taskInArray.phone_hospede = telefoneHospede;
     }
     
-    await sendUpdate(UPDATE_TYPES.DATA_UPDATE, currentTask, { 
-        field: 'dados_hospede',
-old_value: { nome_hospede: oldNome, phone_hospede: oldTelefone },
-        new_value: { nome_hospede: nomeHospede, phone_hospede: telefoneHospede }
-    });
+    await enviarRegistro();;
     
     showToast('Dados do hóspede salvos!', 'success');
     renderBoard();
@@ -2647,9 +2639,58 @@ const dadosParaEnviar = {
             currentTask.hospede_confirmado = true;
             var taskInArray = tasks.find(t => t.id === currentTask.id);
             if (taskInArray) { taskInArray.hospede_id = id; taskInArray.hospede_nome = nome; taskInArray.hospede_phone = phone || ''; taskInArray.hospede_confirmado = true; }
-            await sendUpdate(UPDATE_TYPES.DATA_UPDATE, currentTask, { field: 'hospede', old_value: oldHospede, new_value: { cliente_id: id, hospede_nome: nome, hospede_phone: phone || '', hospede_confirmado: true } });
+            await enviarRegistro();
             renderModalContent();
             showToast('Hóspede vinculado!', 'success');
+        }
+        async function confirmarAcomodacao() {
+            var valor = document.getElementById('acomodacaoInput').value.trim();
+            if (!valor) { showToast('Digite a acomodação', 'error'); return; }
+            currentTask.acomodacao = valor;
+            currentTask.acomodacao_confirmada = true;
+            var taskInArray = tasks.find(t => t.id === currentTask.id);
+            if (taskInArray) { taskInArray.acomodacao = valor; taskInArray.acomodacao_confirmada = true; }
+            await enviarRegistro();
+            renderModalContent();
+            showToast('Acomodação confirmada!', 'success');
+        }
+
+        function desvincularAcomodacao() {
+            currentTask.acomodacao_confirmada = false;
+            var taskInArray = tasks.find(t => t.id === currentTask.id);
+            if (taskInArray) { taskInArray.acomodacao_confirmada = false; }
+            renderModalContent();
+        }
+        async function enviarRegistro() {
+            var registro = {
+                parceiro_id: currentTask.parceiro_id || null,
+                parceiro_nome: currentTask.parceiro_nome || null,
+                parceiro_confirmado: currentTask.parceiro_confirmado || false,
+                cliente_id: currentTask.hospede_id || null,
+                hospede_nome: currentTask.hospede_nome || null,
+                hospede_phone: currentTask.hospede_phone || null,
+                hospede_confirmado: currentTask.hospede_confirmado || false,
+                acomodacao: currentTask.acomodacao || null,
+                acomodacao_confirmada: currentTask.acomodacao_confirmada || false,
+                checkin_bloqueio: currentTask.checkin_bloqueio || null,
+                checkout_bloqueio: currentTask.checkout_bloqueio || null,
+                nome_hospede: currentTask.nome_hospede || null,
+                phone_hospede: currentTask.phone_hospede || null
+            };
+            var localData = getLocalStorage();
+            var payload = {
+                update_type: UPDATE_TYPES.DATA_UPDATE,
+                update_type_name: 'DATA_UPDATE',
+                timestamp: new Date().toISOString(),
+                card: currentTask,
+                local_storage: localData,
+                field: 'registro',
+                registro: registro
+            };
+            try {
+                await fetch(WEBHOOK_UPDATE, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+                return true;
+            } catch (error) { console.error('Erro ao enviar registro:', error); return false; }
         }
         function desvincularHospede() {
             currentTask.hospede_confirmado = false;
@@ -2708,7 +2749,7 @@ const dadosParaEnviar = {
             currentTask.parceiro_confirmado = true;
             var taskInArray = tasks.find(t => t.id === currentTask.id);
             if (taskInArray) { taskInArray.parceiro_id = id; taskInArray.parceiro_nome = nome; taskInArray.parceiro_confirmado = true; }
-            await sendUpdate(UPDATE_TYPES.DATA_UPDATE, currentTask, { field: 'parceiro', old_value: oldParceiro, new_value: { parceiro_id: id, parceiro_nome: nome, parceiro_confirmado: true } });
+            await enviarRegistro();
             renderModalContent();
             showToast('Parceiro vinculado!', 'success');
         }
