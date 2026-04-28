@@ -1080,7 +1080,7 @@ const TIPO_CONFIG = {
         var CARDS_POR_PAGINA = 15;
         var historicoAberto = false;
         var historicoCarregados = 0;
-        var HISTORICO_POR_PAGINA = 10;
+        var HISTORICO_POR_PAGINA = 15;
 
         // Função para converter URLs em links clicáveis
         function linkify(text) {
@@ -1494,8 +1494,8 @@ function renderHistoricoTable() {
     if (filtroDataAte) concluidos = concluidos.filter(function(t) { return t.concluido_em && t.concluido_em.split('T')[0] <= filtroDataAte; });
     
     concluidos.sort(function(a, b) {
-        var dateA = a.concluido_em ? new Date(a.concluido_em) : new Date(0);
-        var dateB = b.concluido_em ? new Date(b.concluido_em) : new Date(0);
+        var dateA = parseDateBR(a.concluido_em);
+        var dateB = parseDateBR(b.concluido_em);
         return dateB - dateA;
     });
     
@@ -1541,8 +1541,8 @@ function carregarMaisHistorico() {
     if (filtroDataAte) concluidos = concluidos.filter(function(t) { return t.concluido_em && t.concluido_em.split('T')[0] <= filtroDataAte; });
     
     concluidos.sort(function(a, b) {
-        var dateA = a.concluido_em ? new Date(a.concluido_em) : new Date(0);
-        var dateB = b.concluido_em ? new Date(b.concluido_em) : new Date(0);
+        var dateA = parseDateBR(a.concluido_em);
+        var dateB = parseDateBR(b.concluido_em);
         return dateB - dateA;
     });
     
@@ -2891,6 +2891,16 @@ function calcularTempoRestante(task) { if (!task.prazo) return { texto: '—', c
     const seg = d.getSeconds().toString().padStart(2, '0');
     return ano + '-' + mes + '-' + dia + ' ' + hora + ':' + min + ':' + seg;
 }
+        function parseDateBR(str) {
+            if (!str) return new Date(0);
+            if (str.includes('/')) {
+                var partes = str.split(' ');
+                var dataPartes = partes[0].split('/');
+                var hora = partes[1] || '00:00';
+                return new Date(dataPartes[2] + '-' + dataPartes[1] + '-' + dataPartes[0] + 'T' + hora + ':00');
+            }
+            return new Date(str.replace(' ', 'T'));
+        }
         function formatDate(dateStr) { if (!dateStr) return '—'; const partes = dateStr.replace('T', ' ').split(' '); const dataPartes = partes[0].split('-'); if (dataPartes.length !== 3) return dateStr; const dia = dataPartes[2]; const mes = dataPartes[1]; const ano = dataPartes[0]; if (partes[1]) { const horaPartes = partes[1].split(':'); return dia + '/' + mes + '/' + ano + ' ' + horaPartes[0] + ':' + horaPartes[1]; } return dia + '/' + mes + '/' + ano; }        
         function showToast(message, type) {
             type = type || 'info';
