@@ -2933,18 +2933,36 @@ document.addEventListener('keydown', function(e) { if (e.key === 'Escape') { clo
         }
         
         function updateDashboard() {
-            const total = tasks.filter(t => t.status !== 'concluido').length;
+            var pendentes = tasks.filter(t => t.status !== 'concluido');
             document.getElementById('dashNaoIniciado').textContent = tasks.filter(t => t.status === 'nao_iniciado').length;
             document.getElementById('dashEmAndamento').textContent = tasks.filter(t => t.status === 'em_andamento').length;
             document.getElementById('dashBloqueado').textContent = tasks.filter(t => t.status === 'bloqueado').length;
-            const concluido = tasks.filter(t => t.status === 'concluido').length;
-            const hoje = new Date().toDateString();
-            document.getElementById('dashConcluidasHoje').textContent = tasks.filter(t => t.status === 'concluido' && t.concluido_em && new Date(t.concluido_em).toDateString() === hoje).length;
-            const taxa = tasks.length > 0 ? Math.round((concluido / tasks.length) * 100) : 0;
-            document.getElementById('dashTaxaConclusao').textContent = taxa + '%';
-            document.getElementById('dashProgressBar').style.width = taxa + '%';
-            document.getElementById('dashAtrasadas').textContent = tasks.filter(t => t.prazo && new Date(t.prazo) < new Date() && t.status !== 'concluido').length;
-            document.getElementById('dashUrgentes').textContent = tasks.filter(t => t.prioridade === 'urgente' && t.status !== 'concluido').length;
+            document.getElementById('dashSemResponsavel').textContent = pendentes.filter(t => !t.responsavel || !t.responsavel.nome || t.responsavel.nome === 'N/A').length;
+            var agora = new Date();
+            var em2h = new Date(agora.getTime() + 2 * 60 * 60 * 1000);
+            document.getElementById('dashVencem2h').textContent = pendentes.filter(t => { if (!t.prazo) return false; var p = parseDateBR(t.prazo); return p > agora && p <= em2h; }).length;
+            document.getElementById('dashUrgentes').textContent = pendentes.filter(t => t.prioridade === 'urgente').length;
+            // Atrasadas por tipo
+            var atrasadasContainer = document.getElementById('dashAtrasadasTipo');
+            var atrasadasPorTipo = {};
+            pendentes.forEach(t => { if (t.prazo && parseDateBR(t.prazo) < agora) { atrasadasPorTipo[t.tipo] = (atrasadasPorTipo[t.tipo] || 0) + 1; } });
+            var totalAtrasadas = Object.values(atrasadasPorTipo).reduce((s, v) => s + v, 0);
+            if (totalAtrasadas === 0) { atrasadasContainer.innerHTML = '<span style="color:var(--text-muted);font-size:0.8rem;">Nenhuma atrasada</span>'; }
+            else { atrasadasContainer.innerHTML = Object.entries(atrasadasPorTipo).sort((a,b) => b[1]-a[1]).map(([tipo, count]) => { var cfg = TIPO_CONFIG[tipo] || {}; return '<div style="display:flex;align-items:center;gap:6px;background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.3);border-radius:6px;padding:6px 10px;"><span style="width:8px;height:8px;border-radius:50%;background:' + (cfg.color || '#666') + ';"></span><span style="font-size:0.75rem;color:var(--text-secondary);">' + (cfg.label || tipo) + '</span><span style="font-family:Oswald;font-size:1rem;font-weight:700;color:#fca5a5;">' + count + '</span></div>'; }).join(''); }
+            // Tempo médio de espera
+            var naoIniciados = tasks.filter(t => t.status === 'nao_iniciado' && t.criado_em);
+            var containerEspera = document.getElementById('chartEspera');
+            if (naoIniciados.length === 0) { containerEspera.innerHTML = '<span style="font-family:Oswald;font-size:1.6rem;color:var(--accent);">0min</span><span style="font-size:0.7rem;color:var(--text-muted);margin-top:4px;">nenhum card aguardando</span>'; }
+            else {
+                var totalMs = naoIniciados.reduce((sum, t) => sum + (agora - parseDateBR(t.criado_em)), 0);
+                var mediaMs = totalMs / naoIniciados.length;
+                var mediaMins = Math.floor(mediaMs / 60000);
+                var horas = Math.floor(mediaMins / 60);
+                var mins = mediaMins % 60;
+                var tempoStr = horas > 0 ? horas + 'h ' + mins + 'min' : mins + 'min';
+                var cor = horas >= 4 ? '#ef4444' : horas >= 1 ? '#f59e0b' : '#22c55e';
+                containerEspera.innerHTML = '<span style="font-family:Oswald;font-size:2.4rem;font-weight:700;color:' + cor + ';line-height:1;">' + tempoStr + '</span><span style="font-size:0.7rem;color:var(--text-muted);margin-top:6px;">' + naoIniciados.length + ' card' + (naoIniciados.length > 1 ? 's' : '') + ' aguardando</span><div style="width:80%;height:4px;background:var(--bg-column);border-radius:2px;margin-top:8px;"><div style="height:100%;width:' + Math.min(100, (horas/4)*100) + '%;background:' + cor + ';border-radius:2px;"></div></div>';
+            }
         }
         
         // Gráfico de Linha - Conclusões por dia
