@@ -575,17 +575,17 @@
     <div class="dashboard" id="dashboard">
         <div class="charts-row">
             <div class="chart-card">
-                <div class="chart-card-title">Conclusões por Dia (7 dias)</div>
-                <div class="chart-container"><canvas id="chartLine"></canvas></div>
+                <div class="chart-card-title">Tempo Médio de Espera</div>
+                <div id="chartEspera" style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:160px;"></div>
             </div>
             <div class="chart-card">
-                <div class="chart-card-title">Concluídas por Responsável (7 dias)</div>
-                <div class="chart-container"><canvas id="chartPie"></canvas></div>
-                <div class="chart-legend" id="chartPieLegend"></div>
+                <div class="chart-card-title">Carga por Responsável (em andamento)</div>
+                <div class="chart-container"><canvas id="chartCarga"></canvas></div>
             </div>
             <div class="chart-card">
-                <div class="chart-card-title">Pendentes por Responsável</div>
-                <div class="chart-container"><canvas id="chartBar"></canvas></div>
+                <div class="chart-card-title">Entrada vs Saída (7 dias)</div>
+                <div class="chart-container"><canvas id="chartFluxo"></canvas></div>
+                <div class="chart-legend" id="chartFluxoLegend"></div>
             </div>
         </div>
         <div class="dashboard-grid">
