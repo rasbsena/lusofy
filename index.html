@@ -3154,74 +3154,44 @@ document.addEventListener('keydown', function(e) { if (e.key === 'Escape') { clo
             ).join('');
         }
         // Gráfico de Barras - Pendentes por responsável
-        function drawBarChart() {
-            const canvas = document.getElementById('chartBar');
+        function drawChartCarga() {
+            var canvas = document.getElementById('chartCarga');
             if (!canvas) return;
-            const ctx = canvas.getContext('2d');
-            const rect = canvas.parentElement.getBoundingClientRect();
-            canvas.width = rect.width;
-            canvas.height = rect.height;
-            
-            const pendentes = tasks.filter(t => t.status !== 'concluido' && t.responsavel && t.responsavel.nome);
-            const porResp = {};
-            pendentes.forEach(t => {
-                porResp[t.responsavel.nome] = (porResp[t.responsavel.nome] || 0) + 1;
-            });
-            
-            const data = Object.entries(porResp).sort((a, b) => b[1] - a[1]).slice(0, 6);
+            var ctx = canvas.getContext('2d');
+            var rect = canvas.parentElement.getBoundingClientRect();
+            canvas.width = rect.width; canvas.height = rect.height;
+            var emAndamento = tasks.filter(t => t.status === 'em_andamento' && t.responsavel && t.responsavel.nome);
+            var porResp = {};
+            emAndamento.forEach(t => { porResp[t.responsavel.nome] = (porResp[t.responsavel.nome] || 0) + 1; });
+            var data = Object.entries(porResp).sort((a,b) => b[1]-a[1]).slice(0,6);
             ctx.clearRect(0, 0, canvas.width, canvas.height);
-            
-            if (data.length === 0) {
-                ctx.fillStyle = 'rgba(255,255,255,0.4)';
-                ctx.font = '12px Montserrat';
-                ctx.textAlign = 'center';
-                ctx.textBaseline = 'middle';
-                ctx.fillText('Sem dados', canvas.width / 2, canvas.height / 2);
-                return;
-            }
-            
-            const max = Math.max(...data.map(d => d[1]), 1);
-            const pad = {top: 15, right: 10, bottom: 55, left: 10};
-            const w = canvas.width - pad.left - pad.right;
-            const h = canvas.height - pad.top - pad.bottom;
-            const barW = (w / data.length) * 0.7;
-            const gap = (w / data.length) * 0.3;
-            
+            if (data.length === 0) { ctx.fillStyle='rgba(255,255,255,0.4)'; ctx.font='12px Montserrat'; ctx.textAlign='center'; ctx.textBaseline='middle'; ctx.fillText('Nenhuma em andamento', canvas.width/2, canvas.height/2); return; }
+            var max = Math.max(...data.map(d=>d[1]), 1);
+            var pad = {top:15, right:10, bottom:55, left:10};
+            var w = canvas.width - pad.left - pad.right;
+            var h = canvas.height - pad.top - pad.bottom;
+            var barW = (w / data.length) * 0.65;
+            var gap = (w / data.length) * 0.35;
+            var colors = ['#ffcf00','#3b82f6','#22c55e','#ec4899','#8b5cf6','#f59e0b'];
             data.forEach((d, i) => {
-                const x = pad.left + (w / data.length) * i + gap / 2;
-                const barH = (d[1] / max) * h;
-                const y = pad.top + h - barH;
-                
-                // Gradient
-                const grad = ctx.createLinearGradient(x, y, x, y + barH);
-                grad.addColorStop(0, '#ffcf00');
-                grad.addColorStop(1, '#f59e0b');
+                var x = pad.left + (w/data.length)*i + gap/2;
+                var barH = (d[1]/max) * h;
+                var y = pad.top + h - barH;
+                var grad = ctx.createLinearGradient(x, y, x, y+barH);
+                grad.addColorStop(0, colors[i % colors.length]);
+                grad.addColorStop(1, colors[i % colors.length] + '88');
                 ctx.fillStyle = grad;
-                
-                // Barra com cantos arredondados
                 ctx.beginPath();
-                ctx.moveTo(x + 4, y);
-                ctx.lineTo(x + barW - 4, y);
-                ctx.quadraticCurveTo(x + barW, y, x + barW, y + 4);
-                ctx.lineTo(x + barW, y + barH);
-                ctx.lineTo(x, y + barH);
-                ctx.lineTo(x, y + 4);
-                ctx.quadraticCurveTo(x, y, x + 4, y);
+                ctx.moveTo(x+5, y); ctx.lineTo(x+barW-5, y);
+                ctx.quadraticCurveTo(x+barW, y, x+barW, y+5);
+                ctx.lineTo(x+barW, y+barH); ctx.lineTo(x, y+barH);
+                ctx.lineTo(x, y+5); ctx.quadraticCurveTo(x, y, x+5, y);
                 ctx.fill();
-                
-                // Valor
-                ctx.fillStyle = '#fff';
-                ctx.font = 'bold 12px Oswald';
-                ctx.textAlign = 'center';
-                ctx.fillText(d[1], x + barW / 2, y - 5);
-                
-                // Nome - horizontal abaixo da barra
-                ctx.fillStyle = 'rgba(255,255,255,0.8)';
-                ctx.font = '8px Montserrat';
-                ctx.textAlign = 'center';
-                const nome = d[0].split(' ')[0];
-                const nomeAbrev = nome.length > 8 ? nome.substring(0, 7) + '.' : nome;
-                ctx.fillText(nomeAbrev, x + barW / 2, pad.top + h + 15);
+                ctx.fillStyle = '#fff'; ctx.font = 'bold 13px Oswald'; ctx.textAlign = 'center';
+                ctx.fillText(d[1], x+barW/2, y-6);
+                ctx.fillStyle = 'rgba(255,255,255,0.7)'; ctx.font = '8px Montserrat';
+                var nome = d[0].split(' ')[0];
+                ctx.fillText(nome.length > 9 ? nome.substring(0,8)+'.' : nome, x+barW/2, pad.top+h+15);
             });
         }
         function openMobileFilters() {
