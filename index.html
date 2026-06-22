@@ -589,7 +589,7 @@
             </div>
         </div>
         <div class="dashboard-grid">
-            <div class="chart-card" style="grid-column: span 1;">
+            <div class="chart-card" style="grid-column: span 2;">
                 <div class="chart-card-title">Tarefas por Tipo</div>
                 <div class="chart-container"><canvas id="chartTipo"></canvas></div>
                 <div class="chart-legend" id="chartTipoLegend"></div>
@@ -601,23 +601,25 @@
                 <div class="status-row"><span class="status-label"><span class="status-dot" style="background:#ef4444;"></span>Bloqueado</span><span class="status-count" id="dashBloqueado">0</span></div>
             </div>
             <div class="dashboard-card">
-                <div class="dashboard-card-title">Sem Responsável</div>
-                <div class="dashboard-card-value" style="color:#f59e0b;" id="dashSemResponsavel">0</div>
-                <div class="dashboard-card-subtitle">aguardando atribuição</div>
-            </div>
-            <div class="dashboard-card">
-                <div class="dashboard-card-title">Vencem em 2h</div>
-                <div class="dashboard-card-value" style="color:#ef4444;" id="dashVencem2h">0</div>
-                <div class="dashboard-card-subtitle">atenção urgente</div>
+                <div class="dashboard-card-title">Alertas</div>
+                <div style="display:flex;gap:16px;flex-wrap:wrap;margin-top:4px;">
+                    <div style="flex:1;min-width:80px;text-align:center;padding:10px;background:rgba(239,68,68,0.08);border-radius:8px;border:1px solid rgba(239,68,68,0.2);">
+                        <div style="font-family:Oswald;font-size:1.8rem;font-weight:700;color:#ef4444;line-height:1;" id="dashVencem2h">0</div>
+                        <div style="font-size:0.6rem;color:#fca5a5;margin-top:4px;text-transform:uppercase;letter-spacing:0.5px;">Vencem 2h</div>
+                    </div>
+                    <div style="flex:1;min-width:80px;text-align:center;padding:10px;background:rgba(245,158,11,0.08);border-radius:8px;border:1px solid rgba(245,158,11,0.2);">
+                        <div style="font-family:Oswald;font-size:1.8rem;font-weight:700;color:#f59e0b;line-height:1;" id="dashUrgentes">0</div>
+                        <div style="font-size:0.6rem;color:#fde047;margin-top:4px;text-transform:uppercase;letter-spacing:0.5px;">Urgentes</div>
+                    </div>
+                    <div style="flex:1;min-width:80px;text-align:center;padding:10px;background:rgba(107,114,128,0.08);border-radius:8px;border:1px solid rgba(107,114,128,0.2);">
+                        <div style="font-family:Oswald;font-size:1.8rem;font-weight:700;color:#9ca3af;line-height:1;" id="dashSemResponsavel">0</div>
+                        <div style="font-size:0.6rem;color:var(--text-muted);margin-top:4px;text-transform:uppercase;letter-spacing:0.5px;">S/ Responsável</div>
+                    </div>
+                </div>
             </div>
             <div class="dashboard-card" style="grid-column:span 2;">
                 <div class="dashboard-card-title">Atrasadas por Tipo</div>
                 <div id="dashAtrasadasTipo" style="display:flex;flex-wrap:wrap;gap:10px;"></div>
-            </div>
-            <div class="dashboard-card">
-                <div class="dashboard-card-title">Urgentes</div>
-                <div class="dashboard-card-value" style="color:#f59e0b;" id="dashUrgentes">0</div>
-                <div class="dashboard-card-subtitle">prioridade máxima</div>
             </div>
         </div>
     </div>
