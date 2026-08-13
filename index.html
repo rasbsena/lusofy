@@ -1147,6 +1147,9 @@ const TIPO_CONFIG = {
                 document.getElementById('acessoNegadoMsg').textContent = mensagem;
             }
             document.getElementById('acessoNegado').style.display = 'flex';
+            setTimeout(function() {
+                window.location.href = 'https://plataforma.upperfy.com.br';
+            }, 7000);
         }
 
         function clearPaymentData(taskId) {
