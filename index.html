@@ -30,6 +30,12 @@
             --status-bloqueado: #ef4444;
         }
         body { font-family: 'Montserrat', sans-serif; background: linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-secondary) 100%); min-height: 100vh; color: var(--text-primary); }
+        /* Conteúdo do Lusofy nasce oculto; só aparece após autenticação confirmada */
+        body:not(.auth-ok) .header,
+        body:not(.auth-ok) .dashboard,
+        body:not(.auth-ok) .main-content,
+        body:not(.auth-ok) .historico-toggle-btn,
+        body:not(.auth-ok) .historico-container { display: none !important; }
         /* TEMA CLARO - apenas fundo branco, resto igual ao escuro */
         body.light-theme { background: linear-gradient(135deg, #f5f5f5 0%, #e8e8e8 100%); }
         body.light-theme .dashboard { background: #f5f5f5; }
@@ -1220,17 +1226,17 @@ const TIPO_CONFIG = {
         document.addEventListener('DOMContentLoaded', () => { loadTasks(); });
 
         async function loadTasks() {
-            const board = document.getElementById('kanbanBoard');
-            board.innerHTML = '<div class="loading"><div class="loading-spinner"></div></div>';
-            
-            // Inicializa usuário do cookie se necessário
+            // Verifica usuário ANTES de exibir qualquer conteúdo do Lusofy
             const user = initUserFromCookie();
-            
-            // Se não tem usuário, mostra acesso negado
             if (!user) {
                 showAcessoNegado('Sessão não encontrada. Faça login na plataforma Upperfy para acessar o Lusofy.');
                 return;
             }
+            // Usuário existe: libera a exibição do conteúdo
+            document.body.classList.add('auth-ok');
+
+            const board = document.getElementById('kanbanBoard');
+            board.innerHTML = '<div class="loading"><div class="loading-spinner"></div></div>';
             
             try {
                 const response = await fetch(WEBHOOK_LOAD, {
