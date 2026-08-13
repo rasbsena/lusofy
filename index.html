@@ -1114,22 +1114,25 @@ const TIPO_CONFIG = {
         // Inicializa usuário do cookie se não existir no localStorage
         function initUserFromCookie() {
             const stored = getLocalStorage();
-            if (!stored.user) {
-                const cookieData = getUpperfyCookie();
-                if (cookieData && cookieData.autenticado) {
-                    const user = {
-                        id_funcionario: cookieData.id_funcionario,
-                        id_empresa: cookieData.id_empresa,
-                        nome: cookieData.usuario?.nome,
-                        email: cookieData.usuario?.email,
-                        token: cookieData.token
-                    };
+            const cookieData = getUpperfyCookie();
+            // O cookie (atualizado pela plataforma a cada login) é a fonte da verdade.
+            // Sempre que houver cookie válido, sincroniza o token do localStorage com ele.
+            if (cookieData && cookieData.autenticado) {
+                const user = {
+                    id_funcionario: cookieData.id_funcionario,
+                    id_empresa: cookieData.id_empresa,
+                    nome: cookieData.usuario?.nome,
+                    email: cookieData.usuario?.email,
+                    token: cookieData.token
+                };
+                // Se o token do cookie mudou (novo login), atualiza o armazenamento local.
+                if (!stored.user || stored.user.token !== user.token) {
                     updateLocalStorage({ user: user });
-                    return user;
                 }
-                return null;
+                return user;
             }
-            return stored.user;
+            // Sem cookie válido: cai para o que houver salvo (ou null).
+            return stored.user || null;
         }
 
         function getLocalStorage() {
