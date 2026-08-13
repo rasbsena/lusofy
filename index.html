@@ -2585,7 +2585,7 @@ const dadosParaEnviar = {
             if (query.length < 3) { dropdown.classList.remove('active'); return; }
             searchTimeout = setTimeout(async () => {
                 try {
-                    const response = await fetch(SEARCH_URL, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ query }) });
+                    const response = await fetch(SEARCH_URL, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ query, local_storage: getLocalStorage() }) });
                     const pessoas = await response.json();
                     if (pessoas.length > 0) {
                         let html = '';
@@ -2738,7 +2738,7 @@ const dadosParaEnviar = {
         }
         async function autoSugerirParceiro(parceiroId) {
             try {
-                var response = await fetch('https://n8n.upperfy.com.br/webhook/0fec17a7-8654-45ff-sugest-parceiro', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ parceiro_id: parceiroId }) });
+                var response = await fetch('https://n8n.upperfy.com.br/webhook/0fec17a7-8654-45ff-sugest-parceiro', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ parceiro_id: parceiroId, local_storage: getLocalStorage() }) });
                 var result = await response.json();
                 var encontrado = result[0] || result;
                 if (encontrado && encontrado.nome) {
@@ -2764,7 +2764,7 @@ const dadosParaEnviar = {
             if (query.length < 3) { dropdown.classList.remove('active'); return; }
             parceiroTimeout = setTimeout(async () => {
                 try {
-                    const response = await fetch('https://n8n.upperfy.com.br/webhook/0fec17a7-8654-45ff-busca-parceiro', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ query: query, tenant_id: 9 }) });
+                    const response = await fetch('https://n8n.upperfy.com.br/webhook/0fec17a7-8654-45ff-busca-parceiro', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ query: query, tenant_id: 9, local_storage: getLocalStorage() }) });
                     const result = await response.json();
                     const filtrados = (Array.isArray(result) ? result : [result]).filter(p => p.nome).slice(0, 8);
                     if (filtrados.length > 0) {
