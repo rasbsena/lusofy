@@ -1151,19 +1151,15 @@ const TIPO_CONFIG = {
         function showAcessoNegado(mensagem) {
             var msgBase = mensagem || 'Sua sessão expirou ou o acesso foi negado.';
             var msgEl = document.getElementById('acessoNegadoMsg');
-
             // Limpa o spinner do board para não ficar girando atrás da tela.
             var board = document.getElementById('kanbanBoard');
             if (board) board.innerHTML = '';
-
             document.getElementById('acessoNegado').style.display = 'flex';
-
             var segundos = 7;
             function atualiza() {
                 msgEl.textContent = msgBase + ' Redirecionando para a plataforma em ' + segundos + ' segundo' + (segundos === 1 ? '' : 's') + '...';
             }
             atualiza();
-
             var intervalo = setInterval(function() {
                 segundos--;
                 if (segundos <= 0) {
@@ -1174,24 +1170,6 @@ const TIPO_CONFIG = {
                 }
             }, 1000);
         }
-
-            var segundos = 7;
-            function atualiza() {
-                msgEl.textContent = msgBase + ' Redirecionando para a plataforma em ' + segundos + ' segundo' + (segundos === 1 ? '' : 's') + '...';
-            }
-            atualiza();
-
-            var intervalo = setInterval(function() {
-                segundos--;
-                if (segundos <= 0) {
-                    clearInterval(intervalo);
-                    window.location.href = 'https://plataforma.upperfy.com.br';
-                } else {
-                    atualiza();
-                }
-            }, 1000);
-        }
-
         function clearPaymentData(taskId) {
             if (paymentDataCache[taskId]) { clearTimeout(paymentDataCache[taskId].timer); delete paymentDataCache[taskId]; }
             const stored = getLocalStorage();
